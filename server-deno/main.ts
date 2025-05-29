@@ -21,22 +21,6 @@ import {
     updateUserSessionTime,
 } from "./supabase.ts";
 import { SupabaseClient } from "@supabase/supabase-js";
-
-// import { Opus, OpusApplication } from 'https://deno.land/x/opus@0.1.1/opus.ts';
-
-// await Opus.load(); // Make sure the Opus module is loaded
-
-// // Define your audio parameters (adjust as needed)
-// const SAMPLE_RATE = 24000; // e.g., 48000 Hz
-// const CHANNELS = 1; // Stereo (change to 1 if using mono)
-// const FRAME_DURATION = 20; // Frame length in ms
-
-// // Calculate the number of samples per frame
-// const frameSize = (SAMPLE_RATE * FRAME_DURATION) / 1000;
-
-// // Create a global encoder instance (reuse this for every audio delta)
-// const encoder = new Opus(SAMPLE_RATE, CHANNELS, OpusApplication.AUDIO);
-
 import { Encoder } from "@evan/opus";
 
 const isDev = Deno.env.get("DEV_MODE") === "True";
@@ -47,9 +31,6 @@ const CHANNELS = 1; // Mono (set to 2 if you have stereo)
 const FRAME_DURATION = 120; // Frame length in ms
 
 const BYTES_PER_SAMPLE = 2; // 16-bit PCM: 2 bytes per sample
-// Calculate the number of bytes per frame:
-// samples = SAMPLE_RATE * FRAME_DURATION / 1000
-// bytes = samples * CHANNELS * BYTES_PER_SAMPLE
 const FRAME_SIZE = (SAMPLE_RATE * FRAME_DURATION / 1000) * CHANNELS *
     BYTES_PER_SAMPLE; // 960 bytes for 24000 Hz mono 16-bit
 

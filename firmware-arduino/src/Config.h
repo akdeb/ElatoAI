@@ -11,11 +11,11 @@
 
 // ---------- CHOOSE YOUR MODE ----------
 // Pick one of the following (DEV_MODE, PROD_MODE, ELATO_MODE) , comment the rest
-// For ELATO_MODE, you will need to register your DIY Hardware on the Elato website
+// For ELATO_MODE, you will need to register your personal DIY Hardware on the Elato website
 
-// #define DEV_MODE
+#define DEV_MODE
 // #define PROD_MODE
-#define ELATO_MODE
+// #define ELATO_MODE
 
 
 // ---------- Touch mode ----------
