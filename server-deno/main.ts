@@ -333,6 +333,11 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
                     console.log("interrupt detected", message);
                     const audioEndMs = message.audio_end_ms;
 
+                    client.realtime.send("response.cancel", {
+                        type: "response.cancel",
+                        event_id: RealtimeUtils.generateId("evt_")
+                    });
+
                     client.realtime.send("conversation.item.truncate", {
                         event_id: RealtimeUtils.generateId("evt_"), // Generate unique ID
                         type: "conversation.item.truncate",
