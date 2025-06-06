@@ -71,6 +71,8 @@ StreamCopy pitchCopier(volumePitch, queue);
 AudioInfo info(SAMPLE_RATE, CHANNELS, BITS_PER_SAMPLE);
 volatile bool i2sOutputFlushScheduled = false;
 
+volatile bool talkInterruptScheduled = false;
+
 unsigned long getSpeakingDuration() {
     if (deviceState == SPEAKING && speakingStartTime > 0) {
         return millis() - speakingStartTime;
@@ -238,6 +240,14 @@ void micTask(void *parameter) {
         if (deviceState == LISTENING && webSocket.isConnected()) {
             // Use smaller chunk size to avoid blocking too long
             micToWsCopier.copyBytes(MIC_COPY_SIZE);
+            
+            if ( talkInterruptScheduled == true ) {
+                talkInterruptScheduled = false;
+                const char* msg = "{\"type\": \"instruction\", \"msg\": \"INTERRUPT\", \"audio_end_ms\": 1000}";
+                xSemaphoreTake(wsMutex, portMAX_DELAY);
+                webSocket.sendTXT(msg, strlen(msg));
+                xSemaphoreGive(wsMutex);
+            }
             
             // Yield more frequently
             vTaskDelay(1);
