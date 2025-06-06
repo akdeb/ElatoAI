@@ -103,8 +103,8 @@ static void onButtonDoubleClickCb(void *button_handle, void *usr_data)
 static void onButtonSingleClickCb(void *button_handle, void *usr_data)
 {
     Serial.println("Button single click");
-    scheduleListeningRestart = true;
-    scheduledTime = millis(); 
+//    scheduleListeningRestart = true;
+//    scheduledTime = millis(); 
     talkInterruptScheduled = true;
 }
 
