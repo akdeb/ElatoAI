@@ -106,6 +106,14 @@ static void onButtonDoubleClickCb(void *button_handle, void *usr_data)
     sleepRequested = true;
 }
 
+static void onButtonSingleClickCb(void *button_handle, void *usr_data)
+{
+    Serial.println("Button single click");
+//    scheduleListeningRestart = true;
+//    scheduledTime = millis(); 
+    talkInterruptScheduled = true;
+}
+
 void getAuthTokenFromNVS()
 {
     preferences.begin("auth", false);
@@ -203,7 +211,7 @@ void setup()
         Button *btn = new Button(BUTTON_PIN, false);
         btn->attachLongPressUpEventCb(&onButtonLongPressUpEventCb, NULL);
         btn->attachDoubleClickEventCb(&onButtonDoubleClickCb, NULL);
-        btn->detachSingleClickEvent();
+        btn->attachSingleClickEventCb(&onButtonSingleClickCb, NULL);
     #endif
 
     // Pin audio tasks to Core 1 (application core)
