@@ -27,6 +27,11 @@ encoder.bitrate = 12000;
 export const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
 export const geminiApiKey = Deno.env.get("GEMINI_API_KEY");
 
+// Azure OpenAI Configuration
+export const azureOpenAIEndpoint = Deno.env.get("AZURE_OPENAI_ENDPOINT");
+export const azureOpenAIApiKey = Deno.env.get("AZURE_OPENAI_API_KEY");
+export const azureOpenAIDeployment = Deno.env.get("AZURE_OPENAI_DEPLOYMENT_NAME");
+
 export { encoder, FRAME_SIZE };
 
 export const isDev = Deno.env.get("DEV_MODE") === "True";

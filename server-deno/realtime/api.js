@@ -7,10 +7,21 @@ export class RealtimeAPI extends RealtimeEventHandler {
      * @param {{url?: string, apiKey?: string, dangerouslyAllowAPIKeyInBrowser?: boolean, debug?: boolean}} [settings]
      * @returns {RealtimeAPI}
      */
-    constructor({ url, apiKey, dangerouslyAllowAPIKeyInBrowser, debug } = {}) {
+    constructor({ url, apiKey, dangerouslyAllowAPIKeyInBrowser, debug, isAzure, azureEndpoint, azureDeployment } = {}) {
         super();
         this.defaultUrl = 'wss://api.openai.com/v1/realtime';
-        this.url = url || this.defaultUrl;
+        this.isAzure = !!isAzure;
+        this.azureEndpoint = azureEndpoint;
+        this.azureDeployment = azureDeployment;
+        
+        if (this.isAzure && azureEndpoint) {
+            // Build Azure WebSocket URL
+            const baseUrl = azureEndpoint.replace('https://', 'wss://');
+            this.url = `${baseUrl}/openai/realtime`;
+        } else {
+            this.url = url || this.defaultUrl;
+        }
+        
         this.apiKey = apiKey || null;
         this.debug = !!debug;
         this.ws = null;
@@ -57,6 +68,7 @@ export class RealtimeAPI extends RealtimeEventHandler {
      * @returns {Promise<true>}
      */
     async connect({ model } = { model: 'gpt-4o-realtime-preview-2024-10-01' }) {
+        // For Azure, deployment is set via query parameter, not model
         if (!this.apiKey && this.url === this.defaultUrl) {
             console.warn(`No apiKey provided for connection to "${this.url}"`);
         }
@@ -73,7 +85,16 @@ export class RealtimeAPI extends RealtimeEventHandler {
                 );
             }
             const WebSocket = globalThis.WebSocket;
-            const ws = new WebSocket(`${this.url}${model ? `?model=${model}` : ''}`, [
+            let wsUrl = this.url;
+            
+            if (this.isAzure) {
+                // Azure uses deployment name and api-version in query params
+                wsUrl = `${this.url}?api-version=2025-04-01-preview&deployment=${this.azureDeployment}`;
+            } else {
+                wsUrl = `${this.url}${model ? `?model=${model}` : ''}`;
+            }
+            
+            const ws = new WebSocket(wsUrl, [
                 'realtime',
                 `openai-insecure-api-key.${this.apiKey}`,
                 'openai-beta.realtime-v1',
@@ -112,14 +133,29 @@ export class RealtimeAPI extends RealtimeEventHandler {
             const moduleName = 'ws';
             const wsModule = await import(/* webpackIgnore: true */ moduleName);
             const WebSocket = wsModule.default;
+            
+            let wsUrl;
+            if (this.isAzure) {
+                // Azure WebSocket URL with deployment
+                wsUrl = `${this.url}?api-version=2025-04-01-preview&deployment=${this.azureDeployment}`;
+            } else {
+                wsUrl = `wss://api.openai.com/v1/realtime?model=${model || 'gpt-4o-realtime-preview-2024-10-01'}`;
+            }
+            
             const ws = new WebSocket(
-                'wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-10-01',
+                wsUrl,
                 [],
                 {
                     finishRequest: (request) => {
                         // Auth
-                        request.setHeader('Authorization', `Bearer ${this.apiKey}`);
-                        request.setHeader('OpenAI-Beta', 'realtime=v1');
+                        if (this.isAzure) {
+                            // Azure uses api-key header
+                            request.setHeader('api-key', this.apiKey);
+                        } else {
+                            // Standard OpenAI uses Bearer token
+                            request.setHeader('Authorization', `Bearer ${this.apiKey}`);
+                            request.setHeader('OpenAI-Beta', 'realtime=v1');
+                        }
                         request.end();
                     },
                 },

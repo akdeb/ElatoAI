@@ -7,6 +7,43 @@ This directory contains the WebSocket server implementation for Elato AI, built 
 - [Deno](https://deno.land/) installed on your system
 - Network access (for both local development and deployment)
 
+## Configuration
+
+### Environment Variables
+
+Create a `.env` file with the following variables:
+
+```env
+# Supabase Configuration
+SUPABASE_URL=http://127.0.0.1:54321
+SUPABASE_KEY=<YOUR-SUPABASE-ANON-KEY>
+
+# OpenAI Configuration
+OPENAI_API_KEY=<OPENAI_API_KEY>
+
+# Azure OpenAI Configuration (for azure-openai provider)
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
+AZURE_OPENAI_API_KEY=<YOUR_AZURE_API_KEY>
+AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o-realtime-preview
+
+# Gemini Configuration
+GEMINI_API_KEY=<GEMINI_API_KEY>
+
+# Local Development
+HOST=0.0.0.0
+PORT=8000
+DEV_MODE=True
+```
+
+### Provider Support
+
+The server supports multiple AI providers:
+- `openai` - Standard OpenAI Realtime API
+- `azure-openai` - Azure OpenAI Realtime API (East US 2, Sweden Central)
+- `gemini` - Google Gemini Live API
+
+Set the provider in your personality configuration in the database.
+
 ## Running the Server
 
 ### Local Development

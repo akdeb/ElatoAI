@@ -14,6 +14,7 @@ import {
 import { SupabaseClient } from "@supabase/supabase-js";
 import { isDev } from "./utils.ts";
 import { connectToOpenAI } from "./models/openai.ts";
+import { connectToAzureOpenAI } from "./models/azure-openai.ts";
 import { connectToGemini } from "./models/gemini.ts";
 
 const server = createServer();
@@ -59,6 +60,15 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     switch (provider) {
         case "openai":
             await connectToOpenAI(
+                ws,
+                payload,
+                connectionPcmFile,
+                firstMessage,
+                systemPrompt,
+            );
+            break;
+        case "azure-openai":
+            await connectToAzureOpenAI(
                 ws,
                 payload,
                 connectionPcmFile,
