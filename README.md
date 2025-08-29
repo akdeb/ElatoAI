@@ -77,6 +77,20 @@ Control your ESP32 AI device from your phone with the Elato AI webapp.
   <img src="https://img.shields.io/badge/Quickstart%20Tutorial-YouTube-yellow?style=for-the-badge&logo=youtube" alt="Watch Demo on YouTube">
 </a>
 
+### Azure OpenAI Support 🆕
+
+ElatoAI now supports Azure OpenAI Realtime API! To use Azure OpenAI:
+
+1. Set your personality provider to `azure-openai` in the database
+2. Configure these environment variables in `server-deno/.env`:
+```env
+AZURE_OPENAI_ENDPOINT=https://your-resource.openai.azure.com
+AZURE_OPENAI_API_KEY=your-azure-api-key
+AZURE_OPENAI_DEPLOYMENT_NAME=gpt-4o-realtime-preview
+```
+
+**Note:** Azure OpenAI Realtime API is available in East US 2 and Sweden Central regions.
+
 1. **Clone the repository**
 
 ```bash
@@ -282,7 +296,7 @@ lib_deps =
 3. Add Hume API client for emotion detection
 4. Add MCP support on Deno Edge
 5. Plug in ElevenLabs API for voice generation
-6. Add Azure OpenAI Support (easy pickings)
+6. ~~Add Azure OpenAI Support~~ ✅ Completed!
 
 We welcome contributions
 - Fork this repository.

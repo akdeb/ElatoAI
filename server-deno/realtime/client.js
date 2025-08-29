@@ -191,7 +191,7 @@ export class RealtimeClient extends RealtimeEventHandler {
      * Create a new RealtimeClient instance
      * @param {{url?: string, apiKey?: string, dangerouslyAllowAPIKeyInBrowser?: boolean, debug?: boolean}} [settings]
      */
-    constructor({ url, apiKey, dangerouslyAllowAPIKeyInBrowser, debug } = {}) {
+    constructor({ url, apiKey, dangerouslyAllowAPIKeyInBrowser, debug, isAzure, azureEndpoint, azureDeployment } = {}) {
         super();
         this.defaultSessionConfig = {
             modalities: ['text', 'audio'],
@@ -223,6 +223,9 @@ export class RealtimeClient extends RealtimeEventHandler {
             apiKey,
             dangerouslyAllowAPIKeyInBrowser,
             debug,
+            isAzure,
+            azureEndpoint,
+            azureDeployment,
         });
         this.conversation = new RealtimeConversation();
         this._resetConfig();
@@ -403,12 +406,15 @@ export class RealtimeClient extends RealtimeEventHandler {
         await this.realtime.connect({
             model,
         });
-        this.updateSession({
-            voice,
-            turn_detection,
-            instructions,
-            input_audio_transcription,
-        });
+        // Only update session after connection is established
+        if (voice || turn_detection || instructions || input_audio_transcription) {
+            this.updateSession({
+                voice,
+                turn_detection,
+                instructions,
+                input_audio_transcription,
+            });
+        }
         return true;
     }
 
