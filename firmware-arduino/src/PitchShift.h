@@ -14,7 +14,7 @@ public:
     return result;
   }
 
-  bool begin(PitchShiftInfo info);
+  bool begin(const PitchShiftInfo& info);
 
   size_t write(const uint8_t *data, size_t len) override {
     size_t result = 0;
@@ -30,12 +30,10 @@ public:
     return result;
   }
 
-  void end() {}
-
-protected:
+private:
   Print *p_out = nullptr;
 
-  int16_t pitchShift(int16_t value);
+  int16_t pitchShift(int16_t value) const;
   uint32_t pitchMul;
   unsigned long secondaryOffset;
 };

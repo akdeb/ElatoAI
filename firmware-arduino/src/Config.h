@@ -25,7 +25,8 @@
 extern Preferences preferences;
 extern bool factory_reset_status;
 
-enum OtaStatus {
+enum OtaStatus : uint8_t
+{
     OTA_IDLE,
     OTA_IN_PROGRESS,
     OTA_COMPLETE
@@ -33,7 +34,7 @@ enum OtaStatus {
 
 extern OtaStatus otaState;
 
-enum DeviceState
+enum DeviceState : uint8_t
 {
     SETUP,
     SOFT_AP,
@@ -54,9 +55,6 @@ extern const char *EAP_IDENTITY;
 extern const char *EAP_USERNAME;
 extern const char *EAP_PASSWORD;
 extern const char *ssid;
-
-extern const char *ssid_peronal;
-extern const char *password_personal;
 
 extern String authTokenGlobal;
 

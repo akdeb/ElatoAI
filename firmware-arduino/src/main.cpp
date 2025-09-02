@@ -4,13 +4,12 @@
 #include "LEDHandler.h"
 #include "FactoryReset.h"
 
-#define TOUCH_THRESHOLD 28000
+#define TOUCH_THRESHOLD		28000
 #define REQUIRED_RELEASE_CHECKS 100     // how many consecutive times we need "below threshold" to confirm release
-#define TOUCH_DEBOUNCE_DELAY 500 // milliseconds
+#define TOUCH_DEBOUNCE_DELAY	500 	// milliseconds
 
 AsyncWebServer webServer(80);
 WIFIMANAGER WifiManager;
-esp_err_t getErr = ESP_OK;
 
 // Main Thread -> onButtonLongPressUpEventCb -> enterSleep()
 // Main Thread -> onButtonDoubleClickCb -> enterSleep()
@@ -120,7 +119,7 @@ void setupWiFi()
         request->redirect("/wifi");
     });
     webServer.onNotFound([](AsyncWebServerRequest *request) {
-      request->send(404, "text/plain", "Not found");
+    	request->send(404, "text/plain", "Not found");
     });
     webServer.begin();
 }
@@ -193,7 +192,7 @@ void setup()
     #ifdef TOUCH_MODE
         xTaskCreate(touchTask, "Touch Task", 4096, NULL, configMAX_PRIORITIES-2, NULL);
     #else
-        getErr = esp_sleep_enable_ext0_wakeup(BUTTON_PIN, LOW);
+        esp_err_t getErr = esp_sleep_enable_ext0_wakeup(BUTTON_PIN, LOW);
         printOutESP32Error(getErr);
         Button *btn = new Button(BUTTON_PIN, false);
         btn->attachLongPressUpEventCb(&onButtonLongPressUpEventCb, NULL);
