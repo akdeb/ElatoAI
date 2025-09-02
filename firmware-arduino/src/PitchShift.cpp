@@ -8,19 +8,19 @@ static int16_t* buf_ = buf2;
 static unsigned long readAddress = 0;
 static unsigned long writeAddress = 0;
 
-bool PitchShiftFixedOutput::begin(PitchShiftInfo info) {
+bool PitchShiftFixedOutput::begin(const PitchShiftInfo& info) 
+{
   TRACED();
   cfg = info;
   AudioOutput::setAudioInfo(info);
-  this->pitchMul = (uint32_t)(info.pitch_shift * 256.0f + 0.5f);
-  //this->secondaryOffset = (uint32_t)( (1.0f - (info.pitch_shift - (int)(info.pitch_shift))) * GRAINSIZE + 0.5f);
-  this->secondaryOffset = GRAINSIZE - ((( this->pitchMul * GRAINSIZE ) >> 8 ) % GRAINSIZE);
+  pitchMul = (uint32_t)(info.pitch_shift * 256.0f + 0.5f);
+  secondaryOffset = GRAINSIZE - ((( pitchMul * GRAINSIZE ) >> 8 ) % GRAINSIZE);
   
   return true;
 }
 
-int16_t PitchShiftFixedOutput::pitchShift(int16_t value) {
-
+int16_t PitchShiftFixedOutput::pitchShift(int16_t value) const 
+{
   buf_[writeAddress] = value;
 
   int ii1 = (writeAddress * this->pitchMul) >> 8;

@@ -5,7 +5,8 @@
 #include <ESPAsyncWebServer.h> //https://github.com/me-no-dev/ESPAsyncWebServer using the latest dev version from @me-no-dev
 #include "Config.h"
 
-void setResetComplete() {
+void setResetComplete() 
+{
     HTTPClient http;
     WiFiClientSecure client;
     client.setCACert(Vercel_CA_cert);  // Using the existing server certificate
@@ -45,7 +46,6 @@ void setResetComplete() {
 
     // Clear NVS
     factoryResetDevice();
-
 }
 
 // TODO(@akdeb): Update this to use `false` as default
@@ -64,7 +64,8 @@ void setFactoryResetStatusInNVS(bool status)
     factory_reset_status = status;
 }
 
-void factoryResetDevice() {
+void factoryResetDevice() 
+{
     Serial.println("Factory reset device");
     
     // Erase the NVS partition

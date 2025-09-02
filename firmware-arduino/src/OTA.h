@@ -3,8 +3,6 @@
 
 #include "Config.h"
 
-extern const char *server_certificate;
-extern const char *ota_firmware_url;
 void performOTAUpdate();
 void markOTAUpdateComplete();
 void loopOTA();

@@ -1,17 +1,14 @@
 #include "OTA.h"
 #include "HttpsOTAUpdate.h"
-#include "esp_ota_ops.h"
-
-HttpsOTAStatus_t otastatus;
 
 // OTA firmware url
 #ifdef TOUCH_MODE
-const char *ota_firmware_url = "<YOUR S3 OTA FIRMWARE URL HERE> - TOUCH MODE";
+static const char *ota_firmware_url = "<YOUR S3 OTA FIRMWARE URL HERE> - TOUCH MODE";
 #else
-const char *ota_firmware_url = "<YOUR S3 OTA FIRMWARE URL HERE> - BUTTON MODE";
+static const char *ota_firmware_url = "<YOUR S3 OTA FIRMWARE URL HERE> - BUTTON MODE";
 #endif
 
-const char *server_certificate = R"EOF(
+static const char *server_certificate = R"EOF(
 -----BEGIN CERTIFICATE-----
 
     <YOUR S3 HOST CERTIFICATE HERE>
@@ -75,7 +72,7 @@ void setOTAStatusInNVS(OtaStatus status)
 
 void loopOTA()
 {
-    otastatus = HttpsOTA.status();
+    HttpsOTAStatus_t otastatus = HttpsOTA.status();
     if (otastatus == HTTPS_OTA_SUCCESS)
     {
         Serial.println("Firmware written successfully. To reboot device, call API ESP.restart() or PUSH restart button on device");
@@ -123,4 +120,3 @@ void performOTAUpdate()
     HttpsOTA.onHttpEvent(HttpEvent);
     HttpsOTA.begin(ota_firmware_url, server_certificate);
 }
-

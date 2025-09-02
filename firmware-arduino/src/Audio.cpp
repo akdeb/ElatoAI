@@ -172,7 +172,6 @@ void audioStreamTask(void *parameter) {
     }
 }
 
-
 class WebsocketStream : public Print {
 public:
     // micTask -> micToWsCopier.copyBytes() -> wsStream.write()
