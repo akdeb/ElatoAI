@@ -108,3 +108,17 @@ openssl s_client -showcerts -connect <your-deno-domain>.deno.dev:443 </dev/null
 3. For development, uncomment `#define DEV_MODE` in Config.h to use local servers without SSL. To deploy to production, comment out `#define DEV_MODE` and set the proper server addresses and ports.
 
 4. To use the button functions, uncomment `#define TOUCH_MODE` in Config.h
+
+
+## WS2812 Status LED (NeoPixel)
+
+This firmware includes support for a single WS2812 (NeoPixel) LED as a system status indicator.  
+It has been tested on the **Freenove ESP32-S3 Audio Kit**, where the LED is connected to **GPIO48**.
+
+### Requirements
+Add the [Adafruit NeoPixel library](https://github.com/adafruit/Adafruit_NeoPixel) to your `platformio.ini`:
+
+```ini
+lib_deps =
+  adafruit/Adafruit NeoPixel @ ^1.12.0
+
