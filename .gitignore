@@ -1,1 +1,45 @@
 .vscode/
+
+# OS generated files #
+######################
+## MacOS, General
+.DS_Store
+__MACOSX/
+.AppleDouble
+.LSOverride
+## MacOS, Thumbnails
+._*
+## MacOS, Directories potentially created on remote AFP shares
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+## MacOS, Files that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+## Linux, Terminal File editor temp files
+*~
+*.swp
+*.bak
+## Linux, Items that might appear in the root of a volume
+.Trash-*
+
+## Windows, General
+[Dd]esktop.ini
+## Windows, thumbnail cache files
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+## Windows, Items that might appear in the root of a volume
+$RECYCLE.BIN/
+## Windows, Stack dumps
+*.stackdump
+# END OS generated files #
