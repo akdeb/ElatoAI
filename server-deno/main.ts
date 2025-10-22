@@ -26,7 +26,7 @@ const wss: _WebSocketServer = new WebSocketServer({ noServer: true,
 
 wss.on('headers', (headers, req) => {
     // You should NOT see any "Sec-WebSocket-Extensions" here
-    console.log('WS response headers:', headers);
+    console.log('WS response headers :', headers);
 });
 
 wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {

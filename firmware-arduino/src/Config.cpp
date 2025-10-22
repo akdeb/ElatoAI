@@ -42,7 +42,7 @@ const uint16_t backend_port = 3000;
 
 #elif defined(PROD_MODE)
 // PROD
-const char *ws_server = "elatoai.akdeb.deno.net";
+const char *ws_server = "elato-dash.deno.dev";
 const uint16_t ws_port = 443;
 const char *ws_path = "/";
 // Backend server details 
