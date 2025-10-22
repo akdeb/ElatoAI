@@ -116,7 +116,7 @@ declare global {
             emoji?: string;
         };
 
-    type ModelProvider = "openai" | "gemini" | "elevenlabs";
+    type ModelProvider = "openai" | "gemini" | "elevenlabs" | "hume";
 
     type GeminiVoice =
         | "Zephyr"

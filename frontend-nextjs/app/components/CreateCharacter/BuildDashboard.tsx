@@ -326,11 +326,11 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
 
             {/* ElevenLabs Alternative */}
             <div className="space-y-3 p-4 bg-yellow-100 rounded-lg border border-gray-200">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center sm:flex-row gap-2 flex-col justify-between">
                 <div>
-                  <Label className="text-sm font-medium">Creating an Eleven Labs Character?</Label>
+                  <Label className="text-sm font-medium">Creating an Eleven Labs or Hume Character?</Label>
                   <p className="text-xs text-gray-600 mt-1">
-                    Create an ElevenLabs character with custom voice agents
+                    Create a voice clone with Eleven Labs Conversational AI Agents or Hume EVI4
                   </p>
                 </div>
                 <Button
@@ -341,7 +341,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                   className="flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" />
-                  ElevenLabs
+                  Add
                 </Button>
               </div>
             </div>

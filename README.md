@@ -17,7 +17,7 @@ Elato is heading to Kickstarter! After a year of prototyping and shipping early 
 <div align="center">
 <h3>
 
-[🏠 Homepage](https://elatoai.com/)  |  [🚀 Kickstarter](https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices)
+[🚀 Kickstarter](https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices) |[🏠 Homepage](https://elatoai.com/) 
 
 </h3>
 </div>
@@ -44,6 +44,8 @@ Realtime AI Speech powered by **OpenAI Realtime API**, **Eleven Labs AI Agents**
     <img src="https://img.shields.io/badge/Adafruit-Product-red?style=for-the-badge&logo=adafruit" alt="Adafruit" style="margin: 0 10px;">
   </a>
 </div>
+
+<br />
 
 <div align="center">
 

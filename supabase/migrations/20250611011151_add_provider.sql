@@ -1,6 +1,6 @@
 -- Add provider column to personalities table
 ALTER TABLE personalities 
-ADD COLUMN provider TEXT CHECK (provider IN ('openai', 'gemini', 'elevenlabs')) DEFAULT 'openai';
+ADD COLUMN provider TEXT CHECK (provider IN ('openai', 'gemini', 'elevenlabs', 'hume')) DEFAULT 'openai';
 
 -- Update existing records to have a default provider
 UPDATE personalities 

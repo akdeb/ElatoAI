@@ -10,6 +10,7 @@ import {
     Inter_Tight,
     Borel,
     Silkscreen,
+    Luckiest_Guy,
 } from "next/font/google";
 import "./globals.css";
 import { createClient } from "@/utils/supabase/server";
@@ -91,7 +92,14 @@ const silkscreen = Silkscreen({
     weight: ["400"],
 });
 
-const fonts = `${inter.variable} ${inter_tight.variable} ${baloo2.variable} ${comicNeue.variable} ${quicksand.variable} ${fredoka.variable} ${lora.variable} ${karla.variable} ${borel.variable} ${silkscreen.variable}`;
+const luckiestGuy = Luckiest_Guy({
+    subsets: ["latin"],
+    display: "swap",
+    variable: "--font-luckiest-guy",
+    weight: ["400"],
+});
+
+const fonts = `${inter.variable} ${inter_tight.variable} ${baloo2.variable} ${comicNeue.variable} ${quicksand.variable} ${fredoka.variable} ${lora.variable} ${karla.variable} ${borel.variable} ${silkscreen.variable} ${luckiestGuy.variable}`;
 
 const defaultUrl = process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`

@@ -10,6 +10,7 @@ import {
     DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 
 const ICON_SIZE = 22;
 
@@ -44,10 +45,10 @@ export default function LeftNavbarButtons({ user }: LeftNavbarButtonsProps) {
             <a href="https://www.elatoai.com">
                 <Link size={18} className="mr-1" />
                 <span className="text-md font-normal mr-1">Main Website</span>
-                <p className="flex items-center font-silkscreen text-xl">
+                <p className="flex items-center font-luckiestGuy tracking-widest text-xl mt-1">
                     <span>Elato</span>
                 </p>
-                <span className="text-xl">👾</span>
+                <Image src="/logos/elato.png" alt="Elato Logo" width={24} height={24} />
             </a>
         </Button>
     </div>

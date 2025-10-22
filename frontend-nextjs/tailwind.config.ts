@@ -116,6 +116,7 @@ const config = {
                 karla: ["var(--font-karla)"],
                 borel: ["var(--font-borel)"],
                 silkscreen: ["var(--font-silkscreen)"],
+                luckiestGuy: ["var(--font-luckiest-guy)"],
             },
             animation: {
                 "accordion-down": "accordion-down 0.2s ease-out",

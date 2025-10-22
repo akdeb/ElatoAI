@@ -10,6 +10,7 @@ export const tiktokLink = "https://www.tiktok.com/@elatoai";
 export const githubPublicLink = "https://github.com/akdeb/ElatoAI";
 export const businessDemoLink = "https://calendly.com/akadeb/elato-ai-demo";
 export const feedbackFormLink = "https://forms.gle/2QmukEG2FXNwBdee7";
+export const kickstarterLink = "https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices";
 
 export const r2Url = "https://pub-cd736d767add4fecafea55c239c28497.r2.dev";
 export const r2UrlAudio = "https://pub-5fab8e2596c544cd8dc3e20812be2168.r2.dev";

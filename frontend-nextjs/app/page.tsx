@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { ChevronRight, Zap, Star, Home } from "lucide-react"
+import { ChevronRight, Zap, Star, Home, ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DEVICE_COST, SUBSCRIPTION_COST } from "@/lib/data";
 import { createClient } from "@/utils/supabase/server"
@@ -10,7 +10,7 @@ import ProductsSection from "./components/LandingPage/ProductsSection";
 import Image from "next/image";
 import { fetchGithubStars } from "./actions";
 import YoutubeDemo from "./components/LandingPage/YoutubeDemo";
-import { PricingSection } from "./components/LandingPage/PricingSection";
+import { kickstarterLink } from "@/lib/data";
 
 export default async function LandingPage() {
   const supabase = createClient();
@@ -26,6 +26,18 @@ export default async function LandingPage() {
           <div className="container px-4 md:px-6 max-w-screen-lg mx-auto">
             <div className="grid gap-6 lg:grid-cols-1 lg:gap-12 items-center">
               <div className="flex flex-col items-center justify-center space-y-4">
+ <h1 className="text-2xl text-center md:text-3xl font-bold font-luckiestGuy tracking-widest flex flex-row items-center justify-center gap-2">
+               <Image src="/logos/elato.png" alt="Elato Logo" width={40} height={40} />
+<span className="mt-3">Elato</span>
+                </h1>
+        <div className="flex flex-row gap-2 items-center py-4"> 
+          <a href={kickstarterLink} className="inline-flex w-fit items-center space-x-2 rounded-full shadow-lg bg-white px-3 py-1 text-sm text-black">
+            {/* <Zap className="h-4 w-4" fill="currentColor" /> */}
+            <Image src="/logos/ks.png" alt="Kickstarter" width={20} height={20} />
+            <span className="inline ml-2">Follow us on Kickstarter ❤️</span>
+            <ArrowUpRight className="h-5 w-5" />
+          </a>
+        </div>
                 <h1 className="text-5xl text-center md:text-6xl font-bold tracking-tight text-purple-900" style={{ lineHeight: '1.2' }}>
                
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-500">
@@ -80,18 +92,7 @@ export default async function LandingPage() {
                       <span className="ml-2 bg-white text-gray-900 px-2 py-0.5 rounded-md text-xs font-bold">{stars}</span>
                     </a>
                   </div>
-                  
-                  {/* <div className="flex items-center space-x-3">
-                      <Link href="https://discord.gg/your-discord" target="_blank" rel="noopener noreferrer" 
-                        className="text-purple-600 hover:text-purple-800 transition-colors">
-                          <FaDiscord size={24} />
-                      </Link>
-                      <Link href="https://tiktok.com/@elatoai" target="_blank" rel="noopener noreferrer"
-                        className="text-purple-600 hover:text-purple-800 transition-colors">
-                        <FaTiktok size={24} />
-                      </Link>
-                    </div> */}
-                 
+ 
                 </div>
 
                 <div className="flex flex-row gap-2 items-center"> 
@@ -171,37 +172,6 @@ export default async function LandingPage() {
 
         {/* Create Character Showcase */}
         <CreateCharacterShowcase />
-
-        {/* Pricing */}
-        <section className="w-full py-16 bg-white">
-        <div className="container px-4 md:px-6">
-		  <div className="max-w-4xl mx-auto bg-gradient-to-r from-purple-100 to-pink-50 rounded-3xl overflow-hidden shadow-lg">
-			<div className="p-8 md:p-12 text-gray-800 text-center">
-			  <h2 className="text-3xl md:text-4xl font-bold mb-12 text-black">Our Pricing</h2>
-        <PricingSection />
-        </div>
-        </div>
-        </div>
-        </section>
-        {/* FAQ */}
-        {/* <section className="w-full py-16 bg-purple-50">
-        <FAQ className="bg-purple-50" titleClassName="text-purple-900" />
-        </section> */}
-        
-
-        {/* CTA */}
-        {/* <section className="w-full py-20 bg-gradient-to-r from-purple-600 to-pink-500 text-white">
-          <div className="container px-4 md:px-6 text-center">
-            <h2 className="text-3xl md:text-5xl font-bold mb-6">Ready to Bring Your Toys to Life?</h2>
-            <p className="text-xl mb-8 max-w-2xl mx-auto">
-              Order your Elato device today and watch the magic happen!
-            </p>
-            <Button size="lg" className="bg-white text-purple-600 hover:bg-purple-50 text-lg h-14 px-8">
-              <Link href={"/products"}>Get Elato for ${DEVICE_COST}</Link>
-            </Button>
-            <p className="mt-4 text-purple-100">First month subscription FREE, then just ${SUBSCRIPTION_COST}/month <span className="text-xs">(or use your own OpenAI API key)</span></p>
-          </div>
-        </section> */}
       </main>
     </div>
   )
