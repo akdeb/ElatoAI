@@ -64,7 +64,7 @@ View a live chart of the tables and their relationships [here](http://localhost:
 
 ## Deploying to your own supabase instance
 
-1. Create a new supabase project
+1. Create a new supabase project on supabase.com
 2. Copy the supabase url and anon key
 3. Paste them in the `.env` and `.env.local` file in the root of the project
 4. Link the project to the new supabase instance: `supabase link --project-ref <project_ref>`

@@ -27,7 +27,8 @@ This directory contains the WebSocket server implementation for Elato AI, built 
 ### Production Deployment
 
 1. **Deploy to Deno Deploy**:
-   - Create an account on [Deno Deploy](https://deno.com/deploy)
+   - Create an account on [Deno Dash Deploy](https://dash.deno.com/account/overview)
+   - Note: Deno Dash is the legacy version of Deno Deploy. Elato is currently using Deno Dash.
    - Create a new project
    - Connect your GitHub repository or upload your server code
    - Deploy to a custom domain (e.g., `your-app.deno.dev`)
