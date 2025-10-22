@@ -21,7 +21,13 @@ import { connectToHume } from "./models/hume.ts";
 const server = createServer();
 
 const wss: _WebSocketServer = new WebSocketServer({ noServer: true,
+    perMessageDeflate: false,
  });
+
+wss.on('headers', (headers, req) => {
+    // You should NOT see any "Sec-WebSocket-Extensions" here
+    console.log('WS response headers:', headers);
+});
 
 wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     const { user, supabase } = payload;
@@ -103,7 +109,7 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
 });
 
 server.on("upgrade", async (req, socket, head) => {
-    console.log("upgrade");
+    console.log('foobar upgrade', req.headers);
     let user: IUser;
     let supabase: SupabaseClient;
     let authToken: string;
