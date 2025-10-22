@@ -27,7 +27,7 @@ export const connectToHume = ({
   // Build Hume WebSocket URL
   const queryParams = new URLSearchParams({
     api_key: humeApiKey!,
-    config_id: personality!.voice?.config.config_id,
+    config_id: personality!.oai_voice,
   });
 
   const humeWsUrl = `wss://api.hume.ai/v0/evi/chat?${queryParams.toString()}`;

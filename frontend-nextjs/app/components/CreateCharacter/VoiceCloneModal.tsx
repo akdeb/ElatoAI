@@ -12,15 +12,24 @@ import { createClient } from "@/utils/supabase/client";
 import { createPersonality } from "@/db/personalities";
 import { v4 as uuidv4 } from 'uuid';
 
-interface ElevenLabsModalProps {
+interface VoiceCloneModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess?: () => void;
   selectedUser: IUser;
+  voiceCloneModalProps: {
+    provider: "elevenlabs" | "hume";
+    title: string;
+    voiceInputLabel: string;
+    voiceInputPlaceholder: string;
+    voiceDescription: string;
+  };
 }
 
-export default function ElevenLabsModal({ isOpen, onClose, onSuccess, selectedUser }: ElevenLabsModalProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+export default function VoiceCloneModal({ isOpen, onClose, onSuccess, selectedUser, voiceCloneModalProps }: VoiceCloneModalProps) {
+if (!voiceCloneModalProps) return null;
+  const { provider, title, voiceInputLabel, voiceInputPlaceholder, voiceDescription } = voiceCloneModalProps;
+const [isSubmitting, setIsSubmitting] = useState(false);
   const [form, setForm] = useState({
     name: '',
     agentId: ''
@@ -35,7 +44,7 @@ export default function ElevenLabsModal({ isOpen, onClose, onSuccess, selectedUs
 
     try {
       const personality = await createPersonality(supabase, selectedUser.user_id, {
-        provider: 'elevenlabs' as ModelProvider,
+        provider: provider,
         title: form.name,
         subtitle: "",
         character_prompt: "",
@@ -54,11 +63,11 @@ export default function ElevenLabsModal({ isOpen, onClose, onSuccess, selectedUs
       if (personality) {
         onClose();
         setForm({ name: '', agentId: '' });
-        toast({ description: 'ElevenLabs character added successfully!' });
+        toast({ description: `${provider} character added successfully!` });
         onSuccess?.();
       }
     } catch (error) {
-      console.error('Error creating ElevenLabs character:', error);
+      console.error(`Error creating ${provider} character:`, error);
       toast({ description: 'Failed to create character. Please try again.', variant: "destructive" });
     } finally {
       setIsSubmitting(false);
@@ -84,7 +93,7 @@ export default function ElevenLabsModal({ isOpen, onClose, onSuccess, selectedUs
         <Label htmlFor="elevenLabsName">Character Name</Label>
         <Input
           id="elevenLabsName"
-          placeholder="My Eleven Labs Character"
+          placeholder={"Your Character Name"}
           value={form.name}
           onChange={handleNameChange}
           required
@@ -92,16 +101,16 @@ export default function ElevenLabsModal({ isOpen, onClose, onSuccess, selectedUs
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="elevenLabsAgentId">Agent ID</Label>
+        <Label htmlFor="elevenLabsAgentId">{voiceInputLabel}</Label>
         <Input
           id="elevenLabsAgentId"
-          placeholder="your-agent-id-here"
+          placeholder={voiceInputPlaceholder}
           value={form.agentId}
           onChange={handleAgentIdChange}
           required
         />
         <p className="text-xs text-gray-500">
-          Find this in your Eleven Labs dashboard under your agent settings
+          {voiceDescription}
         </p>
       </div>
 
@@ -125,12 +134,18 @@ export default function ElevenLabsModal({ isOpen, onClose, onSuccess, selectedUs
     </form>
   ), [form.name, form.agentId, handleSubmit, handleNameChange, handleAgentIdChange, handleClose, isSubmitting]);
 
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (!open) {
+      handleClose();
+    }
+  }, [handleClose]);
+
   if (isDesktop) {
     return (
-      <Dialog open={isOpen} onOpenChange={handleClose}>
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Add Eleven Labs Character</DialogTitle>
+            <DialogTitle>{title}</DialogTitle>
           </DialogHeader>
           {FormContent}
         </DialogContent>
@@ -139,10 +154,10 @@ export default function ElevenLabsModal({ isOpen, onClose, onSuccess, selectedUs
   }
 
   return (
-    <Drawer open={isOpen} onOpenChange={handleClose}>
+    <Drawer open={isOpen} onOpenChange={handleOpenChange}>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Add Eleven Labs Character</DrawerTitle>
+          <DrawerTitle>{title}</DrawerTitle>
         </DrawerHeader>
         <div className="px-4 pb-4">
           {FormContent}

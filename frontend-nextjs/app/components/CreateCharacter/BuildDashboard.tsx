@@ -17,7 +17,8 @@ import { emotionOptions, geminiVoices, openaiVoices, r2UrlAudio } from "@/lib/da
 import EmojiComponent from "./EmojiComponent";
 import { PitchFactors } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
-import ElevenLabsModal from "./ElevenLabsModal";
+import VoiceCloneModal from "./VoiceCloneModal";
+import Image from "next/image";
 
 interface SettingsDashboardProps {
   selectedUser: IUser;
@@ -63,9 +64,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
   });
 
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
-
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData | 'features', string>>>({});
-
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null);
 
   const handleBlur = (field: keyof FormData | 'features') => {
@@ -204,7 +203,13 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
   };
 
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
-  const [showElevenLabsModal, setShowElevenLabsModal] = useState(false);
+  const [showVoiceCloneModal, setShowVoiceCloneModal] = useState<{
+    provider: "elevenlabs" | "hume";
+    title: string;
+    voiceInputLabel: string;
+    voiceInputPlaceholder: string;
+    voiceDescription: string;
+} | null>(null);
 
 
   const previewVoice = (voice: VoiceType) => {
@@ -326,24 +331,37 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
 
             {/* ElevenLabs Alternative */}
             <div className="space-y-3 p-4 bg-yellow-100 rounded-lg border border-gray-200">
-              <div className="flex items-center sm:flex-row gap-2 flex-col justify-between">
+              <div className="flex items-start sm:flex-row gap-4 flex-col justify-between">
                 <div>
                   <Label className="text-sm font-medium">Creating an Eleven Labs or Hume Character?</Label>
                   <p className="text-xs text-gray-600 mt-1">
-                    Create a voice clone with Eleven Labs Conversational AI Agents or Hume EVI4
+                    Create Voice AI Characters with 11Labs Conversational AI Agents or Hume EVI4
                   </p>
                 </div>
-                <Button
+<div className="flex flex-row sm:flex-col gap-2 justify-end">
+<Button
                   type="button"
                   variant="outline"
                   size="sm"
-                  onClick={() => setShowElevenLabsModal(true)}
+                  onClick={() => setShowVoiceCloneModal({ provider: "hume", title: "Hume Character", voiceInputLabel: "Hume Config ID", voiceInputPlaceholder: "your-hume-config-id-here", voiceDescription: "Find this in your Hume playground in configurations" })}
                   className="flex items-center gap-2"
                 >
-                  <Plus className="w-4 h-4" />
-                  Add
+                  <Plus className="w-4 h-4 flex-shrink-0" />
+                  Hume EVI4
                 </Button>
+<Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowVoiceCloneModal({ provider: "elevenlabs", title: "Eleven Labs Character", voiceInputLabel: "Eleven Labs Agent ID", voiceInputPlaceholder: "your-elevenlabs-agent-id-here", voiceDescription: "Find this in your Eleven Labs dashboard in agent settings" })}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4 flex-shrink-0" />
+                  Eleven Labs Agent
+                </Button>
+</div>
               </div>
+
             </div>
 
             <div className="space-y-2">
@@ -544,17 +562,19 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
           </div>
         )}
       </form>
-      <ElevenLabsModal
-        isOpen={showElevenLabsModal}
-        onClose={() => setShowElevenLabsModal(false)}
+      <VoiceCloneModal
+        isOpen={!!showVoiceCloneModal}
+        onClose={() => setShowVoiceCloneModal(null)}
         selectedUser={selectedUser}
         onSuccess={() => {
           // Optionally refresh personalities or show success message
           toast({
             title: "Success",
-            description: "ElevenLabs character added successfully!",
+            description: "Voice clone character added successfully!",
           });
+          router.push('/home');
         }}
+        voiceCloneModalProps={showVoiceCloneModal!}
       />
     </div>
   )

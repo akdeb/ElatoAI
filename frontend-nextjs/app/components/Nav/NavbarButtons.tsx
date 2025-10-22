@@ -31,7 +31,7 @@ const NavbarButtons: React.FC<NavbarButtonsProps> = ({
             } items-center font-bold text-sm `}
         >
             {isHome && user && (
-                <div className="mr-2">
+                <div>
                     <PremiumBadge currentUserId={user.user_id} />
                 </div>
             )}
