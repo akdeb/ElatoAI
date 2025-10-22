@@ -1,8 +1,6 @@
 # Deploying guide
 
-If you are ready to launch your next AI venture that helps people in a meaningful way, this is the guide for you. And we're here to support you in that journey. 
-
-If you get stuck, join our Discord channel where AI enthusiasts from all around the world gather to discuss new ideas and help solve problems together. This is your invite: https://discord.gg/KJWxDPBRUj
+If you are ready to launch your next AI venture that helps people in a meaningful way, this is the guide for you. And we're here to support you in that journey. If you get stuck, join our Discord channel where AI enthusiasts from all around the world gather to discuss new ideas and help solve problems together. This is your invite: https://discord.gg/KJWxDPBRUj
 
 ## How to deploy
 
