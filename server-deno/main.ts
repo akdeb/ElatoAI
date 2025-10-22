@@ -16,6 +16,7 @@ import { isDev } from "./utils.ts";
 import { connectToOpenAI } from "./models/openai.ts";
 import { connectToGemini } from "./models/gemini.ts";
 import { connectToElevenLabs } from "./models/elevenlabs.ts";
+import { connectToHume } from "./models/hume.ts";
 
 const server = createServer();
 
@@ -50,7 +51,7 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     ws.send(
         JSON.stringify({
             type: "auth",
-            volume_control: user.device?.volume ?? 20,
+            volume_control: user.device?.volume ?? 5,
             is_ota: user.device?.is_ota ?? false,
             is_reset: user.device?.is_reset ?? false,
             pitch_factor: user.personality?.pitch_factor ?? 1,
@@ -90,6 +91,10 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
                 agentId,
                 elevenLabsApiKey,
             );
+            break;
+        case "hume":
+            await connectToHume(ws, payload,
+                connectionPcmFile, firstMessage, systemPrompt, () => Promise.resolve());
             break;
         default:
             throw new Error(`Unknown provider: ${provider}`);

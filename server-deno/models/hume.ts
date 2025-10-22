@@ -4,21 +4,14 @@ import { WebSocket } from 'npm:ws';
 import { addConversation, getDeviceInfo } from '../supabase.ts';
 import { encoder, FRAME_SIZE, isDev, humeApiKey, downsamplePcm, extractPcmFromWav, boostLimitPCM16LEInPlace } from '../utils.ts';
 
-export const connectToHume = ({
-  ws,
-  payload,
-  connectionPcmFile,
-  firstMessage,
-  systemPrompt,
-  closeHandler,
-}: {
-  ws: WebSocket;
-  payload: IPayload;
-  connectionPcmFile: Deno.FsFile | null;
-  firstMessage: string;
-  systemPrompt: string;
-  closeHandler: () => Promise<void>;
-}) => {
+export const connectToHume = (
+  ws: WebSocket,
+  payload: IPayload,
+  connectionPcmFile:Deno.FsFile | null,
+  firstMessage: string,
+  systemPrompt: string,
+  closeHandler: () => Promise<void>,
+) => {
   const { user, supabase } = payload;
   const { personality } = user;
 
