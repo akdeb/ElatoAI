@@ -25,7 +25,7 @@ export const connectToGemini = async (
 
 	// Initialize Google GenAI
 	const ai = new GoogleGenAI({ apiKey: geminiApiKey });
-	const model = "gemini-2.5-flash-preview-native-audio-dialog";
+	const model = "gemini-2.5-flash-native-audio-preview-09-2025";
 	const config: LiveConnectConfig = {
 		responseModalities: [Modality.AUDIO],
 		systemInstruction: systemPrompt,
