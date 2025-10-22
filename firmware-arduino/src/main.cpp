@@ -167,7 +167,7 @@ void touchTask(void *parameter) {
 
 void setupDeviceMetadata() {
   // factoryResetDevice();
-//   resetAuth();
+  // resetAuth();
 
   deviceState = IDLE;
 
