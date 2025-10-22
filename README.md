@@ -286,6 +286,7 @@ lib_deps =
 - [⏸️ Using the Eleven Labs API](./docs/ElevenLabs.md)
 - [📈 Core Use Cases](./docs/Usecases.md)
 - [🤖🤖🤖 Getting Started with multiple devices](./docs/MultipleDevices.md)
+- [🚀 Deploying your application](./docs/Deploy.md)
 
 ## 📊 Important Stats
 
