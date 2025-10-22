@@ -4,7 +4,11 @@ If you are ready to launch your next AI venture that helps people in a meaningfu
 
 ## How to deploy
 
-1. Elato consists of 4 main parts: the database hosted on supabase, the frontend that runs with NextJS, the server that runs on Deno edge functions and the firmware the runs on your ESP32 Arduino device. 
+1. Elato consists of 4 main parts: 
+	- the database hosted on supabase, 
+	- the frontend that runs with NextJS, 
+	- the server that runs on Deno edge functions and 
+	- the firmware the runs on your ESP32 Arduino device. 
 
 2. Setup your Supabase db. Follow the instructions here: [Supabase Setup and Usage Guide](../supabase/README.md)
 
