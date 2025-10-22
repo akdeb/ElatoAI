@@ -20,7 +20,8 @@ import { connectToHume } from "./models/hume.ts";
 
 const server = createServer();
 
-const wss: _WebSocketServer = new WebSocketServer({ noServer: true });
+const wss: _WebSocketServer = new WebSocketServer({ noServer: true,
+ });
 
 wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     const { user, supabase } = payload;
