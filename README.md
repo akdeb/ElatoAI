@@ -45,8 +45,6 @@ Realtime AI Speech powered by **OpenAI Realtime API**, **Eleven Labs AI Agents**
   </a>
 </div>
 
-<br />
-
 <div align="center">
 
 [![Discord](https://img.shields.io/badge/Discord-105_members-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/KJWxDPBRUj)
