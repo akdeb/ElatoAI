@@ -66,9 +66,9 @@ Realtime AI Speech powered by **OpenAI Realtime API**, **Eleven Labs AI Agents**
 
 <img src="assets/gemini.png" alt="Gemini Live API" width="45%">
 
-<img src="assets/elevenlabs.svg" alt="Gemini Live API" width="45%">
+<img src="assets/humeai.avif" alt="Hume AI EVI4" width="45%">
 
-<img src="assets/humeai.avif" alt="Gemini Live API" width="45%">
+<img src="assets/elevenlabs.svg" alt="Eleven Labs AI Agents" width="45%">
 
 </div>
 
