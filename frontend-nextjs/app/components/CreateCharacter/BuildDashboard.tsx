@@ -334,8 +334,9 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
               <div className="flex items-start sm:flex-row gap-4 flex-col justify-between">
                 <div>
                   <Label className="text-sm font-medium">Creating an Eleven Labs or Hume Character?</Label>
-                  <p className="text-xs text-gray-600 mt-1">
-                    Create Voice AI Characters with 11Labs Conversational AI Agents or Hume EVI4
+                  <p className="text-xs text-gray-500 mt-1">
+                    Create Voice AI Characters with 11Labs Conversational AI Agents or Hume EVI4. You are responsible for obtaining proper consent and ensuring ethical use of all voice clones.
+
                   </p>
                 </div>
 <div className="flex flex-row sm:flex-col gap-2 justify-end">
