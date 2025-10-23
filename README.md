@@ -1,13 +1,3 @@
-<!-- 
-<img src="assets/ks.png" alt="Elato Logo" width="100%">
-
-
-### 🚀 Kickstarter Pre-Launch
-
-Elato is heading to Kickstarter! After a year of prototyping and shipping early units, we’re preparing our very first campaign. Your early support means a lot. Even one click helps us bring Elato to more people.
-
-➡️ [Kickstarter Pre-launch Page](https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices) — click **“Notify me on launch”** to be first in line when we go live.  
- -->
 <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices" target="_blank">
  <img src="assets/ks.png" alt="Elato Logo" width="100%">
 </a>
@@ -27,7 +17,7 @@ Elato is heading to Kickstarter! After a year of prototyping and shipping early 
 
 # 👾 ElatoAI: Realtime Speech AI Agents for ESP32
 
-Realtime AI Speech powered by **OpenAI Realtime API**, **Eleven Labs AI Agents**, and **Gemini Live API**, ESP32, Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted global conversations
+Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**, **Eleven Labs AI Agents**, **Gemini Live API**, **Hume AI EVI4**, on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally.
 
 <div align="center" style="margin: 20px 0;">
   <!-- <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices" target="_blank">
@@ -157,7 +147,8 @@ cp .env.example .env
 # SUPABASE_KEY=<your-supabase-anon-key>
 # OPENAI_API_KEY=<your-openai-api-key>
 # GEMINI_API_KEY=<your-gemini-api-key>
-# ELEVENLABS_API_KEY=<your-elevenlabs-api-key
+# ELEVENLABS_API_KEY=<your-elevenlabs-api-key>
+# HUME_API_KEY=<your-hume-api-key>
 
 # Run the server at port 8000
 deno run -A --env-file=.env main.ts
@@ -188,7 +179,7 @@ ElatoAI consists of three main components:
 
 ## 🌟 Full list of features
 
-1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API and Eleven Labs AI Agents.
+1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, Eleven Labs AI Agents and Hume AI EVI4.
 2. **Create Custom AI Agents**: Create custom agents with different personalities and voices.
 3. **Customizable Voices**: Choose from a variety of voices and personalities.
 4. **Secure WebSockets**: Reliable, encrypted WebSocket communication.
@@ -238,9 +229,11 @@ flowchart TD
   Edge -->|OpenAI API| OpenAI[OpenAI Realtime API]
   Edge -->|Gemini API| Gemini[Gemini Live API]
   Edge -->|ElevenLabs API| ElevenLabs[ElevenLabs AI Agents]
+  Edge -->|Hume API| Hume[Hume AI EVI4]
   OpenAI --> Edge
   Gemini --> Edge
   ElevenLabs --> Edge
+  Hume --> Edge
   Edge -->|WebSocket| ESP32
   ESP32 --> UserOutput
 ```
@@ -312,10 +305,11 @@ lib_deps =
 
 1. Looking for Speech Interruption detection on ESP32
 2. Adding Arduino IDE support
-3. Add Hume API client for emotion detection
+3. ~~Add Hume API client for emotion detection~~
 4. Add MCP support on Deno Edge
-5. Plug in Eleven Labs API for voice generation
-6. Add Azure OpenAI Support (easy pickings)
+5. ~~Plug in Eleven Labs API for voice generation~~
+6. Add Azure OpenAI Support (easy pickens)
+7. Add Cartesia Support (easy pickens)
 
 We welcome contributions
 - Fork this repository.
