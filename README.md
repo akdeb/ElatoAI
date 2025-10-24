@@ -61,7 +61,7 @@ Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**,
 </div>
 
 
-## 📽️ Demo Video ([✨ Gemini demo](https://youtu.be/_zUBue3pfVI), [Eleven Labs Demo](https://youtu.be/7LKTIuEW-hg), [Hume AI EVI4 Demo](https://youtu.be/Gtann5pdV0I))
+## 📽️ Demo Video ([✨ Gemini demo](https://youtu.be/_zUBue3pfVI), [Eleven Labs Demo](https://youtu.be/7LKTIuEW-hg), [Hume AI EVI-4 Demo](https://youtu.be/Gtann5pdV0I))
 
 <div align="center">
     <a href="https://www.youtube.com/watch?v=o1eIAwVll5I" target="_blank">
@@ -69,7 +69,7 @@ Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**,
   </a>
 </div>
 
-Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https://youtu.be/_zUBue3pfVI) | [Eleven Labs Demo](https://youtu.be/7LKTIuEW-hg) | [Hume AI EVI4 Demo](https://youtu.be/Gtann5pdV0I)
+Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https://youtu.be/_zUBue3pfVI) | [Eleven Labs Demo](https://youtu.be/7LKTIuEW-hg) | [Hume AI EVI-4 Demo](https://youtu.be/Gtann5pdV0I)
 
 ## 👷‍♀️ DIY Hardware Design
 
