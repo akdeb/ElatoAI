@@ -17,7 +17,7 @@
 
 # 👾 ElatoAI: Realtime Speech AI Agents for ESP32
 
-Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**, **Eleven Labs AI Agents**, **Gemini Live API**, **Hume AI EVI4**, on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally.
+Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**, **Eleven Labs AI Agents**, **Gemini Live API**, **Hume AI EVI-4**, on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally.
 
 <div align="center" style="margin: 20px 0;">
   <!-- <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices" target="_blank">
@@ -61,7 +61,7 @@ Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**,
 </div>
 
 
-## 📽️ Demo Video ([✨ Gemini](https://youtu.be/_zUBue3pfVI), [Eleven Labs](https://youtu.be/7LKTIuEW-hg), [Hume AI EVI-4](https://youtu.be/Gtann5pdV0I))
+## 📽️ Demo Video ([✨ Gemini](https://youtu.be/_zUBue3pfVI), [Eleven Labs](https://youtu.be/7LKTIuEW-hg), [Hume AI](https://youtu.be/Gtann5pdV0I))
 
 <div align="center">
     <a href="https://www.youtube.com/watch?v=o1eIAwVll5I" target="_blank">
