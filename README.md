@@ -179,7 +179,7 @@ ElatoAI consists of three main components:
 
 ## 🌟 Full list of features
 
-1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, Eleven Labs AI Agents and Hume AI EVI4.
+1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, Eleven Labs Conversational AI Agents and Hume AI EVI4.
 2. **Create Custom AI Agents**: Create custom agents with different personalities and voices.
 3. **Customizable Voices**: Choose from a variety of voices and personalities.
 4. **Secure WebSockets**: Reliable, encrypted WebSocket communication.
