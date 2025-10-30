@@ -46,7 +46,7 @@ Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**,
 </div>
 
 
-## ⚡️ With SOTA Realtime AI Speech Models on an ESP32
+## ⚡️ `With SOTA Realtime AI Speech Models on an ESP32`
 
 <div align="center" class="flex flex-row gap-4">
 
@@ -61,7 +61,7 @@ Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**,
 </div>
 
 
-## 📽️ Demo Video ([✨ Gemini](https://youtu.be/_zUBue3pfVI), [Eleven Labs](https://youtu.be/7LKTIuEW-hg), [Hume AI](https://youtu.be/Gtann5pdV0I))
+## `📽️ Demo Video ([✨ Gemini](https://youtu.be/_zUBue3pfVI), [Eleven Labs](https://youtu.be/7LKTIuEW-hg), [Hume AI](https://youtu.be/Gtann5pdV0I))`
 
 <div align="center">
     <a href="https://www.youtube.com/watch?v=o1eIAwVll5I" target="_blank">
@@ -71,11 +71,11 @@ Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**,
 
 Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https://youtu.be/_zUBue3pfVI) | [Eleven Labs Demo](https://youtu.be/7LKTIuEW-hg) | [Hume AI EVI-4 Demo](https://youtu.be/Gtann5pdV0I)
 
-## 👷‍♀️ DIY Hardware Design
+## `👷‍♀️ DIY Hardware Design`
 
 <img src="assets/pcb-design.png" alt="Hardware Setup" width="100%">
 
-## 📱 App Design
+## `📱 App Design`
 
 Control your ESP32 AI device from your phone with the Elato AI webapp.
 
@@ -89,7 +89,7 @@ Control your ESP32 AI device from your phone with the Elato AI webapp.
 
 
 
-## 🚀 Quick Start
+## `🚀 Quick Start`
 
 <a href="https://www.youtube.com/watch?v=bXrNRpGOJWw">
   <img src="https://img.shields.io/badge/Quickstart%20Tutorial-YouTube-yellow?style=for-the-badge&logo=youtube" alt="Watch Demo on YouTube">
@@ -168,7 +168,7 @@ Build and upload the firmware to your ESP32 device. The ESP32 should open an `EL
 
 Once your Wifi credentials are configured, turn the device off and on again and it should connect to your Wifi and your server. Now you can talk to your AI Character!
 
-## Project Architecture
+## `Project Architecture`
 
 ElatoAI consists of three main components:
 
@@ -177,7 +177,7 @@ ElatoAI consists of three main components:
 3. **ESP32 IoT Client** (`PlatformIO/Arduino`) - to receive the websocket connections from the Edge Server Functions and send audio to the LLM Provider via the Deno edge server.
 
 
-## 🌟 Full list of features
+## `🌟 Full list of features`
 
 1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, Eleven Labs Conversational AI Agents and Hume AI EVI4.
 2. **Create Custom AI Agents**: Create custom agents with different personalities and voices.
@@ -203,7 +203,7 @@ ElatoAI consists of three main components:
 22. **Tool calling**: Call tools and functions from the ESP32 device to the Deno Edge Functions for a complete voice AI agent.
 23. **Tap to turn on**: Tap the touchpad to turn it on from sleep.
 
-## 🛠 Tech Stack
+## `🛠 Tech Stack`
 
 | Component       | Technology Used                          |
 |-----------------|------------------------------------------|
@@ -215,7 +215,7 @@ ElatoAI consists of three main components:
 | Communication   | Secure WebSockets                        |
 | Libraries       | ArduinoJson, WebSockets, AsyncWebServer, ESP32_Button, Arduino Audio Tools, ArduinoLibOpus        |
 
-## High-Level Flowchart
+## `High-Level Flowchart`
 
 ```mermaid
 flowchart TD
@@ -239,7 +239,7 @@ flowchart TD
 ```
 
 
-## Project Structure
+## `Project Structure`
 
 ```mermaid
 graph TD
@@ -257,7 +257,7 @@ graph TD
   esp32 --> ESPAsyncWebServer[ESPAsyncWebServer]
 ```
 
-## ⚙️ PlatformIO Config
+## `⚙️ PlatformIO Config`
 
 ```ini
 [env:esp32-s3-devkitc-1]
@@ -275,33 +275,33 @@ lib_deps =
     https://github.com/pschatzmann/arduino-libopus.git#a1.1.0
 ```
 
-## Additional Docs
+## `Additional Docs`
 - [⏸️ Using the Eleven Labs API](./docs/ElevenLabs.md)
 - [📈 Core Use Cases](./docs/Usecases.md)
 - [🤖🤖🤖 Getting Started with multiple devices](./docs/MultipleDevices.md)
 - [🚀 Deploying your application](./docs/Deploy.md)
 
-## 📊 Important Stats
+## `📊 Important Stats`
 
 - ⚡️ **Latency**: <2s round-trip globally
 - 🎧 **Audio Quality**: Opus codec at 12kbps (high clarity) 24kHz sampling rate
 - ⏳ **Uninterrupted Conversations**: Up to 15 minutes continuous conversations globally
 - 🌎 **Global Availability**: Optimized with edge computing
 
-## 🛡 Security
+## `🛡 Security`
 
 - Secure WebSockets (WSS) for encrypted data transfers
 - Optional: API Key encryption with 256-bit AES
 - Supabase DB for secure authentication
 - Postgres RLS for all tables
 
-## 🚫 Limitations
+## `🚫 Limitations`
 - 3-4s Cold start time while connecting to edge server
 - Tested with up to 17 minutes of uninterrupted conversations
 - Edge server stops when wall clock time is exceeded
 - No speech interruption detection on ESP32
 
-## 🤝 Contributing
+## `🤝 Contributing`
 
 1. Looking for Speech Interruption detection on ESP32
 2. Adding Arduino IDE support
@@ -319,11 +319,11 @@ We welcome contributions
 - Open a PR
 
 
-## License
+## `License`
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Star History
+## `Star History`
 
 <div align="center">
    <img src="assets/star-history.png" alt="Star History" width="100%">
