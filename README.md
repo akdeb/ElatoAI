@@ -61,7 +61,7 @@ Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**,
 </div>
 
 
-## `📽️ Demo Video ([✨ Gemini](https://youtu.be/_zUBue3pfVI), [Eleven Labs](https://youtu.be/7LKTIuEW-hg), [Hume AI](https://youtu.be/Gtann5pdV0I))`
+## 📽️ Demo Video ([✨ Gemini](https://youtu.be/_zUBue3pfVI), [Eleven Labs](https://youtu.be/7LKTIuEW-hg), [Hume AI](https://youtu.be/Gtann5pdV0I))
 
 <div align="center">
     <a href="https://www.youtube.com/watch?v=o1eIAwVll5I" target="_blank">
@@ -84,7 +84,7 @@ Control your ESP32 AI device from your phone with the Elato AI webapp.
 | Select from a list of AI characters | Talk to your AI with real-time responses | Create personalized AI characters |
 |:--:|:--:|:--:|
 
-## ⭐️ Key Voice AI Features
+## `⭐️ Key Voice AI Features`
 <img src="assets/features.png" alt="App Screenshots" width="100%">
 
 
