@@ -7,7 +7,7 @@
 <div align="center">
 <h3>
 
-[🚀 Kickstarter](https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices) | [🏠 Homepage](https://elatoai.com/) 
+[🚀 Kickstarter (launching soon!)](https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices) | [🏠 Homepage](https://elatoai.com/) 
 
 </h3>
 </div>
