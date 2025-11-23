@@ -71,6 +71,7 @@ extern const uint16_t backend_port;
 
 // I2S and Audio parameters
 extern const uint32_t SAMPLE_RATE;
+extern const uint32_t MIC_SAMPLE_RATE;
 
 extern const int BLUE_LED_PIN;
 extern const int RED_LED_PIN;

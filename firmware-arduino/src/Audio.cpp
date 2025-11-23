@@ -210,7 +210,7 @@ void micTask(void *parameter) {
     // Configure and start I2S input stream.
     auto i2sConfig = i2sInput.defaultConfig(RX_MODE);
     i2sConfig.bits_per_sample = BITS_PER_SAMPLE;
-    i2sConfig.sample_rate = 16000;
+    i2sConfig.sample_rate = MIC_SAMPLE_RATE;
     i2sConfig.channels = CHANNELS;
     i2sConfig.i2s_format = I2S_LEFT_JUSTIFIED_FORMAT;
     i2sConfig.channel_format = I2S_CHANNEL_FMT_ONLY_LEFT;
