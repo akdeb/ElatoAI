@@ -85,6 +85,32 @@ Control your ESP32 AI device from your phone with the Elato AI webapp.
 ## `⭐️ Key Voice AI Features`
 <img src="assets/features.png" alt="App Screenshots" width="100%">
 
+## `🌟 Full feature list`
+
+1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, Eleven Labs Conversational AI Agents and Hume AI EVI4.
+2. **Create Custom AI Agents**: Create custom agents with different personalities and voices.
+3. **Customizable Voices**: Choose from a variety of voices and personalities.
+4. **Secure WebSockets**: Reliable, encrypted WebSocket communication.
+5. **Server VAD Turn Detection**: Intelligent conversation flow handling for smooth interactions.
+6. **Opus Audio Compression**: High-quality audio streaming with minimal bandwidth.
+7. **Global Edge Performance**: Low latency Deno Edge Functions ensuring seamless global conversations.
+8. **ESP32 Arduino Framework**: Optimized and easy-to-use hardware integration.
+9. **Conversation History**: View your conversation history.
+10. **Device Management and Authentication**: Register and manage your devices.
+11. **User Authentication**: Secure user authentication and authorization.
+12. **Conversations with WebRTC and Websockets**: Talk to your AI with WebRTC on the NextJS webapp and with websockets on the ESP32.
+13. **Volume Control**: Control the volume of the ESP32 speaker from the NextJS webapp.
+14. **Realtime Transcripts**: The realtime transcripts of your conversations are stored in the Supabase DB.
+15. **OTA Updates**: Over the Air Updates for the ESP32 firmware.
+16. **Wifi Management with captive portal**: Connect to your Wifi network or Hotspot from the ESP32 device.
+17. **Factory Reset**: Factory reset the ESP32 device from the NextJS webapp.
+18. **Button and Touch Support**: Use the button OR touch sensor to control the ESP32 device.
+19. **No PSRAM Required**: The ESP32 device does not require PSRAM to run the speech to speech AI.
+20. **OAuth for Web client**: OAuth for your users to manage their AI characters and devices.
+21. **Pitch Factor**: Control the pitch of the AI's voice from the NextJS webapp to create cartoon-like voices.
+22. **Tool calling**: Call tools and functions from the ESP32 device to the Deno Edge Functions for a complete voice AI agent.
+23. **Tap to turn on**: Tap the touchpad to turn it on from sleep.
+
 
 
 ## `🚀 Quick Start`
@@ -174,32 +200,6 @@ ElatoAI consists of three main components:
 2. **Edge Server Functions** (`Deno` running on Deno/Supabase Edge) - to handle the websocket connections from the ESP32 device and the LLM Provider API calls
 3. **ESP32 IoT Client** (`PlatformIO/Arduino`) - to receive the websocket connections from the Edge Server Functions and send audio to the LLM Provider via the Deno edge server.
 
-
-## `🌟 Full list of features`
-
-1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, Eleven Labs Conversational AI Agents and Hume AI EVI4.
-2. **Create Custom AI Agents**: Create custom agents with different personalities and voices.
-3. **Customizable Voices**: Choose from a variety of voices and personalities.
-4. **Secure WebSockets**: Reliable, encrypted WebSocket communication.
-5. **Server VAD Turn Detection**: Intelligent conversation flow handling for smooth interactions.
-6. **Opus Audio Compression**: High-quality audio streaming with minimal bandwidth.
-7. **Global Edge Performance**: Low latency Deno Edge Functions ensuring seamless global conversations.
-8. **ESP32 Arduino Framework**: Optimized and easy-to-use hardware integration.
-9. **Conversation History**: View your conversation history.
-10. **Device Management and Authentication**: Register and manage your devices.
-11. **User Authentication**: Secure user authentication and authorization.
-12. **Conversations with WebRTC and Websockets**: Talk to your AI with WebRTC on the NextJS webapp and with websockets on the ESP32.
-13. **Volume Control**: Control the volume of the ESP32 speaker from the NextJS webapp.
-14. **Realtime Transcripts**: The realtime transcripts of your conversations are stored in the Supabase DB.
-15. **OTA Updates**: Over the Air Updates for the ESP32 firmware.
-16. **Wifi Management with captive portal**: Connect to your Wifi network or Hotspot from the ESP32 device.
-17. **Factory Reset**: Factory reset the ESP32 device from the NextJS webapp.
-18. **Button and Touch Support**: Use the button OR touch sensor to control the ESP32 device.
-19. **No PSRAM Required**: The ESP32 device does not require PSRAM to run the speech to speech AI.
-20. **OAuth for Web client**: OAuth for your users to manage their AI characters and devices.
-21. **Pitch Factor**: Control the pitch of the AI's voice from the NextJS webapp to create cartoon-like voices.
-22. **Tool calling**: Call tools and functions from the ESP32 device to the Deno Edge Functions for a complete voice AI agent.
-23. **Tap to turn on**: Tap the touchpad to turn it on from sleep.
 
 ## `🛠 Tech Stack`
 
