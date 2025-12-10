@@ -39,7 +39,7 @@ Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**,
 
 <!-- [![Discord](https://img.shields.io/badge/Discord-115_members-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/KJWxDPBRUj) -->
 <!-- [![Discord](https://img.shields.io/discord/1088574461848064160?style=flat&logo=discord&logoColor=white&label=Discord%20(120%20members)&color=5865F2)](https://discord.gg/KJWxDPBRUj) -->
-[![Discord Total](https://img.shields.io/badge/Discord-120_members-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/KJWxDPBRUj)
+[![Discord Total](https://img.shields.io/badge/Discord-130_members-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/KJWxDPBRUj)
 [![Discord](https://img.shields.io/discord/1088574461848064160?style=flat&logo=discord&logoColor=white&label=🟢&color=5865F2&status=online)](https://discord.gg/KJWxDPBRUj)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/licenses/MIT)
 ![Node.js](https://img.shields.io/badge/Node.js-22.13.0-yellow.svg)
