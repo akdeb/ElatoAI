@@ -38,4 +38,4 @@ We ask that you give us the opportunity to address the vulnerability before disc
 
 ---
 
-Thank you for helping us keep the project safe!
+Thank you for helping us keep ElatoAI safe!
