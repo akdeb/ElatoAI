@@ -59,11 +59,7 @@ Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSock
 ## ⚡️ `With SoTA Realtime AI Speech Models on an ESP32`
 
 <div align="center" class="flex flex-row gap-4">
-<img src="assets/openai.png" alt="OpenAI Realtime API" width="45%">
-<img src="assets/gemini.png" alt="Gemini Live API" width="45%">
-<img src="assets/grok.svg" alt="Grok AI" width="45%">
-<img src="assets/humeai.avif" alt="Hume AI EVI4" width="45%">
-<img src="assets/elevenlabs.svg" alt="Eleven Labs AI Agents" width="45%">
+<img src="assets/doge.png" alt="Model Providers" width="100%">
 </div>
 
 
