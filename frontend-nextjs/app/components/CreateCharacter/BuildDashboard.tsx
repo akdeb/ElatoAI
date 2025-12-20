@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import { emotionOptions, geminiVoices, openaiVoices, r2UrlAudio } from "@/lib/data";
+import { emotionOptions, geminiVoices, grokVoices, openaiVoices, r2UrlAudio } from "@/lib/data";
 import EmojiComponent from "./EmojiComponent";
 import { PitchFactors } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
@@ -26,7 +26,7 @@ interface SettingsDashboardProps {
 }
 
 const formSchema = z.object({
-  provider: z.enum(["openai", "gemini"]),
+  provider: z.enum(["openai", "gemini", "grok"]),
   title: z.string().min(2, "Minimum 2 characters").max(50, "Maximum 50 characters"),
   description: z.string().min(50, "Minimum 50 characters").max(200, "Maximum 200 characters"),
   prompt: z.string().min(100, "Minimum 100 characters").max(1000, "Maximum 1000 characters"),
@@ -66,6 +66,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData | 'features', string>>>({});
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null);
+  const [expandedProvider, setExpandedProvider] = useState<ModelProvider | null>("openai");
 
   const handleBlur = (field: keyof FormData | 'features') => {
     // Mark the field as touched
@@ -249,6 +250,19 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
     }
   }
 
+  const getProviderBadge = (provider: ModelProvider) => {
+    if (provider === "openai") {
+      return { label: "OpenAI", className: "bg-emerald-500 text-white" };
+    }
+    if (provider === "gemini") {
+      return { label: "Gemini", className: "bg-purple-500 text-white" };
+    }
+    if (provider === "grok") {
+      return { label: "Grok", className: "bg-slate-900 text-white" };
+    }
+    return { label: provider, className: "bg-gray-600 text-white" };
+  };
+
   const Heading = () => {
     return (
       <div className="flex flex-col gap-2">
@@ -273,60 +287,98 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
             <div className="space-y-4">
               <Label htmlFor="voice">Pick a voice</Label>
               <p className="text-sm text-gray-500">
-                Click a voice to preview how it sounds.
+                Choose from a list of voices and model providers to create your AI character.
               </p>
 
-              <div className="overflow-x-auto px-2">
-                <div className="flex gap-3 w-max py-2">
-                  {[...openaiVoices, ...geminiVoices].map((voice: VoiceType) => (
-                    <div
-                      key={voice.id}
-                      className={`relative rounded-xl border-2 p-4 transition-all cursor-pointer hover:scale-[1.02] hover:shadow-lg w-48 flex-shrink-0 ${formData.voice === voice.id
-                        ? `border-blue-500 shadow-lg ${voice.color} ring-2 ring-blue-200`
-                        : `border-gray-200 hover:border-gray-300 ${voice.color} hover:shadow-md`
-                        }`}
-                      onClick={() => {
-                        setFormData(prev => ({
+              <div className="grid grid-cols-3 gap-3">
+                {([
+                  { provider: "openai" as ModelProvider, label: "OpenAI" },
+                  { provider: "gemini" as ModelProvider, label: "Gemini" },
+                  { provider: "grok" as ModelProvider, label: "Grok" },
+                ]).map((p) => (
+                  <button
+                    key={p.provider}
+                    type="button"
+                    className={`text-left bg-white shadow-md rounded-xl border-2 p-4 transition-all hover:shadow-md ${expandedProvider === p.provider
+                      ? "border-blue-500 ring-2 ring-blue-200"
+                      : "border-gray-200 hover:border-gray-300"
+                      }`}
+                    onClick={() => {
+                      setExpandedProvider(prev => prev === p.provider ? null : p.provider);
+                      setFormData(prev => {
+                        const switchingProvider = prev.provider !== p.provider;
+                        return {
                           ...prev,
-                          provider: voice.provider as ModelProvider,
-                          voice: voice.id
-                        }));
-                        previewVoice(voice);
-                      }}
-                    >
-                      <div className="flex flex-col">
-                        <div className="flex flex-col items-center gap-3">
-                          <div className="text-3xl">
-                            <EmojiComponent emoji={voice.emoji} />
-                          </div>
-                          <div className="flex flex-col text-center">
-                            <span className="font-semibold text-gray-900">{voice.name}</span>
-                            <span className="text-xs text-gray-600 mt-1">{voice.description}</span>
-                            <div className={`inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-medium mt-2 ${voice.provider === 'openai' ? 'bg-emerald-500 text-white' : 'bg-purple-500 text-white'
-                              }`}>
-                              {voice.provider === 'openai' ? 'OpenAI' : 'Gemini'}
-                            </div>
-                          </div>
-                        </div>
-                        {previewingVoice === voice.id && (
-                          <div className="absolute top-3 right-3">
-                            <div className="animate-pulse text-blue-600 bg-white rounded-full p-2 shadow-lg">
-                              <Volume2 size={16} />
-                            </div>
-                          </div>
-                        )}
-                        {formData.voice === voice.id && (
-                          <div className="absolute -top-2 -right-2">
-                            <div className="bg-blue-500 text-white rounded-full p-1.5 shadow-lg">
-                              <Check size={12} />
-                            </div>
-                          </div>
-                        )}
+                          provider: p.provider,
+                          voice: switchingProvider ? "" : prev.voice,
+                        };
+                      });
+                    }}
+                  >
+                    <div className="flex flex-col gap-1">
+                      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
+                        <span className="font-semibold text-gray-900">{p.label}</span>
+                        <span className="text-xs text-gray-500">
+                          {p.provider === "openai" ? openaiVoices.length : p.provider === "gemini" ? geminiVoices.length : grokVoices.length} voices
+                        </span>
                       </div>
                     </div>
-                  ))}
-                </div>
+                  </button>
+                ))}
               </div>
+
+              {expandedProvider && (
+                <div className="overflow-x-auto px-2">
+                  <div className="flex gap-3 w-max py-2">
+                    {(expandedProvider === "openai" ? openaiVoices : expandedProvider === "gemini" ? geminiVoices : grokVoices).map((voice: VoiceType) => (
+                      <div
+                        key={voice.id}
+                        className={`relative rounded-xl border-2 p-4 transition-all cursor-pointer hover:scale-[1.02] hover:shadow-lg w-48 flex-shrink-0 ${formData.voice === voice.id
+                          ? `border-blue-500 shadow-lg ${voice.color} ring-2 ring-blue-200`
+                          : `border-gray-200 hover:border-gray-300 ${voice.color} hover:shadow-md`
+                          }`}
+                        onClick={() => {
+                          setFormData(prev => ({
+                            ...prev,
+                            provider: voice.provider as ModelProvider,
+                            voice: voice.id
+                          }));
+                          previewVoice(voice);
+                        }}
+                      >
+                        <div className="flex flex-col">
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="text-3xl">
+                              <EmojiComponent emoji={voice.emoji} />
+                            </div>
+                            <div className="flex flex-col text-center">
+                              <span className="font-semibold text-gray-900">{voice.name}</span>
+                              <span className="text-xs text-gray-600 mt-1">{voice.description}</span>
+                              <div className={`inline-flex items-center justify-center px-2 py-1 rounded-full text-xs font-medium mt-2 ${getProviderBadge(voice.provider as ModelProvider).className}`}>
+                                {getProviderBadge(voice.provider as ModelProvider).label}
+                              </div>
+                            </div>
+                          </div>
+                          {previewingVoice === voice.id && (
+                            <div className="absolute top-3 right-3">
+                              <div className="animate-pulse text-blue-600 bg-white rounded-full p-2 shadow-lg">
+                                <Volume2 size={16} />
+                              </div>
+                            </div>
+                          )}
+                          {formData.voice === voice.id && (
+                            <div className="absolute -top-2 -right-2">
+                              <div className="bg-blue-500 text-white rounded-full p-1.5 shadow-lg">
+                                <Check size={12} />
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* ElevenLabs Alternative */}

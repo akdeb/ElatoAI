@@ -28,6 +28,7 @@ export const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
 export const geminiApiKey = Deno.env.get("GEMINI_API_KEY");
 export const elevenLabsApiKey = Deno.env.get("ELEVENLABS_API_KEY");
 export const humeApiKey = Deno.env.get('HUME_API_KEY');
+export const xaiApiKey = Deno.env.get('XAI_API_KEY');
 
 export { encoder, FRAME_SIZE };
 

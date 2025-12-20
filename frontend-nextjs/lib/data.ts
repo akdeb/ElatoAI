@@ -106,6 +106,44 @@ export const openaiVoices: VoiceType[] = [
     },
 ];
 
+export const grokVoices: VoiceType[] = [
+    {
+        id: "Ara",
+        name: "Ara",
+        description: "Bright",
+        color: "bg-yellow-100",
+        provider: "grok",
+    },
+    {
+        id: "Eve",
+        name: "Eve",
+        description: "Upbeat",
+        color: "bg-orange-100",
+        provider: "grok",
+    },
+    {
+        id: "Leo",
+        name: "Leo",
+        description: "Confident",
+        color: "bg-blue-100",
+        provider: "grok",
+    },
+    {
+        id: "Rex",
+        name: "Rex",
+        description: "Direct",
+        color: "bg-gray-100",
+        provider: "grok",
+    },
+    {
+        id: "Sal",
+        name: "Sal",
+        description: "Warm",
+        color: "bg-green-100",
+        provider: "grok",
+    }
+];
+
 export const geminiVoices: VoiceType[] = [
     {
         id: "Zephyr",

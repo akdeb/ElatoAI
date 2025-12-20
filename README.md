@@ -17,7 +17,7 @@
 
 # 👾 ElatoAI: Realtime Speech AI Agents for ESP32
 
-Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**, **Eleven Labs AI Agents**, **Gemini Live API**, **Hume AI EVI-4**, on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally.
+Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**, **Eleven Labs AI Agents**, **Gemini Live API**, **Hume AI EVI-4**, **xAI's Grok Voice Agent API** on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally.
 
 <div align="center" style="margin: 20px 0;">
   <!-- <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices" target="_blank">
@@ -49,11 +49,12 @@ Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**,
 </div>
 
 
-## ⚡️ `With SOTA Realtime AI Speech Models on an ESP32`
+## ⚡️ `With SoTA Realtime AI Speech Models on an ESP32`
 
 <div align="center" class="flex flex-row gap-4">
 <img src="assets/openai.png" alt="OpenAI Realtime API" width="45%">
 <img src="assets/gemini.png" alt="Gemini Live API" width="45%">
+<img src="assets/grok.svg" alt="Grok AI" width="45%">
 <img src="assets/humeai.avif" alt="Hume AI EVI4" width="45%">
 <img src="assets/elevenlabs.svg" alt="Eleven Labs AI Agents" width="45%">
 </div>
@@ -87,7 +88,7 @@ Control your ESP32 AI device from your phone with the Elato AI webapp.
 
 ## `🌟 Full feature list`
 
-1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, Eleven Labs Conversational AI Agents and Hume AI EVI4.
+1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, xAI's Grok Voice Agent API, Eleven Labs Conversational AI Agents and Hume AI EVI4.
 2. **Create Custom AI Agents**: Create custom agents with different personalities and voices.
 3. **Customizable Voices**: Choose from a variety of voices and personalities.
 4. **Secure WebSockets**: Reliable, encrypted WebSocket communication.
@@ -145,7 +146,7 @@ cp .env.example .env.local
 
 # In .env.local, set your environment variables 
 # NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
-# OPENAI_API_KEY=<your-openai-api-key>
+# OPENAI_API_KEY=<your-openai-api-key> (to test OpenAI on the browser)
 
 # Run the development server
 npm run dev
@@ -171,6 +172,7 @@ cp .env.example .env
 # SUPABASE_KEY=<your-supabase-anon-key>
 # OPENAI_API_KEY=<your-openai-api-key>
 # GEMINI_API_KEY=<your-gemini-api-key>
+# XAI_API_KEY=<your-xai-api-key>
 # ELEVENLABS_API_KEY=<your-elevenlabs-api-key>
 # HUME_API_KEY=<your-hume-api-key>
 
@@ -226,10 +228,12 @@ flowchart TD
   ESP32[ESP32 Device] -->|WebSocket| Edge[Deno Edge Function]
   Edge -->|OpenAI API| OpenAI[OpenAI Realtime API]
   Edge -->|Gemini API| Gemini[Gemini Live API]
+  Edge -->|xAI API| xAI[xAI Grok Voice Agent API]
   Edge -->|ElevenLabs API| ElevenLabs[ElevenLabs AI Agents]
   Edge -->|Hume API| Hume[Hume AI EVI4]
   OpenAI --> Edge
   Gemini --> Edge
+  xAI --> Edge
   ElevenLabs --> Edge
   Hume --> Edge
   Edge -->|WebSocket| ESP32
@@ -308,6 +312,8 @@ lib_deps =
 5. ~~Plug in Eleven Labs API for voice generation~~
 6. Add Azure OpenAI Support (easy pickens)
 7. Add Cartesia Support (easy pickens)
+8. Add Amazon Nova Support
+9. Add Deepgram
 
 We welcome contributions
 - Fork this repository.

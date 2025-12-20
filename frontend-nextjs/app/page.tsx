@@ -124,7 +124,10 @@ export default async function LandingPage() {
             </div>
           </div>
         </section>
-        <YoutubeDemo caption="Elato AI ESP32-S3 Demo" />
+        <YoutubeDemo caption="Elato AI ESP32-S3 Demo" youtubeId="o1eIAwVll5I" />
+        <br/><br />
+        <YoutubeDemo caption="How to run ElatoAI on your own device" youtubeId="bXrNRpGOJWw" />
+
         {/* Products Section */}
         <ProductsSection />
 

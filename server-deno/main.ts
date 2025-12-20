@@ -17,6 +17,7 @@ import { connectToOpenAI } from "./models/openai.ts";
 import { connectToGemini } from "./models/gemini.ts";
 import { connectToElevenLabs } from "./models/elevenlabs.ts";
 import { connectToHume } from "./models/hume.ts";
+import { connectToGrok } from "./models/grok.ts";
 
 const server = createServer();
 
@@ -58,7 +59,7 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     ws.send(
         JSON.stringify({
             type: "auth",
-            volume_control: user.device?.volume ?? 20,
+            volume_control: user.device?.volume ?? 100,
             is_ota: user.device?.is_ota ?? false,
             is_reset: user.device?.is_reset ?? false,
             pitch_factor: user.personality?.pitch_factor ?? 1,
@@ -77,6 +78,15 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
             break;
         case "gemini":
             await connectToGemini(
+                ws,
+                payload,
+                connectionPcmFile,
+                firstMessage,
+                systemPrompt,
+            );
+            break;
+        case "grok":
+            await connectToGrok(
                 ws,
                 payload,
                 connectionPcmFile,
@@ -145,7 +155,7 @@ server.on("upgrade", async (req, socket, head) => {
     });
 });
 
-if (isDev) { // deno run -A --env-file=.env main.ts
+if (isDev) { // RUN WITH: deno run -A --env-file=.env main.ts
     const HOST = Deno.env.get("HOST") || "0.0.0.0";
     const PORT = Deno.env.get("PORT") || "8000";
     server.listen(Number(PORT), HOST, () => {

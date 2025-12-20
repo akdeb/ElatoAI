@@ -114,9 +114,24 @@ declare global {
             description: string;
             color: string;
             emoji?: string;
+        }
+        | {
+            provider: "grok";
+            id: GrokVoice;
+            name: string;
+            description: string;
+            color: string;
+            emoji?: string;
         };
 
-    type ModelProvider = "openai" | "gemini" | "elevenlabs" | "hume";
+    type ModelProvider = "openai" | "gemini" | "grok" | "elevenlabs" | "hume";
+
+    type GrokVoice =
+        | "Ara"
+        | "Eve"
+        | "Leo"
+        | "Rex"
+        | "Sal";
 
     type GeminiVoice =
         | "Zephyr"
@@ -162,8 +177,8 @@ declare global {
 
     // characters <-> personalities table
     /**
-     * oai_voice is for the name of any voice. both gemini and openai use this.
-     * forgot to refactor this, update it for your setup
+     * oai_voice is for the name of any voice. grok, gemini and openai use this.
+     * I forgot to refactor this, please consider updating it for your setup :)
      */
     interface IPersonality {
         personality_id?: string;
