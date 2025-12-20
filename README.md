@@ -17,7 +17,12 @@
 
 # 👾 ElatoAI: Realtime Speech AI Agents for ESP32
 
-Realtime AI Speech powered by SoTA AI voice models like **OpenAI Realtime API**, **Eleven Labs AI Agents**, **Gemini Live API**, **Hume AI EVI-4**, **xAI's Grok Voice Agent API** on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally.
+Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally. Models we currently support: 
+1. OpenAI Realtime API
+2. Gemini Live API
+3. xAI's Grok Voice Agent API 
+4. Eleven Labs AI Agents
+5. Hume AI EVI-4
 
 <div align="center" style="margin: 20px 0;">
   <!-- <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices" target="_blank">
