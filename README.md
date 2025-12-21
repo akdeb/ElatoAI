@@ -20,7 +20,7 @@
 Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally. Models we currently support: 
 1. OpenAI Realtime API
 2. Gemini Live API
-3. xAI's Grok Voice Agent API 
+3. xAI Grok Voice Agent API 
 4. Eleven Labs AI Agents
 5. Hume AI EVI-4
 
@@ -59,7 +59,7 @@ Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSock
 ## ⚡️ `With SoTA Realtime AI Speech Models on an ESP32`
 
 <div align="center" class="flex flex-row gap-4">
-<img src="assets/doge.png" alt="Model Providers" width="100%">
+<img src="assets/logos.png" alt="Model Providers" width="100%">
 </div>
 
 
