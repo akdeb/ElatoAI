@@ -59,40 +59,37 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     ws.send(
         JSON.stringify({
             type: "auth",
-            volume_control: user.device?.volume ?? 100,
+            volume_control: user.device?.volume ?? 20,
             is_ota: user.device?.is_ota ?? false,
             is_reset: user.device?.is_reset ?? false,
             pitch_factor: user.personality?.pitch_factor ?? 1,
         }),
     );
 
+    // Common close handler for cleanup
+    const closeHandler = async () => {
+        // Add any common cleanup logic here
+    };
+
+    // Common provider args
+    const providerArgs: ProviderArgs = {
+        ws,
+        payload,
+        connectionPcmFile,
+        firstMessage,
+        systemPrompt,
+        closeHandler,
+    };
+
     switch (provider) {
         case "openai":
-            await connectToOpenAI(
-                ws,
-                payload,
-                connectionPcmFile,
-                firstMessage,
-                systemPrompt,
-            );
+            await connectToOpenAI(providerArgs);
             break;
         case "gemini":
-            await connectToGemini(
-                ws,
-                payload,
-                connectionPcmFile,
-                firstMessage,
-                systemPrompt,
-            );
+            await connectToGemini(providerArgs);
             break;
         case "grok":
-            await connectToGrok(
-                ws,
-                payload,
-                connectionPcmFile,
-                firstMessage,
-                systemPrompt,
-            );
+            await connectToGrok(providerArgs);
             break;
         case "elevenlabs":
             const agentId = user.personality?.oai_voice ?? "";
@@ -107,11 +104,11 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
                 connectionPcmFile,
                 agentId,
                 elevenLabsApiKey,
+                closeHandler,
             );
             break;
         case "hume":
-            await connectToHume(ws, payload,
-                connectionPcmFile, firstMessage, systemPrompt, () => Promise.resolve());
+            await connectToHume(providerArgs);
             break;
         default:
             throw new Error(`Unknown provider: ${provider}`);

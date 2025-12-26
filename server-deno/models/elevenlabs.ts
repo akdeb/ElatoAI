@@ -9,7 +9,7 @@ import {
 } from "npm:@elevenlabs/client";
 
 import { addConversation, getDeviceInfo } from "../supabase.ts";
-import { encoder, FRAME_SIZE, isDev } from "../utils.ts";
+import { createOpusPacketizer, isDev } from "../utils.ts";
 
 // Calculate audio level for debugging
 function calculateAudioLevel(audioData: any): number {
@@ -32,9 +32,12 @@ export const connectToElevenLabs = async (
     connectionPcmFile: Deno.FsFile | null,
     agentId: string,
     apiKey: string,
+    closeHandler: () => Promise<void>,
 ) => {
     console.log(apiKey, agentId);
     const { user, supabase } = payload;
+
+    const opus = createOpusPacketizer((packet) => ws.send(packet));
 
     // Queue messages until ElevenLabs connection is ready
     const messageQueue: RawData[] = [];
@@ -128,13 +131,6 @@ export const connectToElevenLabs = async (
         isElevenLabsConnected = true;
         console.log(`ElevenLabs connection ready - conversation_initiation_metadata already processed by SDK`);
 
-        // Send initial RESPONSE.CREATED for the first message
-        // console.log("Sending initial RESPONSE.CREATED to ESP32");
-        // ws.send(JSON.stringify({
-        //     type: "server",
-        //     msg: "RESPONSE.CREATED"
-        // }));
-
         // Set up ElevenLabs event handlers
         elevenLabsConnection.onMessage(async (event: IncomingSocketEvent) => {
             console.log("ElevenLabs message type:", event);
@@ -142,7 +138,6 @@ export const connectToElevenLabs = async (
             switch (event.type) {
                 case "conversation_initiation_metadata":
                     console.log("ElevenLabs conversation initiated (metadata received)");
-                    // RESPONSE.CREATED already sent when connection was established
                     break;
 
                 case "ping":
@@ -158,9 +153,10 @@ export const connectToElevenLabs = async (
 
                 case "audio":
                     if (event.audio_event?.audio_base_64) {
-                        // Send RESPONSE.CREATED only for the first audio chunk of each response
+                        // Send RESPONSE.CREATED before first audio chunk
                         if (!hasResponseStarted) {
                             console.log("Sending RESPONSE.CREATED to ESP32 (agent audio starting)");
+                            opus.reset();
                             ws.send(JSON.stringify({
                                 type: "server",
                                 msg: "RESPONSE.CREATED"
@@ -169,23 +165,10 @@ export const connectToElevenLabs = async (
                         }
 
                         const audioBuffer = Buffer.from(event.audio_event.audio_base_64, "base64");
-                        console.log(`Received audio from ElevenLabs: ${audioBuffer.length} bytes, processing into ${Math.ceil(audioBuffer.length / FRAME_SIZE)} frames`);
+                        console.log(`Received audio from ElevenLabs: ${audioBuffer.length} bytes`);
 
-                        let framesSent = 0;
-                        // Process audio in frames for Opus encoding
-                        for (let offset = 0; offset < audioBuffer.length; offset += FRAME_SIZE) {
-                            const frame = audioBuffer.subarray(offset, offset + FRAME_SIZE);
-
-                            try {
-                                const encodedPacket = encoder.encode(frame);
-                                ws.send(encodedPacket);
-                                framesSent++;
-                            } catch (_e) {
-                                // Skip this frame but continue with others
-                                console.log(`Failed to encode frame at offset ${offset}`);
-                            }
-                        }
-                        console.log(`Sent ${framesSent} audio frames to ESP32`);
+                        // Use Opus packetizer to encode and send audio
+                        opus.push(audioBuffer);
                     }
                     break;
 
@@ -199,23 +182,15 @@ export const connectToElevenLabs = async (
                             user,
                         );
 
-                        // Send audio committed message like OpenAI does
-                        // console.log("Sending AUDIO.COMMITTED to ESP32");
-                        // ws.send(JSON.stringify({
-                        //     type: "server",
-                        //     msg: "AUDIO.COMMITTED"
-                        // }));
-
                         if (!hasResponseStarted) {
                             console.log("Sending RESPONSE.CREATED to ESP32 (agent audio starting)");
+                            opus.reset();
                             ws.send(JSON.stringify({
                                 type: "server",
                                 msg: "RESPONSE.CREATED"
                             }));
                             hasResponseStarted = true;
                         }
-
-
                     }
                     break;
 
@@ -228,6 +203,9 @@ export const connectToElevenLabs = async (
                             event.agent_response_event.agent_response,
                             user,
                         );
+
+                        // Flush any remaining audio before sending complete
+                        opus.flush(true);
 
                         // Send response complete with device info like OpenAI does
                         console.log("Sending RESPONSE.COMPLETE to ESP32");
@@ -305,6 +283,8 @@ export const connectToElevenLabs = async (
 
         ws.on("close", async (code: number, reason: string) => {
             console.log(`ESP32 WebSocket closed with code ${code}, reason: ${reason}`);
+            await closeHandler();
+            opus.close();
             elevenLabsConnection?.close();
 
             if (isDev && connectionPcmFile) {

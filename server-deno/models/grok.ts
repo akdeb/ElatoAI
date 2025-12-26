@@ -1,32 +1,33 @@
+import { Buffer } from "node:buffer";
+import type { RawData } from "npm:@types/ws";
+import { WebSocket } from "npm:ws";
+import { addConversation, getDeviceInfo } from "../supabase.ts";
+import { createOpusPacketizer, isDev, xaiApiKey, defaultGrokVoice } from "../utils.ts";
 
-import { Buffer } from 'node:buffer';
-import type { RawData } from 'npm:@types/ws';
-import { WebSocket } from 'npm:ws';
-import { addConversation, getDeviceInfo } from '../supabase.ts';
-import { encoder, FRAME_SIZE, isDev, xaiApiKey } from '../utils.ts';
+const XAI_REALTIME_URL = "wss://api.x.ai/v1/realtime";
 
-const XAI_REALTIME_URL = 'wss://api.x.ai/v1/realtime';
-const DEFAULT_GROK_VOICE = 'Ara';
-
-export const connectToGrok = async (
-	ws: WebSocket,
-	payload: IPayload,
-	connectionPcmFile: Deno.FsFile | null,
-	firstMessage: string,
-	systemPrompt: string,
-) => {
+export const connectToGrok = async ({
+    ws,
+    payload,
+    connectionPcmFile,
+    firstMessage,
+    systemPrompt,
+    closeHandler,
+}: ProviderArgs) => {
     const { user, supabase } = payload;
 
     if (!xaiApiKey) {
-        throw new Error('XAI_API_KEY is not set');
+        throw new Error("XAI_API_KEY is not set");
     }
 
-    const voice = user.personality?.oai_voice ?? DEFAULT_GROK_VOICE;
+    const voice = user.personality?.oai_voice ?? defaultGrokVoice;
+
+    const opus = createOpusPacketizer((packet) => ws.send(packet));
 
     const grokWs = new WebSocket(XAI_REALTIME_URL, {
         headers: {
             Authorization: `Bearer ${xaiApiKey}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
         },
     });
 
@@ -34,21 +35,21 @@ export const connectToGrok = async (
     const messageQueue: RawData[] = [];
 
     let createdSent = false;
-    let outputTranscript = '';
-    let audioRemainder = Buffer.alloc(0);
+    let outputTranscript = "";
 
     const sendResponseCreated = async () => {
         try {
             const device = await getDeviceInfo(supabase, user.user_id);
+            opus.reset();
             ws.send(
                 JSON.stringify({
-                    type: 'server',
-                    msg: 'RESPONSE.CREATED',
+                    type: "server",
+                    msg: "RESPONSE.CREATED",
                     volume_control: device?.volume ?? 100,
                 }),
             );
         } catch {
-            ws.send(JSON.stringify({ type: 'server', msg: 'RESPONSE.CREATED' }));
+            ws.send(JSON.stringify({ type: "server", msg: "RESPONSE.CREATED" }));
         }
     };
 
@@ -56,30 +57,30 @@ export const connectToGrok = async (
         if (!firstMessage) return;
         grokWs.send(
             JSON.stringify({
-                type: 'conversation.item.create',
+                type: "conversation.item.create",
                 item: {
-                    type: 'message',
-                    role: 'user',
-                    content: [{ type: 'input_text', text: firstMessage }],
+                    type: "message",
+                    role: "user",
+                    content: [{ type: "input_text", text: firstMessage }],
                 },
             }),
         );
-        grokWs.send(JSON.stringify({ type: 'response.create' }));
+        grokWs.send(JSON.stringify({ type: "response.create" }));
     };
 
-    grokWs.on('open', () => {
+    grokWs.on("open", () => {
         isConnected = true;
 
         grokWs.send(
             JSON.stringify({
-                type: 'session.update',
+                type: "session.update",
                 session: {
                     voice,
                     instructions: systemPrompt,
                     turn_detection: { type: "server_vad" },
                     audio: {
-                        input: { format: { type: 'audio/pcm', rate: 16000 } },
-                        output: { format: { type: 'audio/pcm', rate: 24000 } },
+                        input: { format: { type: "audio/pcm", rate: 16000 } },
+                        output: { format: { type: "audio/pcm", rate: 24000 } },
                     },
                 },
             }),
@@ -95,91 +96,84 @@ export const connectToGrok = async (
         }
     });
 
-    grokWs.on('message', async (data: Buffer) => {
+    grokWs.on("message", async (data: Buffer) => {
         let event: any;
         try {
-            event = JSON.parse(data.toString('utf-8'));
+            event = JSON.parse(data.toString("utf-8"));
         } catch {
             return;
         }
 
         try {
             switch (event.type) {
-                case 'response.created':
+                case "response.created":
                     if (!createdSent) {
                         await sendResponseCreated();
                         createdSent = true;
                     }
                     break;
 
-                case 'response.output_audio_transcript.delta':
-                    if (typeof event.delta === 'string') {
+                case "response.output_audio_transcript.delta":
+                    if (typeof event.delta === "string") {
                         outputTranscript += event.delta;
                     }
                     break;
 
-                case 'response.output_audio.delta':
-                    if (typeof event.delta === 'string') {
-                        const pcmChunk = Buffer.from(event.delta, 'base64');
-                        audioRemainder = Buffer.concat([audioRemainder, pcmChunk]);
-
-                        while (audioRemainder.length >= FRAME_SIZE) {
-                            const frame = audioRemainder.subarray(0, FRAME_SIZE);
-                            audioRemainder = audioRemainder.subarray(FRAME_SIZE);
-                            try {
-                                const packet = encoder.encode(frame);
-                                ws.send(packet);
-                            } catch {
-                                // Skip frame
-                            }
-                        }
+                case "response.output_audio.delta":
+                    if (typeof event.delta === "string") {
+                        const pcmChunk = Buffer.from(event.delta, "base64");
+                        // Use Opus packetizer to encode and send audio
+                        opus.push(pcmChunk);
                     }
                     break;
 
-                case 'conversation.item.input_audio_transcription.completed':
-                    if (typeof event.transcript === 'string' && event.transcript.length > 0) {
-                        await addConversation(supabase, 'user', event.transcript, user);
+                case "conversation.item.input_audio_transcription.completed":
+                    if (typeof event.transcript === "string" && event.transcript.length > 0) {
+                        await addConversation(supabase, "user", event.transcript, user);
                     }
                     break;
 
-                case 'input_audio_buffer.committed':
-                    ws.send(JSON.stringify({ type: 'server', msg: 'AUDIO.COMMITTED' }));
+                case "input_audio_buffer.committed":
+                    ws.send(JSON.stringify({ type: "server", msg: "AUDIO.COMMITTED" }));
                     break;
 
-                case 'response.done':
+                case "response.done":
+                    // Flush any remaining audio
+                    opus.flush(true);
+
                     if (outputTranscript) {
-                        await addConversation(supabase, 'assistant', outputTranscript, user);
-                        outputTranscript = '';
+                        await addConversation(supabase, "assistant", outputTranscript, user);
+                        outputTranscript = "";
                     }
-                    ws.send(JSON.stringify({ type: 'server', msg: 'RESPONSE.COMPLETE' }));
+                    ws.send(JSON.stringify({ type: "server", msg: "RESPONSE.COMPLETE" }));
                     createdSent = false;
                     break;
 
-                case 'error':
-                    ws.send(JSON.stringify({ type: 'server', msg: 'RESPONSE.ERROR' }));
+                case "error":
+                    ws.send(JSON.stringify({ type: "server", msg: "RESPONSE.ERROR" }));
                     createdSent = false;
                     break;
             }
         } catch (err) {
-            console.error('Error processing Grok event:', err);
-            ws.send(JSON.stringify({ type: 'server', msg: 'RESPONSE.ERROR' }));
+            console.error("Error processing Grok event:", err);
+            ws.send(JSON.stringify({ type: "server", msg: "RESPONSE.ERROR" }));
             createdSent = false;
         }
     });
 
-    grokWs.on('close', () => {
+    grokWs.on("close", () => {
         ws.close();
     });
 
-    grokWs.on('error', (error: any) => {
-        console.error('Grok WebSocket error:', error);
-        ws.send(JSON.stringify({ type: 'server', msg: 'RESPONSE.ERROR' }));
+    grokWs.on("error", (error: any) => {
+        console.error("Grok WebSocket error:", error);
+        ws.send(JSON.stringify({ type: "server", msg: "RESPONSE.ERROR" }));
     });
 
     const messageHandler = async (data: RawData, isBinary: boolean) => {
         if (isBinary) {
-            const base64Data = (data as Buffer).toString('base64');
-            grokWs.send(JSON.stringify({ type: 'input_audio_buffer.append', audio: base64Data }));
+            const base64Data = (data as Buffer).toString("base64");
+            grokWs.send(JSON.stringify({ type: "input_audio_buffer.append", audio: base64Data }));
 
             if (isDev && connectionPcmFile) {
                 await connectionPcmFile.write(data as Buffer);
@@ -189,23 +183,23 @@ export const connectToGrok = async (
 
         let message: any;
         try {
-            message = JSON.parse((data as Buffer).toString('utf-8'));
+            message = JSON.parse((data as Buffer).toString("utf-8"));
         } catch {
             return;
         }
 
-        if (message?.type !== 'instruction') return;
+        if (message?.type !== "instruction") return;
 
-        if (message.msg === 'end_of_speech') {
-            grokWs.send(JSON.stringify({ type: 'input_audio_buffer.commit' }));
-            grokWs.send(JSON.stringify({ type: 'response.create' }));
-            grokWs.send(JSON.stringify({ type: 'input_audio_buffer.clear' }));
-        } else if (message.msg === 'INTERRUPT') {
-            grokWs.send(JSON.stringify({ type: 'input_audio_buffer.clear' }));
+        if (message.msg === "end_of_speech") {
+            grokWs.send(JSON.stringify({ type: "input_audio_buffer.commit" }));
+            grokWs.send(JSON.stringify({ type: "response.create" }));
+            grokWs.send(JSON.stringify({ type: "input_audio_buffer.clear" }));
+        } else if (message.msg === "INTERRUPT") {
+            grokWs.send(JSON.stringify({ type: "input_audio_buffer.clear" }));
         }
     };
 
-    ws.on('message', (data: RawData, isBinary: boolean) => {
+    ws.on("message", (data: RawData, isBinary: boolean) => {
         if (!isConnected) {
             messageQueue.push(data);
         } else {
@@ -213,13 +207,15 @@ export const connectToGrok = async (
         }
     });
 
-    ws.on('error', (error: any) => {
-        console.error('ESP32 WebSocket error:', error);
+    ws.on("error", (error: any) => {
+        console.error("ESP32 WebSocket error:", error);
         grokWs.close();
     });
 
-    ws.on('close', async (code: number, reason: string) => {
+    ws.on("close", async (code: number, reason: string) => {
         console.log(`ESP32 WebSocket closed with code ${code}, reason: ${reason}`);
+        await closeHandler();
+        opus.close();
         grokWs.close();
         if (isDev && connectionPcmFile) {
             connectionPcmFile.close();
@@ -227,12 +223,12 @@ export const connectToGrok = async (
     });
 
     return new Promise<void>((resolve, reject) => {
-        const timeout = setTimeout(() => reject(new Error('Grok connection timeout')), 10000);
-        grokWs.on('open', () => {
+        const timeout = setTimeout(() => reject(new Error("Grok connection timeout")), 10000);
+        grokWs.on("open", () => {
             clearTimeout(timeout);
             resolve();
         });
-        grokWs.on('error', (error: any) => {
+        grokWs.on("error", (error: any) => {
             clearTimeout(timeout);
             reject(error);
         });

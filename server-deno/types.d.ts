@@ -199,4 +199,13 @@ declare global {
         code: string;
         message: string;
     }
+
+    interface ProviderArgs {
+        ws: WebSocket;
+        payload: IPayload;
+        connectionPcmFile: Deno.FsFile | null;
+        firstMessage: string;
+        systemPrompt: string;
+        closeHandler: () => Promise<void>;
+    }
 }

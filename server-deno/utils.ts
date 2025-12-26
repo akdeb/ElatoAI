@@ -7,6 +7,10 @@ import { Encoder } from "@evan/opus";
 
 export const defaultVolume = 50;
 
+export const defaultGeminiVoice = "Sadachbia";
+export const defaultOpenAIVoice = "ash";
+export const defaultGrokVoice = "Ara";
+
 // Define your audio parameters
 export const SAMPLE_RATE = 24000; // For example, 24000 Hz
 const CHANNELS = 1; // Mono (set to 2 if you have stereo)
@@ -15,6 +19,79 @@ const BYTES_PER_SAMPLE = 2; // 16-bit PCM: 2 bytes per sample
 const FRAME_SIZE = (SAMPLE_RATE * FRAME_DURATION / 1000) * CHANNELS *
     BYTES_PER_SAMPLE; // 960 bytes for 24000 Hz mono 16-bit
 
+export function createOpusEncoder() {
+    const enc = new Encoder({
+        channels: CHANNELS,
+        sample_rate: SAMPLE_RATE,
+        application: "voip",
+    });
+
+    enc.expert_frame_duration = FRAME_DURATION;
+    enc.bitrate = 24000;
+    return enc;
+}
+
+export function createOpusPacketizer(
+    sendPacket: (packet: Uint8Array) => void,
+) {
+    const enc = createOpusEncoder();
+    let pending = Buffer.alloc(0);
+    let closed = false;
+
+    const push = (pcm: Uint8Array) => {
+        if (closed) return;
+        if (!pcm || pcm.length === 0) return;
+
+        pending = Buffer.concat([pending, Buffer.from(pcm)]);
+
+        while (pending.length >= FRAME_SIZE) {
+            const frame = pending.subarray(0, FRAME_SIZE);
+            pending = pending.subarray(FRAME_SIZE);
+            try {
+                const packet = enc.encode(frame);
+                sendPacket(packet);
+            } catch (err) {
+                console.error("Opus encode failed:", err);
+            }
+        }
+    };
+
+    const flush = (padFinalFrame = false) => {
+        if (closed) return;
+        if (pending.length === 0) return;
+
+        if (!padFinalFrame) {
+            pending = Buffer.alloc(0);
+            return;
+        }
+
+        const padded = Buffer.alloc(FRAME_SIZE);
+        pending.copy(padded, 0, 0, pending.length);
+        pending = Buffer.alloc(0);
+
+        try {
+            const packet = enc.encode(padded);
+            sendPacket(packet);
+        } catch (err) {
+            console.error("Opus encode failed:", err);
+        }
+    };
+
+    const reset = () => {
+        pending = Buffer.alloc(0);
+    };
+
+    const close = () => {
+        closed = true;
+        pending = Buffer.alloc(0);
+    };
+
+    const bufferedBytes = () => pending.length;
+
+    return { push, flush, reset, close, bufferedBytes };
+}
+
+// Legacy encoder for backwards compatibility during migration
 const encoder = new Encoder({
     channels: CHANNELS,
     sample_rate: SAMPLE_RATE,
@@ -22,7 +99,7 @@ const encoder = new Encoder({
 });
 
 encoder.expert_frame_duration = FRAME_DURATION;
-encoder.bitrate = 12000;
+encoder.bitrate = 24000;
 
 export const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
 export const geminiApiKey = Deno.env.get("GEMINI_API_KEY");
