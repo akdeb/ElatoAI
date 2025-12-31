@@ -121,7 +121,11 @@ server.on("upgrade", async (req, socket, head) => {
     let supabase: SupabaseClient;
     let authToken: string;
     try {
-        const { authorization: authHeader, "x-wifi-rssi": rssi } = req.headers;
+        const {
+            authorization: authHeader,
+            "x-wifi-rssi": rssi,
+            mac_address,
+        } = req.headers;
         authToken = authHeader?.replace("Bearer ", "") ?? "";
         const wifiStrength = parseInt(rssi as string); // Convert to number
 
@@ -137,6 +141,13 @@ server.on("upgrade", async (req, socket, head) => {
 
         supabase = getSupabaseClient(authToken as string);
         user = await authenticateUser(supabase, authToken as string);
+
+        const expectedMac = user.device?.mac_address;
+        if (mac_address && mac_address !== expectedMac) {
+            socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+            socket.destroy();
+            return;
+        }
     } catch (_e: any) {
         socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
         socket.destroy();

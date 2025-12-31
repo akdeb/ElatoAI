@@ -23,7 +23,7 @@ export const getUserByEmail = async (
     email: string,
 ): Promise<IUser> => {
     const { data, error } = await supabase.from("users").select(
-        "*, language:languages(name), personality:personalities!users_personality_id_fkey(*), device:device_id(is_reset, is_ota, volume)",
+        "*, language:languages(name), personality:personalities!users_personality_id_fkey(*), device:device_id(is_reset, is_ota, volume, mac_address)",
     ).eq("email", email);
 
     console.log("data", data, error);

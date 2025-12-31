@@ -363,7 +363,9 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
 // wifiTask -> WIFIMANAGER::loop() -> WIFIMANAGER::tryConnect() -> connectCb() -> websocketSetup()
 void websocketSetup(const String& server_domain, int port, const String& path)
 {
-    const String headers = "Authorization: Bearer " + String(authTokenGlobal);
+    const String headers =
+        "Authorization: Bearer " + String(authTokenGlobal) + "\r\n" +
+        "mac_address: " + WiFi.macAddress() + "\r\n";
 
     xSemaphoreTake(wsMutex, portMAX_DELAY);
 
