@@ -15,7 +15,9 @@
 </div>
 
 
-## Run Conversational AI Agents on Arduino ESP32 with Realtime AI Speech
+## Run Conversational AI Models on Arduino ESP32 with Realtime AI Speech
+
+Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agent API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
 
 </div>
 
@@ -32,42 +34,6 @@
 </div> -->
 
 <br />
-
-
-# 👾 ElatoAI: Realtime Speech AI Agents for ESP32
-
-Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agent API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
-
-<br />
-
-<div align="center" style="margin: 20px 0;">
-  <!-- <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices" target="_blank">
-    <img src="https://img.shields.io/badge/Kickstarter_Pre_Launch-white?style=for-the-badge&logo=kickstarter" alt="Elato Kickstarter Prelaunch" style="margin: 0 10px;">
-  </a> -->
-    <a href="https://cookbook.openai.com/examples/voice_solutions/running_realtime_api_speech_on_esp32_arduino_edge_runtime_elatoai" target="_blank">
-  <img src="https://img.shields.io/badge/OpenAI-Cookbook-violet?style=for-the-badge&logo=openai&logoColor=white&labelColor=black" alt="OpenAI" style="margin: 0 10px;">
-</a>
-  <a href="https://news.ycombinator.com/item?id=43762409" target="_blank">
-    <img src="https://img.shields.io/badge/Hacker_News_Launch-white?style=for-the-badge&logo=ycombinator" alt="Hacker News Launch" style="margin: 0 10px;">
-  </a>
-
-  <a href="https://blog.adafruit.com/2025/05/06/elatoai-realtime-speech-ai-agents-for-esp32/" target="_blank">
-    <img src="https://img.shields.io/badge/Adafruit-Product-red?style=for-the-badge&logo=adafruit" alt="Adafruit" style="margin: 0 10px;">
-  </a>
-</div>
-
-<div align="center">
-
-<!-- [![Discord](https://img.shields.io/badge/Discord-115_members-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/KJWxDPBRUj) -->
-<!-- [![Discord](https://img.shields.io/discord/1088574461848064160?style=flat&logo=discord&logoColor=white&label=Discord%20(120%20members)&color=5865F2)](https://discord.gg/KJWxDPBRUj) -->
-[![Discord Total](https://img.shields.io/badge/Discord-130_members-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/KJWxDPBRUj)
-[![Discord](https://img.shields.io/discord/1088574461848064160?style=flat&logo=discord&logoColor=white&label=🟢&color=5865F2&status=online)](https://discord.gg/KJWxDPBRUj)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](https://opensource.org/licenses/MIT)
-![Node.js](https://img.shields.io/badge/Node.js-22.13.0-yellow.svg)
-![Next.js](https://img.shields.io/badge/Next.js-14.2.7-brightgreen.svg)
-![React](https://img.shields.io/badge/React-18.2.0-blue.svg)
-
-</div>
 
 ## `📽️ Demo Video`
 
