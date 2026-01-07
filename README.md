@@ -48,7 +48,7 @@ Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSock
 
 </div>
 
-## 📽️ Demo Videos
+## `📽️ Demo Videos`
 
 <div align="center">
     <a href="https://www.youtube.com/watch?v=o1eIAwVll5I" target="_blank">
