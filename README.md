@@ -291,13 +291,13 @@ lib_deps =
 
 ## `🤝 Contributing`
 
-1. Looking for Speech Interruption detection on ESP32
+1. Speech Interruption on ESP32
 2. Adding Arduino IDE support
 3. ~~Add Hume API client for emotion detection~~
 4. Add MCP support on Deno Edge
 5. ~~Plug in Eleven Labs API for voice generation~~
-6. Add Azure OpenAI Support (easy pickens)
-7. Add Cartesia Support (easy pickens)
+6. Add Azure OpenAI Support (easy pickens) - in review
+7. Add Cartesia Support
 8. Add Amazon Nova Support
 9. Add Deepgram
 
