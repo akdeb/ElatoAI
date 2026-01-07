@@ -1,16 +1,16 @@
 <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices" target="_blank">
- <img src="assets/ks.png" alt="Elato Logo" width="100%">
+ <img src="assets/cover.png" alt="Elato Logo" width="100%">
 </a>
 
 <br />
 
-<div align="center">
+<!-- <div align="center">
 <h3>
 
 [🚀 Kickstarter (launching soon!)](https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices) | [🏠 Homepage](https://elatoai.com/) 
 
 </h3>
-</div>
+</div> -->
 
 <br />
 
