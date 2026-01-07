@@ -124,7 +124,7 @@ server.on("upgrade", async (req, socket, head) => {
         const {
             authorization: authHeader,
             "x-wifi-rssi": rssi,
-            mac_address,
+            "x-device-mac": deviceMac,
         } = req.headers;
         authToken = authHeader?.replace("Bearer ", "") ?? "";
         const wifiStrength = parseInt(rssi as string); // Convert to number
@@ -143,7 +143,7 @@ server.on("upgrade", async (req, socket, head) => {
         user = await authenticateUser(supabase, authToken as string);
 
         const expectedMac = user.device?.mac_address;
-        if (mac_address && mac_address !== expectedMac) {
+        if (deviceMac && deviceMac !== expectedMac) {
             socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
             socket.destroy();
             return;

@@ -365,7 +365,8 @@ void websocketSetup(const String& server_domain, int port, const String& path)
 {
     const String headers =
         "Authorization: Bearer " + String(authTokenGlobal) + "\r\n" +
-        "mac_address: " + WiFi.macAddress() + "\r\n";
+        "X-Wifi-Rssi: " + String(WiFi.RSSI()) + "\r\n" +
+        "X-Device-Mac: " + WiFi.macAddress();
 
     xSemaphoreTake(wsMutex, portMAX_DELAY);
 
