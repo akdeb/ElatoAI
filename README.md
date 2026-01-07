@@ -3,7 +3,7 @@
   <a href="https://elatoai.com"><picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/darkelato.png">
     <source media="(prefers-color-scheme: light)" srcset="assets/lightelato.png">
-    <img alt="elato logo" src="assets/lightelato.png" height="80" style="max-width: 100%;">
+    <img alt="elato logo" src="assets/lightelato.png" height="70" style="max-width: 100%;">
   </picture></a>
   
 <div style="display: flex; justify-content: center; align-items: center; gap: 2px; flex-wrap: wrap;">
@@ -19,7 +19,7 @@
  <img src="assets/cover.png" alt="Elato Logo" width="100%">
 </a>
 
-## Run Conversational AI Models on Arduino ESP32 with Realtime AI Speech
+## 👾 ElatoAI: Run Conversational AI Models on Arduino ESP32 with Realtime AI Speech
 
 Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agent API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
 
