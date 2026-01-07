@@ -1,3 +1,24 @@
+<div align="center">
+
+  <a href="https://elatoai.com"><picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/darkelato.png">
+    <source media="(prefers-color-scheme: light)" srcset="assets/lightelato.png">
+    <img alt="elato logo" src="assets/lightelato.png" height="50" style="max-width: 100%;">
+  </picture></a>
+  
+<div style="display: flex; justify-content: center; align-items: center; gap: 4px; flex-wrap: wrap;">
+  <a href="https://cookbook.openai.com/examples/voice_solutions/running_realtime_api_speech_on_esp32_arduino_edge_runtime_elatoai"><img src="assets/oai.png" height="36" style="width: auto;"></a>
+  <a href="https://discord.gg/KJWxDPBRUj"><img src="assets/discord.png" height="36" style="width: auto;"></a>
+    <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices"><img src="assets/ks.png" height="36" style="width: auto;"></a>
+  <a href="https://elatoai.com"><img src="assets/try.png" height="36" style="width: auto;"></a>
+
+</div>
+
+
+### Run Conversational AI Agents on Arduino ESP32 with Realtime AI Speech
+
+</div>
+
 <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices" target="_blank">
  <img src="assets/cover.png" alt="Elato Logo" width="100%">
 </a>
@@ -48,7 +69,7 @@ Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSock
 
 </div>
 
-## `📽️ Demo Videos`
+## `📽️ Demo Video`
 
 <div align="center">
     <a href="https://www.youtube.com/watch?v=o1eIAwVll5I" target="_blank">
