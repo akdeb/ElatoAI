@@ -2,8 +2,6 @@
  <img src="assets/cover.png" alt="Elato Logo" width="100%">
 </a>
 
-<br />
-
 <!-- <div align="center">
 <h3>
 
