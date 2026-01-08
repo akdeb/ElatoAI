@@ -16,12 +16,12 @@
 </div>
 
 ## 👾 ElatoAI: Run Realtime Voice AI Models on Arduino ESP32
+Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agent API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
 
 <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices" target="_blank">
  <img src="assets/cover.png" alt="Elato Logo" width="100%">
 </a>
 
-Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agent API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
 
 ## `📽️ Demo Video`
 
