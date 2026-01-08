@@ -6,7 +6,7 @@
     <img alt="elato logo" src="assets/lightelato.png" height="70" style="max-width: 100%;">
   </picture></a>
   
-<div style="display: flex; justify-content: center; align-items: center; gap: 2px; flex-wrap: wrap;">
+<div style="display: flex; justify-content: center; align-items: center; flex-wrap: wrap;">
   <a href="https://cookbook.openai.com/examples/voice_solutions/running_realtime_api_speech_on_esp32_arduino_edge_runtime_elatoai"><img src="assets/oai.png" height="44" style="width: auto;"></a>
   <a href="https://discord.gg/KJWxDPBRUj"><img src="assets/discord.png" height="44" style="width: auto;"></a>
   <a href="https://elatoai.com"><img src="assets/try.png" height="44" style="width: auto;"></a>
