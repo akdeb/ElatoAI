@@ -14,7 +14,7 @@
 
 </div>
 
-## Run Conversational AI Models on Arduino ESP32
+## 👾 ElatoAI: Run Conversational AI Models on Arduino ESP32
 
 </div>
 
