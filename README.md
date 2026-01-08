@@ -13,7 +13,8 @@
       <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices"><img src="assets/ks.png" height="44" style="width: auto;"></a>
 
 </div>
-## Run Conversational AI models on Arduino ESP32
+
+## Run Conversational AI Models on Arduino ESP32
 
 </div>
 
