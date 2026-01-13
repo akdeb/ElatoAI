@@ -266,6 +266,7 @@ lib_deps =
 
 ## `🤝 Contributing`
 
+We welcome contributions! Here are some ideas:
 1. Speech Interruption on ESP32
 2. Adding Arduino IDE support
 3. ~~Add Hume API client for emotion detection~~
@@ -275,13 +276,6 @@ lib_deps =
 7. Add Cartesia Support
 8. Add Amazon Nova Support
 9. Add Deepgram
-
-We welcome contributions
-- Fork this repository.
-- Create your feature branch (`git checkout -b feature/EpicFeature`).
-- Commit your changes (`git commit -m 'Add EpicFeature'`).
-- Push to the branch (`git push origin feature/EpicFeature`).
-- Open a PR
 
 
 ## `License`
