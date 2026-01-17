@@ -282,4 +282,4 @@ We welcome contributions! Here are some ideas:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-**Check out our hardware offerings at [ElatoAI Products](https://www.elatoai.com/). If you find this project interesting or useful, support us by starring this project on GitHub. Thanks! ⭐**
+**Check out our hardware offerings at [ElatoAI Products](https://www.elatoai.com/). If you find this project interesting or useful, support us by starring this project on GitHub. ⭐**
