@@ -266,7 +266,7 @@ lib_deps =
 
 ## 🙌 Contributing
 
-We welcome contributions! Here are some ideas:
+We value your contributions! Here are some ideas:
 1. Speech Interruption on ESP32
 2. ~~Adding Arduino IDE support~~
 3. ~~Add Hume API client for emotion detection~~
@@ -278,7 +278,7 @@ We welcome contributions! Here are some ideas:
 9. Add Deepgram
 
 
-## `License`
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
