@@ -25,13 +25,10 @@
 
 Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agents API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
 
-[🚀 Quick Start](https://www.elatoai.com/docs/quickstart)
-
-[Build with PlatformIO](https://www.elatoai.com/docs/platformio)
-
-[Build on Arduino](https://www.elatoai.com/docs/arduino)
-
-[Documentation](https://www.elatoai.com/docs)
+- [🚀 Quick Start](https://www.elatoai.com/docs/quickstart)
+- [Build with PlatformIO](https://www.elatoai.com/docs/platformio)
+- [Build on Arduino IDE](https://www.elatoai.com/docs/arduino)
+- [Deploy Guide](https://www.elatoai.com/docs/blog/deploying-globally)
 
 ## 📽️ Demo Video
 
@@ -167,18 +164,12 @@ lib_deps =
     https://github.com/pschatzmann/arduino-libopus.git#a1.1.0
 ```
 
-## Additional Docs
-- [⏸️ Using the Eleven Labs API](./docs/ElevenLabs.md)
-- [📈 Core Use Cases](./docs/Usecases.md)
-- [🤖🤖🤖 Getting Started with multiple devices](./docs/MultipleDevices.md)
-- [🚀 Deploying your application](./docs/Deploy.md)
-
 ## 📊 Important Stats
 
-- ⚡️ **Latency**: <2s round-trip globally
-- 🎧 **Audio Quality**: Opus codec at 12kbps (high clarity) 24kHz sampling rate
-- ⏳ **Uninterrupted Conversations**: Up to 15 minutes continuous conversations globally
-- 🌎 **Global Availability**: Optimized with edge computing
+- **Latency**: <2s round-trip globally
+- **Audio Quality**: Opus codec at 12kbps (high clarity) 24kHz sampling rate
+- **Uninterrupted Conversations**: Up to 15 minutes continuous conversations globally
+- **Global Availability**: Optimized with edge computing
 
 ## 🛡 Security
 
