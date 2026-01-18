@@ -29,6 +29,7 @@ Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSock
 - [Build with PlatformIO](https://www.elatoai.com/docs/platformio)
 - [Build on Arduino IDE](https://www.elatoai.com/docs/arduino)
 - [Deploy Guide](https://www.elatoai.com/docs/blog/deploying-globally)
+- [Ship Multiple Devices](https://www.elatoai.com/docs/blog/multiple-devices)
 
 ## 📽️ Demo Video
 
