@@ -6,13 +6,14 @@
     <img alt="elato logo" src="assets/lightelato.png" height="70" style="max-width: 100%;">
   </picture></a>
   
-<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, max-content)); justify-content:center; justify-items:center; align-items:center; column-gap:0; row-gap:0; width:100%;">
+<div style="display:flex; flex-direction:row; align-items:center; flex-wrap:wrap; justify-content:center;">
   <a style="display:inline-flex;" href="https://cookbook.openai.com/examples/voice_solutions/running_realtime_api_speech_on_esp32_arduino_edge_runtime_elatoai"><img src="assets/oai.png" height="44" style="width: auto;"></a>
   <a style="display:inline-flex;" href="https://www.elatoai.com/docs"><img src="assets/docs.png" height="44" style="width: auto;"></a>
-  <!-- <a href="https://elatoai.com"><img src="assets/try.png" height="44" style="width: auto;"></a> -->
+    <a style="display:inline-flex;" href="https://discord.gg/KJWxDPBRUj"><img src="assets/discord.png" height="44" style="width: auto;"></a>
   <a style="display:inline-flex;" href="https://www.elatoai.com/products/ai-devkit"><img src="assets/diy.png" height="44" style="width: auto;"></a>
   <a style="display:inline-flex;" href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices"><img src="assets/ks.png" height="44" style="width: auto;"></a>
-  <a style="display:inline-flex;" href="https://discord.gg/KJWxDPBRUj"><img src="assets/discord.png" height="44" style="width: auto;"></a>
+    <a href="https://elatoai.com"><img src="assets/try.png" height="44" style="width: auto;"></a>
+
 </div>
 </div>
 
