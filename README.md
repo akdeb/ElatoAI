@@ -25,6 +25,11 @@
 
 Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSockets, and Deno Edge Functions for >15-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agents API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
 
+[🚀 Quick Start](https://www.elatoai.com/docs/quickstart)
+[Build with PlatformIO](https://www.elatoai.com/docs/platformio)
+[Build on Arduino](https://www.elatoai.com/docs/arduino)
+[Documentation](https://www.elatoai.com/docs)
+
 ## 📽️ Demo Video
 
 <div align="center">
@@ -48,87 +53,6 @@ Control your ESP32 AI device from your phone with the ElatoAI webapp.
 
 ## ⭐️ Key Voice AI Features
 <img src="assets/features.png" alt="App Screenshots" width="100%">
-
-## 🚀 Quick Start
-
-<a href="https://www.youtube.com/watch?v=bXrNRpGOJWw">
-  <img src="https://img.shields.io/badge/Quickstart%20Tutorial-YouTube-yellow?style=for-the-badge&logo=youtube" alt="Watch Demo on YouTube">
-</a>
-
-1. **Clone the repository**
-
-```bash
-git clone git@github.com:akdeb/ElatoAI.git
-```
-
-2. **Start Supabase**
-
-Install [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) and set up your Local Supabase Backend. Make sure you have [Docker Desktop](https://www.docker.com/products/docker-desktop/) set up. Then from the root directory, run:
-```bash
-brew install supabase/tap/supabase
-supabase start # This starts your local Supabase server with the default migrations and seed data.
-```
-
-3. **Set up your NextJS Frontend**
-
-([See the Frontend README](frontend-nextjs/README.md)) 
-
-From the `frontend-nextjs` directory, run the following commands. (**Login creds:** Email: `admin@elatoai.com`, Password: `admin`)
-```bash
-cd frontend-nextjs
-npm install
-cp .env.example .env.local
-
-# In .env.local, set your environment variables 
-# NEXT_PUBLIC_SUPABASE_ANON_KEY=<your-supabase-anon-key>
-# OPENAI_API_KEY=<your-openai-api-key> (to test OpenAI on the browser)
-
-# Run the development server
-npm run dev
-```
-
-4. **Choose edge server option (FREE USAGE)**
-
-- **ELATO MODE:** Got your own ESP32 DIY hardware device? We offer a fully hosted server for free for up to 30 minutes per month. Register your device on the [settings page](https://www.elatoai.com/home/settings/device) and it will automatically connect to our edge server. Check out our [Pricing page](https://www.elatoai.com/#pricing) for more details.
-
-- **DEV MODE:** Alternatively, you can run your own edge server locally by following the instructions below and in the [Deno server README](server-deno/README.md).
-
-> **Pro Tip:** You can adjust this server setting in the `firmware-arduino/Config.h` file.
-
-5. **If you choose to run your own edge server locally:**
-
-
-```bash
-# Navigate to the server directory
-cd server-deno
-cp .env.example .env
-
-# In .env, set your environment variables 
-# SUPABASE_KEY=<your-supabase-anon-key>
-# OPENAI_API_KEY=<your-openai-api-key>
-# GEMINI_API_KEY=<your-gemini-api-key>
-# XAI_API_KEY=<your-xai-api-key>
-# ELEVENLABS_API_KEY=<your-elevenlabs-api-key>
-# HUME_API_KEY=<your-hume-api-key>
-
-# Run the server at port 8000
-deno run -A --env-file=.env main.ts
-```
-
-6. **Setup the ESP32 Device firmware**
-
-([See the ESP32 Device README](firmware-arduino/README.md))
-
-In `Config.cpp` set `ws_server` and `backend_server` to your local IP address. Run `ifconfig` in your console and find `en0` -> `inet` -> `192.168.1.100` (it may be different for your Wifi network). This tells the ESP32 device to connect to your NextJS frontend and Deno server running on your local machine. All services should be on the same Wifi network.
-
-7. **Setup the ESP32 Device Wifi**
-
-Build and upload the firmware to your ESP32 device. The ESP32 should open an `ELATO-DEVICE` captive portal to connect to Wifi. Connect to it and go to `http://192.168.4.1` to configure the device wifi.
-
-8. **Turn on your device**
-
-Once your Wifi credentials are configured, turn the device off and on again and it should connect to your Wifi and your server. Now you can talk to your AI Character!
-
 
 ## 🌟 Full feature list
 
