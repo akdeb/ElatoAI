@@ -101,7 +101,7 @@ ElatoAI consists of three main components:
 | IoT Client      | PlatformIO, Arduino Framework, ESP32-S3  |
 | Audio Codec     | Opus                                     |
 | Communication   | Secure WebSockets                        |
-| Libraries       | ArduinoJson, WebSockets, AsyncWebServer, ESP32_Button, Arduino Audio Tools, ArduinoLibOpus        |
+| Libraries       | [ArduinoJson](https://github.com/bblanchon/ArduinoJson), [WebSockets](https://github.com/Links2004/arduinoWebSockets), [AsyncWebServer](https://github.com/ESP32Async/ESPAsyncWebServer), [ESP32_Button](https://github.com/esp-arduino-libs/ESP32_Button), [Arduino Audio Tools](https://github.com/pschatzmann/arduino-audio-tools), [ArduinoLibOpus](https://github.com/pschatzmann/arduino-libopus)        |
 
 ## High-Level Flowchart
 
@@ -145,24 +145,6 @@ graph TD
   esp32 --> audio_tools[arduino-audio-tools]
   esp32 --> libopus[arduino-libopus]
   esp32 --> ESPAsyncWebServer[ESPAsyncWebServer]
-```
-
-## ⚙️ PlatformIO Config
-
-```ini
-[env:esp32-s3-devkitc-1]
-platform = espressif32 @ 6.10.0
-board = esp32-s3-devkitc-1
-framework = arduino
-monitor_speed = 115200
-
-lib_deps =
-    bblanchon/ArduinoJson@^7.1.0
-    links2004/WebSockets@^2.4.1
-    ESP32Async/ESPAsyncWebServer@^3.7.6
-    https://github.com/esp-arduino-libs/ESP32_Button.git#v0.0.1
-    https://github.com/pschatzmann/arduino-audio-tools.git#v1.0.1
-    https://github.com/pschatzmann/arduino-libopus.git#a1.1.0
 ```
 
 ## 📊 Important Stats
