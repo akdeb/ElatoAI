@@ -6,13 +6,18 @@
     <img alt="elato logo" src="assets/lightelato.png" height="70" style="max-width: 100%;">
   </picture></a>
   
-<div style="display:flex; flex-wrap:wrap; justify-content:center; align-items:center; max-width:520px; margin:0 auto;">
-  <a style="display:inline-flex;" href="https://cookbook.openai.com/examples/voice_solutions/running_realtime_api_speech_on_esp32_arduino_edge_runtime_elatoai"><img src="assets/oai.png" height="44" style="width: auto;"></a>
-  <a style="display:inline-flex;" href="https://www.elatoai.com/docs"><img src="assets/docs.png" height="44" style="width: auto;"></a>
-  <!-- <a href="https://elatoai.com"><img src="assets/try.png" height="44" style="width: auto;"></a> -->
-  <a style="display:inline-flex;" href="https://www.elatoai.com/products/ai-devkit"><img src="assets/diy.png" height="44" style="width: auto;"></a>
-  <a style="display:inline-flex;" href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices"><img src="assets/ks.png" height="44" style="width: auto;"></a>
-  <a style="display:inline-flex;" href="https://discord.gg/KJWxDPBRUj"><img src="assets/discord.png" height="44" style="width: auto;"></a>
+<div style="display:flex; flex-direction:column; align-items:center;">
+  <div style="display:flex; justify-content:center; align-items:center; flex-wrap:wrap;">
+    <a style="display:inline-flex;" href="https://cookbook.openai.com/examples/voice_solutions/running_realtime_api_speech_on_esp32_arduino_edge_runtime_elatoai"><img src="assets/oai.png" height="44" style="width: auto;"></a>
+    <a style="display:inline-flex;" href="https://www.elatoai.com/docs"><img src="assets/docs.png" height="44" style="width: auto;"></a>
+    <!-- <a href="https://elatoai.com"><img src="assets/try.png" height="44" style="width: auto;"></a> -->
+    <a style="display:inline-flex;" href="https://www.elatoai.com/products/ai-devkit"><img src="assets/diy.png" height="44" style="width: auto;"></a>
+  </div>
+
+  <div style="display:flex; justify-content:center; align-items:center; flex-wrap:wrap;">
+    <a style="display:inline-flex;" href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices"><img src="assets/ks.png" height="44" style="width: auto;"></a>
+    <a style="display:inline-flex;" href="https://discord.gg/KJWxDPBRUj"><img src="assets/discord.png" height="44" style="width: auto;"></a>
+  </div>
 </div>
 </div>
 
