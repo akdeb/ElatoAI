@@ -15,8 +15,6 @@
     <a href="https://elatoai.com"><img src="assets/try.png" height="44" style="width: auto;"></a> -->
 
 </div>
-</div>
-
 <a href="https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices" target="_blank">
  <img src="assets/cover.png" alt="Elato Logo" width="100%">
 </a>
@@ -27,6 +25,9 @@
  <a style="display:inline-flex;" href="https://www.elatoai.com/products/ai-devkit"><img src="assets/diy.png" height="42" style="width: auto;"></a>
     
 </div>
+</div>
+
+
 
 <br />
 
