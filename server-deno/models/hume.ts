@@ -46,7 +46,7 @@ export const connectToHume = ({
             audio: {
                 encoding: "linear16",
                 channels: 1,
-                sample_rate: 16000,
+                sample_rate: 24000,
             },
             system_prompt: systemPrompt,
         }));

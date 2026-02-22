@@ -226,7 +226,7 @@ export const connectToGemini = async ({
                 geminiSession?.sendRealtimeInput({
                     audio: {
                         data: base64Data,
-                        mimeType: "audio/pcm;rate=24000",
+                        mimeType: "audio/pcm;rate=16000",
                     },
                 });
             }

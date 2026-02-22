@@ -83,7 +83,7 @@ export const connectToElevenLabs = async ({
 	let elevenLabsConnection: WebSocketConnection | null = null;
 	let hasResponseStarted = false;
 	let elevenInputSampleRate = 16000;
-	let elevenOutputSampleRate = 16000;
+	let elevenOutputSampleRate = 24000;
 
 	// Handle messages from ESP32 ws client.
 	const handleClientMessage = async (data: any, isBinary: boolean) => {
@@ -269,17 +269,6 @@ export const connectToElevenLabs = async ({
 							event.user_transcription_event.user_transcript,
 							user,
 						);
-
-						if (!hasResponseStarted) {
-							console.log(
-								"Sending RESPONSE.CREATED to ESP32 (agent audio starting)",
-							);
-							ws.send(JSON.stringify({
-								type: "server",
-								msg: "RESPONSE.CREATED",
-							}));
-							hasResponseStarted = true;
-						}
 					}
 					break;
 
@@ -346,7 +335,7 @@ export const connectToElevenLabs = async ({
 		});
 
 		elevenLabsConnection.onDisconnect((details: DisconnectionDetails) => {
-			console.log("ElevenLabs connection closed:", details.reason);
+			console.log("ElevenLabs connection closed:", details);
 			opus.close();
 			ws.close();
 		});
