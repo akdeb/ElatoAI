@@ -12,8 +12,8 @@ const int RED_LED_PIN   = 9;
 const int GREEN_LED_PIN = 8;
 
 // ====== Schedule ======
-static const int TARGET_HOUR   = 11;  // 11:15 local time
-static const int TARGET_MINUTE = 52;
+static const int TARGET_HOUR   = 00;  // 11:15 local time
+static const int TARGET_MINUTE = 10;
 
 // Blink settings
 static const uint32_t BLINK_DURATION_MS = 30 * 1000; // blink for 30 seconds
@@ -144,9 +144,9 @@ void setup() {
   // Otherwise sleep until next 11:15.
   uint64_t secs = secondsUntilNextTarget();
 
-  // If it's within ~90 seconds of 11:15, do the blink routine now.
+  // If it's within ~60 seconds of 11:15, do the blink routine now.
   // (This helps if wake happened a bit late/early.)
-  if (secs > (24ULL * 3600ULL - 90ULL) || secs < 90ULL) {
+  if (secs > (24ULL * 3600ULL - 60ULL) || secs < 60ULL) {
     Serial.println("At/near target time. Blinking now.");
     blinkRgbThenSleep();
   } else {
