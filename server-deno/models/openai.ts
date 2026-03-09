@@ -308,7 +308,7 @@ export const connectToOpenAI = async ({
     try {
         console.log(`Connecting to OpenAI...`);
         const sessionOptions = {
-            model: "gpt-4o-mini-realtime-preview-2024-12-17",
+            model: "gpt-realtime-1.5",
             turn_detection: {
                 type: "server_vad",
                 threshold: 0.4,

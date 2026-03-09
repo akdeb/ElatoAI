@@ -56,7 +56,7 @@ export class RealtimeAPI extends RealtimeEventHandler {
      * @param {{model?: string}} [settings]
      * @returns {Promise<true>}
      */
-    async connect({ model } = { model: 'gpt-4o-realtime-preview-2024-10-01' }) {
+    async connect({ model } = { model: 'gpt-realtime-1.5' }) {
         if (!this.apiKey && this.url === this.defaultUrl) {
             console.warn(`No apiKey provided for connection to "${this.url}"`);
         }
@@ -113,7 +113,7 @@ export class RealtimeAPI extends RealtimeEventHandler {
             const wsModule = await import(/* webpackIgnore: true */ moduleName);
             const WebSocket = wsModule.default;
             const ws = new WebSocket(
-                'wss://api.openai.com/v1/realtime?model=gpt-4o-realtime-preview-2024-10-01',
+                'wss://api.openai.com/v1/realtime?model=gpt-realtime-1.5',
                 [],
                 {
                     finishRequest: (request) => {
