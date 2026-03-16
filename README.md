@@ -21,6 +21,10 @@
 <br />
 </div>
 
+**News:** 
+- Launched Local AI Toys 🔥 Elato's devices now support local AI models and voice generation with frontier Local LLMs and TTS models like Qwen, Mistral, and more. Check it out [here](https://www.github.com/akdeb/local-ai-toys).
+
+
 
 
 <br />
