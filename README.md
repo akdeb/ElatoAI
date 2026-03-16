@@ -20,7 +20,9 @@
 
 <br />
 </div>
-<br />
+
+## News
+- **2026-03-14:** Elato just launched Local AI Toys.🎉🎉🎉  And it's Pi Day! Your ESP32 devices can now support local AI models and voice generation with frontier Local LLMs and TTS models like Qwen, Mistral, and more with MLX. Check it out [here](https://www.github.com/akdeb/local-ai-toys). 
 
 # 👾 ElatoAI: Realtime Voice AI Models on Arduino ESP32
 
@@ -31,10 +33,6 @@ Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSock
 - [Build on Arduino IDE](https://www.elatoai.com/docs/arduino)
 - [Deploy globally](https://www.elatoai.com/docs/blog/deploying-globally)
 - [🤖🤖🤖 Deploy multiple devices](https://www.elatoai.com/docs/blog/multiple-devices)
-
-## News
-- 2026/03/14: It's Pi Day!🎉🎉🎉  Elato just launched Local AI Toys. Your ESP32 devices can now support local AI models and voice generation with frontier Local LLMs and TTS models like Qwen, Mistral, and more with MLX. Check it out [here](https://www.github.com/akdeb/local-ai-toys). 
-
 
 ## 📽️ Demo Video
 
