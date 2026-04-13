@@ -1,3 +1,5 @@
+English | [中文](README.zh.md)
+
 <div align="center">
 
   <a href="https://elatoai.com"><picture>
