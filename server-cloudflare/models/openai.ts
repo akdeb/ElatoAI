@@ -1,5 +1,5 @@
 import { DurableObject } from "cloudflare:workers";
-import { WorkersAIFluxSTT, WorkersAITTS, type TranscriberSession } from "@cloudflare/voice";
+import { WorkersAIFluxSTT, type TranscriberSession } from "@cloudflare/voice";
 import type { Env } from "../src/types";
 import { createOpusPacketizer } from "../src/opus";
 import { getFirstMessagePrompt, getSystemPrompt } from "../src/prompt";
@@ -88,22 +88,24 @@ async function generateOpenAIReply(
   );
 }
 
-const ttsProviderFor = (env: Env) => new WorkersAITTS(env.AI, {
-  model: "@cf/deepgram/aura-1",
-  speaker: "asteria",
-});
-
-async function synthesizeSpeech(env: Env, text: string): Promise<ArrayBuffer> {
+async function synthesizeSpeech(env: Env, text: string): Promise<Response> {
   if (!env.AI) {
     throw new Error("Cloudflare AI binding is missing");
   }
 
-  const audio = await ttsProviderFor(env).synthesize(text);
-  if (!audio) {
-    throw new Error("WorkersAITTS returned no audio");
-  }
-
-  return audio;
+  return env.AI.run(
+    "@cf/deepgram/aura-1",
+    {
+      text,
+      speaker: "asteria",
+      encoding: "linear16",
+      container: "none",
+      sample_rate: AUDIO_OUTPUT_SAMPLE_RATE,
+    },
+    {
+      returnRawResponse: true,
+    },
+  ) as Promise<Response>;
 }
 
 export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
@@ -187,15 +189,29 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     opus.reset();
     websocket.send(createServerMessage("RESPONSE.CREATED"));
 
+    const ttsResponse = await synthesizeSpeech(this.env, reply);
+    if (!ttsResponse.ok || !ttsResponse.body) {
+      console.error(
+        `[cloudflare][tts] request failed: ${ttsResponse.status} ${ttsResponse.statusText}`,
+      );
+      websocket.send(createServerMessage("RESPONSE.ERROR"));
+      return;
+    }
+
+    const reader = ttsResponse.body.getReader();
     try {
-      const audio = await synthesizeSpeech(this.env, reply);
-      opus.push(new Uint8Array(audio));
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        if (value) {
+          opus.push(value);
+        }
+      }
       opus.flush(true);
       websocket.send(createServerMessage("RESPONSE.COMPLETE", { volume_control: 100 }));
-      console.log(`[cloudflare][tts] synthesized reply successfully via WorkersAITTS (${reply.length} chars)`);
-    } catch (error) {
-      console.error(`[cloudflare][tts] ${errorMessage(error)}`);
-      websocket.send(createServerMessage("RESPONSE.ERROR"));
+      console.log(`[cloudflare][tts] streamed reply successfully (${reply.length} chars)`);
+    } finally {
+      reader.releaseLock();
     }
   }
 
