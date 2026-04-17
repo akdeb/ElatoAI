@@ -30,7 +30,7 @@ English | [中文](README.zh.md)
 
 # 👾 ElatoAI: Realtime Voice AI Models on Arduino ESP32
 
-Realtime AI Speech powered by SoTA Voice AI models on ESP32, with Secure WebSockets & Edge Functions for >15-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agents API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
+Realtime AI Speech powered by SoTA Voice AI models on ESP32, with Secure WebSockets & Edge Functions for >20-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agents API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
 
 - [🚀 Quick Start](https://www.elatoai.com/docs/quickstart)
 - [Build with PlatformIO](https://www.elatoai.com/docs/platformio)
@@ -158,7 +158,7 @@ graph TD
 
 - **Latency**: <2s round-trip globally
 - **Audio Quality**: Opus codec at 12kbps (high clarity) 24kHz sampling rate
-- **Uninterrupted Conversations**: Up to 15 minutes continuous conversations globally
+- **Uninterrupted Conversations**: Up to 20 minutes continuous conversations globally
 - **Global Availability**: Optimized with edge computing
 
 ## 🛡 Security
