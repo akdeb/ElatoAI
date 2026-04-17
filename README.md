@@ -38,6 +38,16 @@ Realtime AI Speech powered by 100+ Voice AI models on ESP32, with Secure WebSock
 - [Deploy globally](https://www.elatoai.com/docs/blog/deploying-globally)
 - [🤖🤖🤖 Deploy multiple devices](https://www.elatoai.com/docs/blog/multiple-devices)
 
+## 📽️ Demo Video
+
+<div align="center">
+    <a href="https://www.youtube.com/watch?v=o1eIAwVll5I" target="_blank">
+    <img src="https://raw.githubusercontent.com/akdeb/ElatoAI/refs/heads/main/assets/thumbnail.png" alt="ElatoAI Demo Video" width="100%" style="border-radius:10px" />
+  </a>
+</div>
+
+Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https://youtu.be/_zUBue3pfVI) | [Eleven Labs Demo](https://youtu.be/7LKTIuEW-hg) | [Hume AI EVI-4 Demo](https://youtu.be/Gtann5pdV0I)
+
 ## 🧠 Models
 
 ### Deno Edge
@@ -52,15 +62,6 @@ Realtime AI Speech powered by 100+ Voice AI models on ESP32, with Secure WebSock
 2. TTS - [10+ Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Text-to-Speech) Deepgram, MeloTTS and more.
 3. STT - [5 Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Automatic+Speech+Recognition) Whisper, Deepgram and more.
 
-## 📽️ Demo Video
-
-<div align="center">
-    <a href="https://www.youtube.com/watch?v=o1eIAwVll5I" target="_blank">
-    <img src="https://raw.githubusercontent.com/akdeb/ElatoAI/refs/heads/main/assets/thumbnail.png" alt="ElatoAI Demo Video" width="100%" style="border-radius:10px" />
-  </a>
-</div>
-
-Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https://youtu.be/_zUBue3pfVI) | [Eleven Labs Demo](https://youtu.be/7LKTIuEW-hg) | [Hume AI EVI-4 Demo](https://youtu.be/Gtann5pdV0I)
 
 ## 👷‍♀️ DIY Hardware Design
 
