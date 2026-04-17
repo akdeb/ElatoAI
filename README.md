@@ -40,14 +40,14 @@ Realtime AI Speech powered by 100+ Voice AI models on ESP32, with Secure WebSock
 
 ## 🧠 Models
 
-### Deno Edge [(model list)](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models)
-1. OpenAI Realtime API
-2. Gemini Live API
-3. xAI Grok Voice Agent API
-4. Eleven Labs Conversational AI Agents
-5. Hume AI EVI-4
+### Deno Edge
+1. [OpenAI Realtime API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/openai)
+2. [Gemini Live API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/gemini)
+3. [xAI Grok Voice Agent API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/grok)
+4. [Eleven Labs Conversational AI Agents](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/elevenlabs)
+5. [Hume AI EVI-4](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/hume)
 
-### Cloudflare Workers [(model list)](https://github.com/akdeb/ElatoAI/tree/main/server/cloudflare/models)
+### Cloudflare Workers
 1. STT - [7+ Models](https://developers.cloudflare.com/ai/models/?tasks=Automatic+Speech+Recognition) Whisper, Deepgram and more.
 2. TTS - [10+ Models](https://developers.cloudflare.com/ai/models/?tasks=Text-to-Speech) Deepgram, MiniMax and more.
 3. LLM - [80+ Models](https://developers.cloudflare.com/ai/models/?tasks=Text+Generation) OpenAI, Gemini, xAI, and more.
