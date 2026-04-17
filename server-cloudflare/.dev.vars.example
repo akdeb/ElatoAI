@@ -1,0 +1,4 @@
+OPENAI_API_KEY=your_openai_api_key_here
+JWT_SECRET_KEY=replace_with_your_jwt_secret_key
+ELATO_OPENAI_MODEL=gpt-4.1-mini
+ELATO_OPENAI_SYSTEM_PROMPT=You are an Elato voice companion. Be concise, playful, and easy to understand when spoken aloud.

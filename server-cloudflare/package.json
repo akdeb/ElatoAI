@@ -1,0 +1,20 @@
+{
+  "name": "server-cloudflare",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev --ip 0.0.0.0 --port 8787",
+    "deploy": "wrangler deploy",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@cloudflare/voice": "latest",
+    "agents": "latest",
+    "jose": "^6.0.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260417.0",
+    "typescript": "^5.8.3",
+    "wrangler": "latest"
+  }
+}

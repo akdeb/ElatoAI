@@ -1,0 +1,15 @@
+name = "elato-cloudflare-voice"
+main = "src/index.ts"
+compatibility_date = "2026-04-17"
+compatibility_flags = ["nodejs_compat"]
+
+[ai]
+binding = "AI"
+
+[[durable_objects.bindings]]
+name = "ElatoOpenAiVoiceAgent"
+class_name = "ElatoOpenAiVoiceAgent"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["ElatoOpenAiVoiceAgent"]

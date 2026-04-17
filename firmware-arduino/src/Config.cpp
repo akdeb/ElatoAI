@@ -16,6 +16,13 @@ volatile bool sleepRequested = false;
  * 2. `DEV_MODE` requires updating the IP addresses to your local network IP
  * 3. Without `DEV_MODE` defined, the firmware will use your production servers
  *
+ * VOICE BACKEND SELECTION:
+ * --------------------------------
+ * Keep the deployment mode (DEV/PROD/ELATO) separate from the voice backend
+ * (`VOICE_SERVER_DENO` vs `VOICE_SERVER_CLOUDFLARE`).
+ * This avoids an extra device-side config lookup while still letting us switch
+ * websocket backends at build time.
+ *
  * DEV SETUP (find your local IP address using ifconfig):
  *   - WebSocket: Your local IP (e.g., 192.168.1.100:8000)
  *   - Backend: Your local IP (e.g., 192.168.1.100:3000)
@@ -33,27 +40,45 @@ volatile bool sleepRequested = false;
  */
 
 #ifdef DEV_MODE
-const char *ws_server = "192.168.1.121";
-const uint16_t ws_port = 8000;
+const char *ws_server = "192.168.1.33";
 const char *ws_path = "/";
+
+#if defined(VOICE_SERVER_DENO)
+const uint16_t ws_port = 8000;
+#elif defined(VOICE_SERVER_CLOUDFLARE)
+const uint16_t ws_port = 8787;
+#endif
+
 // Backend server details 
 const char *backend_server = "192.168.1.121";
 const uint16_t backend_port = 3000;
 
 #elif defined(PROD_MODE)
 // PROD
+#if defined(VOICE_SERVER_DENO)
 const char *ws_server = "<your-edge-server>.deno.dev";
 const uint16_t ws_port = 443;
 const char *ws_path = "/";
+#elif defined(VOICE_SERVER_CLOUDFLARE)
+const char *ws_server = "<your-cloudflare-worker>.workers.dev";
+const uint16_t ws_port = 443;
+const char *ws_path = "/ws/esp32";
+#endif
 // Backend server details 
 const char *backend_server = "<your-backend-server-url>"; // like www.facebook.com or facebook.vercel.app
 const uint16_t backend_port = 3000;
 
 #elif defined(ELATO_MODE)
 // ELATO
+#if defined(VOICE_SERVER_DENO)
 const char *ws_server = "talkedge.deno.dev";
 const uint16_t ws_port = 443;
 const char *ws_path = "/";
+#elif defined(VOICE_SERVER_CLOUDFLARE)
+const char *ws_server = "<your-cloudflare-worker>.workers.dev";
+const uint16_t ws_port = 443;
+const char *ws_path = "/ws/openai/default";
+#endif
 // Backend server details 
 const char *backend_server = "www.elatoai.com"; // like www.facebook.com or facebook.vercel.app
 const uint16_t backend_port = 3000;
@@ -98,8 +123,8 @@ const char *Vercel_CA_cert = R"EOF(
 -----END CERTIFICATE-----
 )EOF";
 
-// Deno Edge Functions CA cert
-// add the CA cert for your edge server here `ws_server`
+// Voice websocket CA cert
+// add the CA cert for your selected voice websocket server here `ws_server`
 const char *CA_cert = R"EOF(
 -----BEGIN CERTIFICATE-----
 <YOUR TALKEDGE CERTIFICATE HERE>
@@ -144,7 +169,7 @@ emyPxgcYxn/eR44/KJ4EBs+lVDR3veyJm+kXQ99b21/+jh5Xos1AnX5iItreGCc=
 )EOF";
 
 
-// talkedge.deno.dev CA cert
+// Voice websocket CA cert
 const char *CA_cert = R"EOF(
 -----BEGIN CERTIFICATE-----
 MIIFazCCA1OgAwIBAgIRAIIQz7DSQONZRGPgu2OCiwAwDQYJKoZIhvcNAQELBQAw
