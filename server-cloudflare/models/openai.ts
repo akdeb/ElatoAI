@@ -32,6 +32,13 @@ function createServerMessage(msg: string, extra: Record<string, unknown> = {}) {
   });
 }
 
+function errorMessage(error: unknown): string {
+  if (error instanceof Error) {
+    return `${error.name}: ${error.message}`;
+  }
+  return String(error);
+}
+
 async function transcribePcm(env: Env, audio: Uint8Array): Promise<string> {
   const response = await env.AI.run("@cf/openai/whisper", {
     audio: [...audio],
@@ -45,6 +52,10 @@ async function generateOpenAIReply(
   transcript: string | null,
   history: OpenAIChatMessage[],
 ): Promise<string> {
+  if (!env.OPENAI_API_KEY?.trim()) {
+    throw new Error("OPENAI_API_KEY is missing");
+  }
+
   const messages: OpenAIChatMessage[] = [
     { role: "system", content: getSystemPrompt(env) },
     ...history,
@@ -84,6 +95,10 @@ async function generateOpenAIReply(
 }
 
 async function synthesizeSpeech(env: Env, text: string): Promise<Response> {
+  if (!env.AI) {
+    throw new Error("Cloudflare AI binding is missing");
+  }
+
   return env.AI.run(
     "@cf/deepgram/aura-1",
     {
@@ -136,6 +151,12 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     return this.opusPromise;
   }
 
+  private failStartup(websocket: WebSocket, stage: string, error: unknown) {
+    console.error(`[cloudflare][startup:${stage}] ${errorMessage(error)}`);
+    websocket.send(createServerMessage("RESPONSE.ERROR"));
+    websocket.close(1011, "startup_failed");
+  }
+
   private async streamAssistantReply(websocket: WebSocket, reply: string) {
     const opus = await this.getOpusPacketizer(websocket);
     opus.reset();
@@ -143,6 +164,9 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
 
     const ttsResponse = await synthesizeSpeech(this.env, reply);
     if (!ttsResponse.ok || !ttsResponse.body) {
+      console.error(
+        `[cloudflare][tts] request failed: ${ttsResponse.status} ${ttsResponse.statusText}`,
+      );
       websocket.send(createServerMessage("RESPONSE.ERROR"));
       return;
     }
@@ -158,6 +182,7 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
       }
       opus.flush(true);
       websocket.send(createServerMessage("RESPONSE.COMPLETE", { volume_control: 100 }));
+      console.log(`[cloudflare][tts] streamed reply successfully (${reply.length} chars)`);
     } finally {
       reader.releaseLock();
     }
@@ -177,13 +202,16 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
 
     const transcript = await transcribePcm(this.env, pcm);
     if (!transcript) {
+      console.error("[cloudflare][stt] empty transcript");
       websocket.send(createServerMessage("RESPONSE.ERROR"));
       return;
     }
+    console.log(`[cloudflare][stt] transcript: ${transcript}`);
     /* Add user transcript DB call here */
 
     const session = await this.loadSessionState();
     const reply = await generateOpenAIReply(this.env, transcript, session.history);
+    console.log(`[cloudflare][llm] generated reply (${reply.length} chars)`);
     session.history.push(
       { role: "user", content: transcript },
       { role: "assistant", content: reply },
@@ -204,12 +232,13 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     try {
       const session = await this.loadSessionState();
       const reply = await generateOpenAIReply(this.env, null, session.history);
+      console.log(`[cloudflare][llm] initial reply (${reply.length} chars)`);
       session.history.push({ role: "assistant", content: reply });
       await this.saveSessionState(session);
       /* Add AI transcript DB call here */
       await this.streamAssistantReply(websocket, reply);
-    } catch {
-      websocket.send(createServerMessage("RESPONSE.ERROR"));
+    } catch (error) {
+      this.failStartup(websocket, "initial_turn", error);
     } finally {
       this.isGenerating = false;
     }
@@ -250,7 +279,8 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
           this.isGenerating = true;
           try {
             await this.handleTurn(server);
-          } catch {
+          } catch (error) {
+            console.error(`[cloudflare][turn] ${errorMessage(error)}`);
             server.send(createServerMessage("RESPONSE.ERROR"));
           } finally {
             this.isGenerating = false;
