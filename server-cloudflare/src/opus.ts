@@ -81,8 +81,11 @@ class WasmOpusEncoder {
       this.memory,
       wasm,
     );
-    ensureOk(wasm.opus_encoder_ctl_set(this.encoderPtr, 4002, 24_000), this.memory, wasm);
-    ensureOk(wasm.opus_encoder_ctl_set(this.encoderPtr, 4040, FRAME_DURATION_MS), this.memory, wasm);
+
+    // The 120ms packet duration is determined by the PCM frame size we pass to
+    // opus_encode(). Avoid low-level CTL tuning here because incorrect request
+    // codes/enum values in the wasm build surface as "invalid argument" during
+    // session startup.
   }
 
   private refreshMemory() {
