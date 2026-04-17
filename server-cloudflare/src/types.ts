@@ -5,5 +5,5 @@ export interface Env {
   ELATO_OPENAI_MODEL?: string;
   ELATO_OPENAI_SYSTEM_PROMPT?: string;
   ELATO_OPENAI_FIRST_MESSAGE?: string;
-  ElatoOpenAiVoiceAgent: DurableObjectNamespace;
+  ElatoVoiceSession: DurableObjectNamespace;
 }

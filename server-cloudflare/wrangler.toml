@@ -7,12 +7,12 @@ compatibility_flags = ["nodejs_compat"]
 binding = "AI"
 
 [[durable_objects.bindings]]
-name = "ElatoOpenAiVoiceAgent"
-class_name = "ElatoOpenAiVoiceAgent"
+name = "ElatoVoiceSession"
+class_name = "ElatoVoiceSession"
 
 [[migrations]]
 tag = "v1"
-new_sqlite_classes = ["ElatoOpenAiVoiceAgent"]
+new_sqlite_classes = ["ElatoVoiceSession"]
 
 [observability]
 [observability.logs]

@@ -1,6 +1,6 @@
 import type { Env } from "./types";
 
-export { ElatoOpenAiVoiceAgent } from "../models/openai";
+export { ElatoVoiceSession } from "../models/session";
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -13,8 +13,8 @@ export default {
     if (url.pathname === "/ws/esp32" || url.pathname.startsWith("/ws/esp32/")) {
       /* Add AUTH here */
 
-      const stub = env.ElatoOpenAiVoiceAgent.get(
-        env.ElatoOpenAiVoiceAgent.newUniqueId(),
+      const stub = env.ElatoVoiceSession.get(
+        env.ElatoVoiceSession.newUniqueId(),
       );
       return stub.fetch(request);
     }

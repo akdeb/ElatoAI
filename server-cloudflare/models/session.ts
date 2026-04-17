@@ -1,16 +1,10 @@
 import { DurableObject } from "cloudflare:workers";
-import { WorkersAIFluxSTT, type TranscriberSession } from "@cloudflare/voice";
 import type { Env } from "../src/types";
 import { createOpusPacketizer } from "../src/opus";
-import { getFirstMessagePrompt, getSystemPrompt } from "../src/prompt";
-
-const AUDIO_OUTPUT_SAMPLE_RATE = 24_000;
-const STT_SAMPLE_RATE = 16_000;
-
-interface OpenAIChatMessage {
-  role: "system" | "user" | "assistant";
-  content: string;
-}
+import { createSttSession } from "./stt";
+import { generateOpenAIReply, type ChatMessage } from "./llm";
+import { synthesizeSpeech } from "./tts";
+import type { TranscriberSession } from "@cloudflare/voice";
 
 function createAuthMessage() {
   return {
@@ -37,80 +31,13 @@ function errorMessage(error: unknown): string {
   return String(error);
 }
 
-async function generateOpenAIReply(
-  env: Env,
-  transcript: string | null,
-  history: OpenAIChatMessage[],
-): Promise<string> {
-  if (!env.OPENAI_API_KEY?.trim()) {
-    throw new Error("OPENAI_API_KEY is missing");
-  }
-
-  const messages: OpenAIChatMessage[] = [
-    { role: "system", content: getSystemPrompt(env) },
-    ...history,
-  ];
-
-  if (transcript && transcript.trim().length > 0) {
-    messages.push({ role: "user", content: transcript });
-  } else {
-    messages.push({ role: "user", content: getFirstMessagePrompt(env) });
-  }
-
-  const response = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.OPENAI_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: env.ELATO_OPENAI_MODEL || "gpt-4.1-mini",
-      messages,
-      temperature: 0.7,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`OpenAI request failed: ${response.status} ${await response.text()}`);
-  }
-
-  const data = (await response.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
-  };
-
-  return (
-    data.choices?.[0]?.message?.content?.trim() ||
-    "I heard you, but I do not have a response yet."
-  );
-}
-
-async function synthesizeSpeech(env: Env, text: string): Promise<Response> {
-  if (!env.AI) {
-    throw new Error("Cloudflare AI binding is missing");
-  }
-
-  return env.AI.run(
-    "@cf/deepgram/aura-2-en",
-    {
-      text,
-      speaker: "asteria",
-      encoding: "linear16",
-      container: "none",
-      sample_rate: AUDIO_OUTPUT_SAMPLE_RATE,
-    },
-    {
-      returnRawResponse: true,
-    },
-  ) as Promise<Response>;
-}
-
-export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
+export class ElatoVoiceSession extends DurableObject<Env> {
   private isGenerating = false;
   private opusPromise: Promise<Awaited<ReturnType<typeof createOpusPacketizer>>> | null = null;
   private hasStartedConversation = false;
   private transcriberSession: TranscriberSession | null = null;
   private currentWebSocket: WebSocket | null = null;
-  private history: OpenAIChatMessage[] = [];
+  private history: ChatMessage[] = [];
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
@@ -141,23 +68,12 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
       return;
     }
 
-    const transcriber = new WorkersAIFluxSTT(this.env.AI, {
-      sampleRate: STT_SAMPLE_RATE,
-      eotTimeoutMs: 1000,
-    });
-
-    this.transcriberSession = transcriber.createSession({
-      onInterim: (text) => {
-        if (text.trim()) {
-          console.log(`[cloudflare][stt] interim: ${text}`);
-        }
+    this.transcriberSession = createSttSession(
+      this.env,
+      (text) => {
+        console.log(`[cloudflare][stt] interim: ${text}`);
       },
-      onUtterance: (transcript) => {
-        const text = transcript.trim();
-        if (!text) {
-          return;
-        }
-
+      (text) => {
         void this.ctx.blockConcurrencyWhile(async () => {
           if (!this.currentWebSocket || this.isGenerating) {
             return;
@@ -174,7 +90,7 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
           }
         });
       },
-    });
+    );
 
     console.log("[cloudflare][stt] started continuous Flux session");
   }
@@ -262,11 +178,12 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
       return new Response("Expected websocket", { status: 426 });
     }
 
+    this.resetSessionState();
+
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
     server.accept();
 
-    this.resetSessionState();
     this.currentWebSocket = server;
     this.ensureTranscriberSession();
 
