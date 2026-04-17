@@ -321,6 +321,7 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
 
     server.addEventListener("close", () => {
       this.isGenerating = false;
+      this.hasStartedConversation = false;
       this.currentWebSocket = null;
       this.transcriberSession?.close();
       this.transcriberSession = null;
