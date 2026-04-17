@@ -24,11 +24,13 @@ English | [中文](README.zh.md)
 </div>
 
 ## News
+- **2026-03-17:** Create a Global Devices/Toys network with Cloudflare Voice Agents and Durable Objects. Cloudflare's Workers AI provides Deepgram STT/TTS natively so all you need to bring is an LLM API Key to create a scalable, low-latency voice AI pipeline.
+- **2026-03-15:** You can launch over 100+ STT, LLM, TTS voice pipeline systems with a FastAPI server with Pipecat!
 - **2026-03-14:** Elato just launched Local AI Toys.🎉🎉🎉  And it's Pi Day! Your ESP32 devices can now support local AI models and voice generation with frontier Local LLMs and TTS models like Qwen, Mistral, and more with MLX. Check it out [here](https://www.github.com/akdeb/local-ai-toys). 
 
 # 👾 ElatoAI: Realtime Voice AI Models on Arduino ESP32
 
-Realtime AI Speech powered by SoTA AI voice models on ESP32, with Secure WebSockets & Deno Edge Functions for >15-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agents API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
+Realtime AI Speech powered by SoTA Voice AI models on ESP32, with Secure WebSockets & Edge Functions for >15-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agents API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
 
 - [🚀 Quick Start](https://www.elatoai.com/docs/quickstart)
 - [Build with PlatformIO](https://www.elatoai.com/docs/platformio)
@@ -83,17 +85,17 @@ Control your ESP32 AI device from your phone with the ElatoAI webapp.
 19. **No PSRAM Required**: The ESP32 device does not require PSRAM to run the speech to speech AI.
 20. **OAuth for Web client**: OAuth for your users to manage their AI characters and devices.
 21. **Pitch Factor**: Control the pitch of the AI's voice from the NextJS webapp to create cartoon-like voices.
-22. **Tool calling**: Call tools and functions from the ESP32 device to the Deno Edge Functions for a complete voice AI agent.
+22. **Tool calling**: Call tools and functions from the ESP32 device to the edge Functions for a complete voice AI agent.
 23. **Tap to turn on**: Tap the touchpad to turn it on from sleep.
-
+24. **Deploy on Cloudflare**: Connect to any LLM, TTS, STT service with Cloudflare Voice Agents and Durable Objects
 
 ## Project Architecture
 
 ElatoAI consists of three main components:
 
 1. **Frontend Client** (`Next.js` hosted on Vercel) - to create and talk to your AI agents and 'send' it to your ESP32 device
-2. **Edge Server Functions** (`Deno` running on Deno/Supabase Edge) - to handle the websocket connections from the ESP32 device and the LLM Provider API calls
-3. **ESP32 IoT Client** (`PlatformIO/Arduino`) - to receive the websocket connections from the Edge Server Functions and send audio to the LLM Provider via the Deno edge server.
+2. **Edge Server Functions** (`Deno Edge` or `Cloudflare Workers`) - to handle the websocket connections from the ESP32 device and the LLM Provider API calls
+3. **ESP32 IoT Client** (`PlatformIO/Arduino`) - to receive the websocket connections from the Edge Server Functions and send audio to the LLM Provider via the Deno edge server or Cloudflare Durable Objects.
 
 
 ## 🛠 Tech Stack
@@ -102,7 +104,7 @@ ElatoAI consists of three main components:
 |-----------------|------------------------------------------|
 | Frontend        | Next.js, Vercel            |
 | Backend         | Supabase DB  |
-| Edge Functions  | Deno Edge Functions on Deno/Supabase          |
+| Edge Functions  | Deno Edge or Cloudflare Workers          |
 | IoT Client      | PlatformIO, Arduino Framework, ESP32-S3  |
 | Audio Codec     | Opus                                     |
 | Communication   | Secure WebSockets                        |
@@ -118,7 +120,7 @@ flowchart TD
   end
   
   UserInput --> ESP32
-  ESP32[ESP32 Device] -->|WebSocket| Edge[Deno Edge Function]
+  ESP32[ESP32 Device] -->|WebSocket| Edge[Deno Edge / Cloudflare Workers]
   Edge -->|OpenAI API| OpenAI[OpenAI Realtime API]
   Edge -->|Gemini API| Gemini[Gemini Live API]
   Edge -->|xAI API| xAI[xAI Grok Voice Agent API]
@@ -140,9 +142,9 @@ flowchart TD
 graph TD
   repo[ElatoAI]
   repo --> frontend[Frontend Vercel NextJS]
-  repo --> deno[Deno Edge Function]
+  repo --> server[Deno Edge Function / Cloudflare Workers]
   repo --> esp32[ESP32 Arduino Client]
-  deno --> supabase[Supabase DB]
+  server --> supabase[Supabase DB]
 
   frontend --> supabase
   esp32 --> websockets[Secure WebSockets]
