@@ -42,5 +42,5 @@ wss://<worker-domain>/ws/esp32
 - This backend now targets the current Elato ESP32 control protocol first:
   `auth`, `AUDIO.COMMITTED`, `RESPONSE.CREATED`, binary audio frames, `RESPONSE.COMPLETE`, and `SESSION.END`.
 - It does not currently use `@cloudflare/voice`; the Durable Object owns the websocket session directly so the firmware protocol stays explicit.
-- The ESP32 route now packetizes Cloudflare TTS output into Opus frames before sending binary websocket packets, matching the same 24kHz mono / 120ms framing shape used by `server-deno`.
+- The ESP32 route now packetizes Cloudflare TTS output into Opus frames before sending binary websocket packets, matching the same 24kHz mono / 120ms framing shape used by `server/deno`.
 - The remaining gap is operational, not transport-level: this prototype still has placeholder auth / DB comments and has not been load-tested against long-running device sessions yet.
