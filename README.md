@@ -30,13 +30,27 @@ English | [中文](README.zh.md)
 
 # 👾 ElatoAI: Realtime Voice AI Models on Arduino ESP32
 
-Realtime AI Speech powered by SoTA Voice AI models on ESP32, with Secure WebSockets & Edge Functions for >20-minute uninterrupted conversations globally. We currently support OpenAI Realtime API, Gemini Live API, xAI Grok Voice Agents API, Eleven Labs Conversational AI Agents, and Hume AI EVI-4.
+Realtime AI Speech powered by 100+ Voice AI models on ESP32, with Secure WebSockets & Edge Functions for >20-minute uninterrupted conversations globally.
 
 - [🚀 Quick Start](https://www.elatoai.com/docs/quickstart)
 - [Build with PlatformIO](https://www.elatoai.com/docs/platformio)
 - [Build on Arduino IDE](https://www.elatoai.com/docs/arduino)
 - [Deploy globally](https://www.elatoai.com/docs/blog/deploying-globally)
 - [🤖🤖🤖 Deploy multiple devices](https://www.elatoai.com/docs/blog/multiple-devices)
+
+## 🧠 Models
+
+### Deno Edge [(model list)](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models)
+1. OpenAI Realtime API
+2. Gemini Live API
+3. xAI Grok Voice Agent API
+4. Eleven Labs Conversational AI Agents
+5. Hume AI EVI-4
+
+### Cloudflare Workers [(model list)](https://github.com/akdeb/ElatoAI/tree/main/server/cloudflare/models)
+1. STT - [7+ Models](https://developers.cloudflare.com/ai/models/?tasks=Automatic+Speech+Recognition) Whisper, Deepgram and more.
+2. TTS - [10+ Models](https://developers.cloudflare.com/ai/models/?tasks=Text-to-Speech) Deepgram, MiniMax and more.
+3. LLM - [80+ Models](https://developers.cloudflare.com/ai/models/?tasks=Text+Generation) OpenAI, Gemini, xAI, and more.
 
 ## 📽️ Demo Video
 
