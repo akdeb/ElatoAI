@@ -97,6 +97,7 @@ async function synthesizeSpeech(env: Env, text: string): Promise<Response> {
 export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
   private audioBuffer = new Uint8Array(0);
   private isGenerating = false;
+  private opusPromise: Promise<Awaited<ReturnType<typeof createOpusPacketizer>>> | null = null;
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
@@ -122,10 +123,17 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     this.audioBuffer = new Uint8Array(0);
   }
 
+  private getOpusPacketizer(websocket: WebSocket) {
+    if (!this.opusPromise) {
+      this.opusPromise = createOpusPacketizer((packet) => websocket.send(packet));
+    }
+    return this.opusPromise;
+  }
+
   private async handleTurn(
     websocket: WebSocket,
-    opus: Awaited<ReturnType<typeof createOpusPacketizer>>,
   ) {
+    const opus = await this.getOpusPacketizer(websocket);
     const pcm = this.audioBuffer;
     this.resetBufferedAudio();
 
@@ -184,7 +192,6 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     const pair = new WebSocketPair();
     const [client, server] = Object.values(pair);
     server.accept();
-    const opus = await createOpusPacketizer((packet) => server.send(packet));
 
     server.send(JSON.stringify(createAuthMessage()));
 
@@ -210,7 +217,7 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
           }
           this.isGenerating = true;
           try {
-            await this.handleTurn(server, opus);
+            await this.handleTurn(server);
           } catch {
             server.send(createServerMessage("RESPONSE.ERROR"));
           } finally {
@@ -236,7 +243,10 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     server.addEventListener("close", () => {
       this.isGenerating = false;
       this.resetBufferedAudio();
-      opus.close();
+      if (this.opusPromise) {
+        void this.opusPromise.then((opus) => opus.close()).catch(() => {});
+        this.opusPromise = null;
+      }
     });
 
     return new Response(null, { status: 101, webSocket: client });

@@ -1,4 +1,4 @@
-name = "elato-cloudflare-voice"
+name = "elato"
 main = "src/index.ts"
 compatibility_date = "2026-04-17"
 compatibility_flags = ["nodejs_compat"]
@@ -16,5 +16,5 @@ new_sqlite_classes = ["ElatoOpenAiVoiceAgent"]
 
 [observability]
 [observability.logs]
-enabled = false
+enabled = true
 invocation_logs = true
