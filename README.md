@@ -59,8 +59,8 @@ Control your ESP32 AI device from your phone with the ElatoAI webapp.
 <img src="assets/mockups.png" alt="App Screenshots" width="100%">
 
 
-## ⭐️ Key Voice AI Features
-<img src="assets/features.png" alt="App Screenshots" width="100%">
+<!-- ## ⭐️ Key Voice AI Features
+<img src="assets/features.png" alt="App Screenshots" width="100%"> -->
 
 ## 🌟 Full feature list
 
