@@ -12,10 +12,6 @@ interface OpenAIChatMessage {
   content: string;
 }
 
-interface SessionState {
-  history: OpenAIChatMessage[];
-}
-
 function createAuthMessage() {
   return {
     type: "auth",
@@ -94,7 +90,7 @@ async function synthesizeSpeech(env: Env, text: string): Promise<Response> {
   }
 
   return env.AI.run(
-    "@cf/deepgram/aura-1",
+    "@cf/deepgram/aura-2-en",
     {
       text,
       speaker: "asteria",
@@ -114,18 +110,17 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
   private hasStartedConversation = false;
   private transcriberSession: TranscriberSession | null = null;
   private currentWebSocket: WebSocket | null = null;
+  private history: OpenAIChatMessage[] = [];
 
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env);
   }
 
-  private async loadSessionState(): Promise<SessionState> {
-    const stored = await this.ctx.storage.get<SessionState>("session_state");
-    return stored || { history: [] };
-  }
-
-  private async saveSessionState(state: SessionState) {
-    await this.ctx.storage.put("session_state", state);
+  private resetSessionState() {
+    this.isGenerating = false;
+    this.hasStartedConversation = false;
+    this.currentWebSocket = null;
+    this.history = [];
   }
 
   private getOpusPacketizer(websocket: WebSocket) {
@@ -187,7 +182,6 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
   private async streamAssistantReply(websocket: WebSocket, reply: string) {
     const opus = await this.getOpusPacketizer(websocket);
     opus.reset();
-    websocket.send(createServerMessage("RESPONSE.CREATED"));
 
     const ttsResponse = await synthesizeSpeech(this.env, reply);
     if (!ttsResponse.ok || !ttsResponse.body) {
@@ -199,13 +193,24 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     }
 
     const reader = ttsResponse.body.getReader();
+    let responseCreatedSent = false;
     try {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         if (value) {
+          if (!responseCreatedSent) {
+            websocket.send(createServerMessage("RESPONSE.CREATED"));
+            responseCreatedSent = true;
+            console.log("[cloudflare][tts] first audio chunk ready");
+          }
           opus.push(value);
         }
+      }
+      if (!responseCreatedSent) {
+        console.error("[cloudflare][tts] no audio chunks returned");
+        websocket.send(createServerMessage("RESPONSE.ERROR"));
+        return;
       }
       opus.flush(true);
       websocket.send(createServerMessage("RESPONSE.COMPLETE", { volume_control: 100 }));
@@ -220,14 +225,12 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     console.log(`[cloudflare][stt] transcript: ${transcript}`);
     /* Add user transcript DB call here */
 
-    const session = await this.loadSessionState();
-    const reply = await generateOpenAIReply(this.env, transcript, session.history);
+    const reply = await generateOpenAIReply(this.env, transcript, this.history);
     console.log(`[cloudflare][llm] generated reply (${reply.length} chars)`);
-    session.history.push(
+    this.history.push(
       { role: "user", content: transcript },
       { role: "assistant", content: reply },
     );
-    await this.saveSessionState(session);
     /* Add AI transcript DB call here */
     await this.streamAssistantReply(websocket, reply);
   }
@@ -241,11 +244,10 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     this.isGenerating = true;
 
     try {
-      const session = await this.loadSessionState();
-      const reply = await generateOpenAIReply(this.env, null, session.history);
+      console.log("[cloudflare][startup] starting initial turn");
+      const reply = await generateOpenAIReply(this.env, null, this.history);
       console.log(`[cloudflare][llm] initial reply (${reply.length} chars)`);
-      session.history.push({ role: "assistant", content: reply });
-      await this.saveSessionState(session);
+      this.history.push({ role: "assistant", content: reply });
       /* Add AI transcript DB call here */
       await this.streamAssistantReply(websocket, reply);
     } catch (error) {
@@ -264,6 +266,7 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     const [client, server] = Object.values(pair);
     server.accept();
 
+    this.resetSessionState();
     this.currentWebSocket = server;
     this.ensureTranscriberSession();
 
@@ -320,8 +323,7 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     });
 
     server.addEventListener("close", () => {
-      this.isGenerating = false;
-      this.currentWebSocket = null;
+      this.resetSessionState();
       this.transcriberSession?.close();
       this.transcriberSession = null;
       if (this.opusPromise) {
