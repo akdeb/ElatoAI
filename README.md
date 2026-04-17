@@ -190,7 +190,7 @@ graph TD
 
 ## 🙌 Contributing
 
-We value your contributions! Here are some ideas:
+We value your contributions! Here are some ideas to get you started:
 1. Speech Interruption on ESP32 (works with OpenAI)
 2. ~~Adding Arduino IDE support~~
 3. ~~Add Hume API client for emotion detection~~
@@ -200,6 +200,7 @@ We value your contributions! Here are some ideas:
 7. Add Cartesia Support
 8. Add Amazon Nova Support
 9. Add Deepgram
+10. ~~Add Cloudflare Workers support~~
 
 
 ## License
