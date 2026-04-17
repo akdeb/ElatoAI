@@ -2,12 +2,6 @@ import type { Env } from "./types";
 
 export { ElatoOpenAiVoiceAgent } from "../models/openai";
 
-function sessionNameFromRequest(request: Request): string {
-  const url = new URL(request.url);
-  const pathParts = url.pathname.split("/").filter(Boolean);
-  return pathParts[2] || url.searchParams.get("session") || "default";
-}
-
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
@@ -20,7 +14,7 @@ export default {
       /* Add AUTH here */
 
       const stub = env.ElatoOpenAiVoiceAgent.get(
-        env.ElatoOpenAiVoiceAgent.idFromName(sessionNameFromRequest(request)),
+        env.ElatoOpenAiVoiceAgent.newUniqueId(),
       );
       return stub.fetch(request);
     }
