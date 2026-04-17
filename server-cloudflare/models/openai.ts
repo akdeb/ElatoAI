@@ -331,8 +331,6 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
               }
               this.sawUserSpeech = true;
               this.scheduleAutoCommit(server);
-            } else if (this.sawUserSpeech) {
-              this.scheduleAutoCommit(server);
             }
           }
           return;
