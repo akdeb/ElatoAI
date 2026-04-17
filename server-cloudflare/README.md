@@ -2,17 +2,17 @@
 
 Cloudflare Workers + Durable Objects voice backend for Elato.
 
-This starts with one model path:
+This starts with one ESP32-compatible websocket path:
 
-- `/ws/openai`
+- `/ws/esp32`
 
-Under the hood that route is rewritten into a Durable Object agent using Cloudflare Agents SDK and `@cloudflare/voice`.
+The route is backed by a Durable Object that preserves the Elato device control protocol.
 
 ## Current stack
 
-- STT: `WorkersAIFluxSTT`
+- STT: `@cf/openai/whisper`
 - LLM: OpenAI Chat Completions
-- TTS: `WorkersAITTS`
+- TTS: `@cf/deepgram/aura-1`
 
 ## Local setup
 
@@ -32,11 +32,15 @@ npm run dev
 
 ## Notes
 
-- Browser / Next.js clients should connect with a token query param, for example:
+- ESP32 clients should connect to:
 
 ```text
-wss://<worker-domain>/ws/openai?token=<jwt>&session=<session-id>
+wss://<worker-domain>/ws/esp32
 ```
 
-- ESP32 clients can keep sending `Authorization: Bearer <token>` headers, but this backend is currently built around Cloudflare Voice's browser-style PCM websocket flow, not the existing Elato ESP32 control protocol.
-- For ESP32 parity, we will likely need a Cloudflare-side shim or a separate ESP32-specific route.
+- Auth is intentionally left out of this iteration. Add your own auth check in the Worker route before using this in production.
+- This backend now targets the current Elato ESP32 control protocol first:
+  `auth`, `AUDIO.COMMITTED`, `RESPONSE.CREATED`, binary audio frames, `RESPONSE.COMPLETE`, and `SESSION.END`.
+- It does not currently use `@cloudflare/voice`; the Durable Object owns the websocket session directly so the firmware protocol stays explicit.
+- The ESP32 route now packetizes Cloudflare TTS output into Opus frames before sending binary websocket packets, matching the same 24kHz mono / 120ms framing shape used by `server-deno`.
+- The remaining gap is operational, not transport-level: this prototype still has placeholder auth / DB comments and has not been load-tested against long-running device sessions yet.

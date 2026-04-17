@@ -1,17 +1,11 @@
-import { routeAgentRequest } from "agents";
-
-import { requireAuthorizedRequest } from "./auth";
 import type { Env } from "./types";
 
 export { ElatoOpenAiVoiceAgent } from "../models/openai";
 
-function rewriteOpenAIRequest(request: Request): Request {
-  const originalUrl = new URL(request.url);
-  const pathParts = originalUrl.pathname.split("/").filter(Boolean);
-  const sessionName = pathParts[2] || originalUrl.searchParams.get("session") || "default";
-
-  originalUrl.pathname = `/agents/elato-open-ai-voice-agent/${encodeURIComponent(sessionName)}`;
-  return new Request(originalUrl.toString(), request);
+function sessionNameFromRequest(request: Request): string {
+  const url = new URL(request.url);
+  const pathParts = url.pathname.split("/").filter(Boolean);
+  return pathParts[2] || url.searchParams.get("session") || "default";
 }
 
 export default {
@@ -22,19 +16,15 @@ export default {
       return Response.json({ ok: true, backend: "cloudflare-voice" });
     }
 
-    let routedRequest = request;
-    if (url.pathname === "/ws/openai" || url.pathname.startsWith("/ws/openai/")) {
-      routedRequest = rewriteOpenAIRequest(request);
+    if (url.pathname === "/ws/esp32" || url.pathname.startsWith("/ws/esp32/")) {
+      /* Add AUTH here */
+
+      const stub = env.ElatoOpenAiVoiceAgent.get(
+        env.ElatoOpenAiVoiceAgent.idFromName(sessionNameFromRequest(request)),
+      );
+      return stub.fetch(request);
     }
 
-    return (
-      (await routeAgentRequest(routedRequest, env, {
-        cors: true,
-        onBeforeConnect: async (incomingRequest) =>
-          requireAuthorizedRequest(incomingRequest, env),
-        onBeforeRequest: async (incomingRequest) =>
-          requireAuthorizedRequest(incomingRequest, env),
-      })) ?? new Response("Not found", { status: 404 })
-    );
+    return new Response("Not found", { status: 404 });
   },
 };

@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "models/**/*.ts"]
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "models/**/*.ts"]
 }
