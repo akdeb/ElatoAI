@@ -2,7 +2,7 @@ import { DurableObject } from "cloudflare:workers";
 import type { Env } from "../src/types";
 import { createOpusPacketizer } from "../src/opus";
 import { createSttSession } from "./stt";
-import { generateOpenAIReply, type ChatMessage } from "./llm";
+import { generateOpenAIReply as generateLLMReply, type ChatMessage } from "./llm";
 import { synthesizeSpeech } from "./tts";
 import type { TranscriberSession } from "@cloudflare/voice";
 
@@ -141,7 +141,7 @@ export class ElatoVoiceSession extends DurableObject<Env> {
     console.log(`[cloudflare][stt] transcript: ${transcript}`);
     /* Add user transcript DB call here */
 
-    const reply = await generateOpenAIReply(this.env, transcript, this.history);
+    const reply = await generateLLMReply(this.env, transcript, this.history);
     console.log(`[cloudflare][llm] generated reply (${reply.length} chars)`);
     this.history.push(
       { role: "user", content: transcript },
@@ -161,7 +161,7 @@ export class ElatoVoiceSession extends DurableObject<Env> {
 
     try {
       console.log("[cloudflare][startup] starting initial turn");
-      const reply = await generateOpenAIReply(this.env, null, this.history);
+      const reply = await generateLLMReply(this.env, null, this.history);
       console.log(`[cloudflare][llm] initial reply (${reply.length} chars)`);
       this.history.push({ role: "assistant", content: reply });
       /* Add AI transcript DB call here */
