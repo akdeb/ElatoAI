@@ -5,7 +5,7 @@ import { getFirstMessagePrompt, getSystemPrompt } from "../src/prompt";
 
 const AUDIO_OUTPUT_SAMPLE_RATE = 24_000;
 const INPUT_SILENCE_DURATION_MS = 1000;
-const INPUT_LEVEL_THRESHOLD = 900;
+const INPUT_LEVEL_THRESHOLD = 180;
 
 interface OpenAIChatMessage {
   role: "system" | "user" | "assistant";
@@ -199,7 +199,9 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
           return;
         }
 
-        console.log("[cloudflare][vad] silence detected, auto-committing turn");
+        console.log(
+          `[cloudflare][vad] silence detected, auto-committing turn (${this.audioBuffer.byteLength} bytes buffered)`,
+        );
         this.isGenerating = true;
         this.sawUserSpeech = false;
 
@@ -325,7 +327,7 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
             const level = this.calculateAudioLevel(chunk);
             if (level >= INPUT_LEVEL_THRESHOLD) {
               if (!this.sawUserSpeech) {
-                console.log(`[cloudflare][vad] speech started (level=${level})`);
+                console.log(`[cloudflare][vad] speech started (level=${level}, threshold=${INPUT_LEVEL_THRESHOLD})`);
               }
               this.sawUserSpeech = true;
               this.scheduleAutoCommit(server);
