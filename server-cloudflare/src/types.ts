@@ -2,6 +2,7 @@ export interface Env {
   AI: Ai;
   JWT_SECRET_KEY: string;
   OPENAI_API_KEY: string;
+  TTS_SPEAKER?: string;
   ELATO_OPENAI_MODEL?: string;
   ELATO_OPENAI_SYSTEM_PROMPT?: string;
   ELATO_OPENAI_FIRST_MESSAGE?: string;

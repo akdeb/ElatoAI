@@ -7,11 +7,13 @@ export async function synthesizeSpeech(env: Env, text: string): Promise<Response
     throw new Error("Cloudflare AI binding is missing");
   }
 
+  const speaker = env.TTS_SPEAKER || "asteria";
+
   return env.AI.run(
     "@cf/deepgram/aura-2-en",
     {
       text,
-      speaker: "asteria",
+      speaker: speaker as Ai_Cf_Deepgram_Aura_2_En_Input["speaker"],
       encoding: "linear16",
       container: "none",
       sample_rate: AUDIO_OUTPUT_SAMPLE_RATE,
