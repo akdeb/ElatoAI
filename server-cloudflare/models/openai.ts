@@ -90,7 +90,7 @@ async function synthesizeSpeech(env: Env, text: string): Promise<Response> {
   }
 
   return env.AI.run(
-    "@cf/deepgram/aura-2-en",
+    "@cf/deepgram/aura-1",
     {
       text,
       speaker: "asteria",
