@@ -48,9 +48,9 @@ Realtime AI Speech powered by 100+ Voice AI models on ESP32, with Secure WebSock
 5. [Hume AI EVI-4](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/hume)
 
 ### Cloudflare Workers
-1. STT - [7+ Models](https://developers.cloudflare.com/ai/models/?tasks=Automatic+Speech+Recognition) Whisper, Deepgram and more.
-2. TTS - [10+ Models](https://developers.cloudflare.com/ai/models/?tasks=Text-to-Speech) Deepgram, MiniMax and more.
-3. LLM - [80+ Models](https://developers.cloudflare.com/ai/models/?tasks=Text+Generation) OpenAI, Gemini, xAI, and more.
+1. LLM - [80+ Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Text+Generation) OpenAI, Gemini, xAI, and more.
+2. TTS - [10+ Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Text-to-Speech) Deepgram, MeloTTS and more.
+3. STT - [5 Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Automatic+Speech+Recognition) Whisper, Deepgram and more.
 
 ## 📽️ Demo Video
 
