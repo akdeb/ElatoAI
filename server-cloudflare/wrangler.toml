@@ -12,7 +12,13 @@ class_name = "ElatoVoiceSession"
 
 [[migrations]]
 tag = "v1"
-new_sqlite_classes = ["ElatoVoiceSession"]
+new_sqlite_classes = ["ElatoOpenAiVoiceAgent"]
+
+[[migrations]]
+tag = "v2"
+renamed_classes = [
+  { from = "ElatoOpenAiVoiceAgent", to = "ElatoVoiceSession" }
+]
 
 [observability]
 [observability.logs]
