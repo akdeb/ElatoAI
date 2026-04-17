@@ -13,3 +13,8 @@ class_name = "ElatoOpenAiVoiceAgent"
 [[migrations]]
 tag = "v1"
 new_sqlite_classes = ["ElatoOpenAiVoiceAgent"]
+
+[observability]
+[observability.logs]
+enabled = false
+invocation_logs = true

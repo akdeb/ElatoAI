@@ -13,8 +13,8 @@
 // For ELATO_MODE, you will need to register your DIY Hardware on the Elato website
 
 // #define DEV_MODE
-#define PROD_MODE
-// #define ELATO_MODE
+// #define PROD_MODE
+#define ELATO_MODE
 
 // ---------- CHOOSE YOUR VOICE SERVER ----------
 // Keep this separate from DEV/PROD/ELATO so the deployment mode and the voice backend stay independent.

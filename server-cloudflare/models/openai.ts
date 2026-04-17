@@ -1,3 +1,4 @@
+import { DurableObject } from "cloudflare:workers";
 import type { Env } from "../src/types";
 import { createOpusPacketizer } from "../src/opus";
 import { getSystemPrompt } from "../src/prompt";
@@ -93,15 +94,12 @@ async function synthesizeSpeech(env: Env, text: string): Promise<Response> {
   ) as Promise<Response>;
 }
 
-export class ElatoOpenAiVoiceAgent {
+export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
   private audioBuffer = new Uint8Array(0);
   private isGenerating = false;
-  private readonly ctx: DurableObjectState;
-  private readonly env: Env;
 
   constructor(ctx: DurableObjectState, env: Env) {
-    this.ctx = ctx;
-    this.env = env;
+    super(ctx, env);
   }
 
   private appendAudio(chunk: Uint8Array) {
