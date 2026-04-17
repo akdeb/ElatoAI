@@ -141,7 +141,7 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     websocket.close(1011, "startup_failed");
   }
 
-  private ensureTranscriberSession(websocket: WebSocket) {
+  private ensureTranscriberSession() {
     if (this.transcriberSession) {
       return;
     }
@@ -265,7 +265,7 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
     server.accept();
 
     this.currentWebSocket = server;
-    this.ensureTranscriberSession(server);
+    this.ensureTranscriberSession();
 
     server.send(JSON.stringify(createAuthMessage()));
     void this.startInitialTurn(server);
@@ -277,12 +277,21 @@ export class ElatoOpenAiVoiceAgent extends DurableObject<Env> {
             return;
           }
 
-          const chunk = event.data instanceof ArrayBuffer
-            ? event.data
-            : event.data.buffer.slice(
-                event.data.byteOffset,
-                event.data.byteOffset + event.data.byteLength,
-              );
+          const chunk =
+            event.data instanceof ArrayBuffer
+              ? event.data
+              : event.data instanceof Uint8Array
+                ? event.data.slice().buffer
+                : event.data instanceof Blob
+                  ? await event.data.arrayBuffer()
+                  : null;
+
+          if (!chunk) {
+            console.error(
+              `[cloudflare][stt] unsupported binary payload: ${Object.prototype.toString.call(event.data)}`,
+            );
+            return;
+          }
 
           this.transcriberSession.feed(chunk);
           return;
