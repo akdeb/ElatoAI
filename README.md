@@ -183,7 +183,7 @@ graph TD
 - Supabase DB for secure authentication
 - Postgres RLS for all tables
 
-## 🚫 Limitations
+## 🚫 Limitations 
 - 3-4s cold start time while connecting to edge server
 - Tested with up to 17 minutes of uninterrupted conversations
 - Edge server stops when wall clock time is exceeded
