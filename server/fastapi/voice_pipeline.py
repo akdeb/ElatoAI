@@ -1,4 +1,4 @@
-"""Classic STT -> LLM -> TTS pipeline builder."""
+"""Default STT -> LLM -> TTS voice pipeline builder."""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from pipecat.processors.aggregators.llm_response_universal import (
 )
 
 
-def build_classic_route(input_processor, context: LLMContext):
+def build_voice_pipeline(input_processor, context: LLMContext):
     stt_provider = os.getenv("CLASSIC_STT_PROVIDER", "deepgram")
     llm_provider = os.getenv("CLASSIC_LLM_PROVIDER", "openai")
     tts_provider = os.getenv("CLASSIC_TTS_PROVIDER", "elevenlabs")

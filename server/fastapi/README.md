@@ -54,7 +54,7 @@ That gives people one obvious path to get running before they start swapping pro
 ```text
 server/fastapi/
 ├── bot.py
-├── classic_route.py
+├── voice_pipeline.py
 ├── esp32_transport.py
 ├── server.py
 ├── env.example
@@ -327,7 +327,7 @@ That gives users one obvious starting point without taking away flexibility.
 If you want to change the FastAPI backend, start here:
 
 - `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/server.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/classic_route.py`
+- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/voice_pipeline.py`
 - `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/esp32_transport.py`
 - `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/llm/__init__.py`
 - `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/stt/__init__.py`

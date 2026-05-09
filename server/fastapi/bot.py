@@ -9,7 +9,7 @@
 import os
 from typing import Literal
 
-from classic_route import build_classic_route
+from voice_pipeline import build_voice_pipeline
 from dotenv import load_dotenv
 from gem_live_route import build_gem_live_route
 from grok_route import build_grok_route
@@ -155,7 +155,7 @@ async def run_bot_session(
     elif voice_route == "grok":
         route_processors, assistant_aggregator = build_grok_route(input_processor, context)
     else:
-        route_processors, assistant_aggregator = build_classic_route(input_processor, context)
+        route_processors, assistant_aggregator = build_voice_pipeline(input_processor, context)
 
     processors = [transport.input(), *route_processors]
 
