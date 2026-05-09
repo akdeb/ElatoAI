@@ -1,0 +1,7 @@
+agent_name = "pipecat-test-ws-ap-south"
+region = "ap-south"
+secret_set = "pipecat-test-ws-ap-south-secrets"
+agent_profile = "agent-1x"
+
+[scaling]
+	min_agents = 1
