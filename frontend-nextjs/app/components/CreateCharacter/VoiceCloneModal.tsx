@@ -18,7 +18,7 @@ interface VoiceCloneModalProps {
   onSuccess?: () => void;
   selectedUser: IUser;
   voiceCloneModalProps: {
-    provider: "elevenlabs" | "hume";
+    provider: "elevenlabs" | "hume" | "60db";
     title: string;
     voiceInputLabel: string;
     voiceInputPlaceholder: string;

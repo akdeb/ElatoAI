@@ -52,6 +52,14 @@ PROVIDER_SPECS: dict[ProviderCategory, dict[str, ProviderSpec]] = {
             env=("XAI_API_KEY",),
             description="xAI Grok via Pipecat.",
         ),
+        "60db": ProviderSpec(
+            name="60db",
+            category="llm",
+            module="models.llm.sixtydb",
+            env=("SIXTYDB_API_KEY",),
+            aliases=("sixtydb",),
+            description="60db.ai chat completions (OpenAI-compatible, model 60db-tiny).",
+        ),
     },
     "stt": {
         "deepgram": ProviderSpec(
@@ -66,6 +74,14 @@ PROVIDER_SPECS: dict[ProviderCategory, dict[str, ProviderSpec]] = {
             category="stt",
             module="models.stt.whisper",
             description="Local Whisper transcription service with no external API key.",
+        ),
+        "60db": ProviderSpec(
+            name="60db",
+            category="stt",
+            module="models.stt.sixtydb",
+            env=("SIXTYDB_API_KEY",),
+            aliases=("sixtydb",),
+            description="60db.ai WebSocket STT — 39 languages, native Indic support.",
         ),
     },
     "tts": {
@@ -96,6 +112,14 @@ PROVIDER_SPECS: dict[ProviderCategory, dict[str, ProviderSpec]] = {
             module="models.tts.openai",
             env=("OPENAI_API_KEY",),
             description="OpenAI text-to-speech service.",
+        ),
+        "60db": ProviderSpec(
+            name="60db",
+            category="tts",
+            module="models.tts.sixtydb",
+            env=("SIXTYDB_API_KEY",),
+            aliases=("sixtydb",),
+            description="60db.ai WebSocket TTS — low-cost, native Indic voices.",
         ),
     },
 }
