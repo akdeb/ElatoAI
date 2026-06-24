@@ -24,6 +24,7 @@ To keep onboarding straightforward, the classic FastAPI route is centered around
 - `claude`
 - `gemini`
 - `grok`
+- `minimax`
 
 ### STT
 
@@ -203,6 +204,7 @@ The current simple provider map is:
 - `claude` LLM: `ANTHROPIC_API_KEY`
 - `gemini` LLM: `GEMINI_API_KEY`
 - `grok` LLM: `XAI_API_KEY`
+- `minimax` LLM: `MINIMAX_API_KEY`
 - `deepgram` STT: `DEEPGRAM_API_KEY`
 - `whisper` STT: no external API key required
 - `elevenlabs` TTS: `ELEVENLABS_API_KEY`
@@ -220,6 +222,7 @@ Each supported provider now has its own module file so the layout is easy to und
 - `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/llm/anthropic.py`
 - `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/llm/gemini.py`
 - `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/llm/grok.py`
+- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/llm/minimax.py`
 - `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/stt/deepgram.py`
 - `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/stt/whisper.py`
 - `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/tts/elevenlabs.py`
@@ -260,6 +263,17 @@ CLASSIC_STT_PROVIDER=deepgram
 CLASSIC_LLM_PROVIDER=gemini
 CLASSIC_TTS_PROVIDER=openai
 ```
+
+### Deepgram + MiniMax + ElevenLabs
+
+```env
+CLASSIC_STT_PROVIDER=deepgram
+CLASSIC_LLM_PROVIDER=minimax
+CLASSIC_TTS_PROVIDER=elevenlabs
+```
+
+MiniMax uses an OpenAI-compatible chat API, so only `MINIMAX_API_KEY` is
+required. The default model is `MiniMax-M3`.
 
 ## Unified Experience Across Elato
 
