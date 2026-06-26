@@ -174,7 +174,7 @@ graph TD
 - **Latency**: <2-3s round-trip globally
 - **Audio Quality**: Opus codec at 12kbps (high clarity) 24kHz sampling rate
 - **Uninterrupted Conversations**: Up to 20 minutes continuous conversations globally
-- **Global Availability**: Optimized with edge computing
+- **Global Availability**: Optimized with edge / monolith servers
 
 ## 🛡 Security
 
