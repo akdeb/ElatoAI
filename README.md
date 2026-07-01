@@ -56,11 +56,15 @@ Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https:/
 3. [xAI Grok Voice Agent API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/grok)
 4. [Eleven Labs Conversational AI Agents](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/elevenlabs)
 5. [Hume AI EVI-4](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/hume)
+6. More speech to speech models coming soon!
 
 ### Cloudflare Workers
 1. LLM - [80+ Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Text+Generation) OpenAI, Gemini, xAI, and more.
 2. TTS - [10+ Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Text-to-Speech) Deepgram, MeloTTS and more.
 3. STT - [5 Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Automatic+Speech+Recognition) Whisper, Deepgram and more.
+
+### FastAPI
+Select from 100+ models from the list above and use the FastAPI server to create your own voice pipeline. Check out the [FastAPI server](https://github.com/akdeb/ElatoAI/tree/main/server/fastapi) for more details.
 
 
 ## 👷‍♀️ DIY Hardware Design
