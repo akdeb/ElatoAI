@@ -205,7 +205,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
 
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const [showVoiceCloneModal, setShowVoiceCloneModal] = useState<{
-    provider: "elevenlabs" | "hume";
+    provider: "elevenlabs" | "hume" | "60db";
     title: string;
     voiceInputLabel: string;
     voiceInputPlaceholder: string;
@@ -411,6 +411,16 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                 >
                   <Plus className="w-4 h-4 flex-shrink-0" />
                   Eleven Labs Agent
+                </Button>
+<Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowVoiceCloneModal({ provider: "60db", title: "60db Character", voiceInputLabel: "60db Voice ID", voiceInputPlaceholder: "fbb75ed2-975a-40c7-9e06-38e30524a9a1", voiceDescription: "Voice UUID from https://api.60db.ai/myvoices or /default-voices. The agentId field maps to 60db's voice_id; the full STT+LLM+TTS pipeline is server-managed." })}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4 flex-shrink-0" />
+                  60db Voice
                 </Button>
 </div>
               </div>
