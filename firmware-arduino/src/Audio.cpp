@@ -114,7 +114,9 @@ void audioStreamTask(void *parameter) {
     cfg.sample_rate = SAMPLE_RATE;
     cfg.channels = CHANNELS;
     cfg.bits_per_sample = BITS_PER_SAMPLE;
-    cfg.max_buffer_size = 6144;
+    // A 120ms Opus frame decoded at 48kHz mono s16 is 11520 bytes; 6144 only
+    // fit the old 24kHz pipeline.
+    cfg.max_buffer_size = 16384;
 
     xSemaphoreTake(wsMutex, portMAX_DELAY);
     opusDecoder.setOutput(bufferPrint);

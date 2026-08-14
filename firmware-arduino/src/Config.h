@@ -19,6 +19,8 @@
 // ---------- CHOOSE YOUR VOICE SERVER ----------
 // Keep this separate from DEV/PROD/ELATO so the deployment mode and the voice backend stay independent.
 // Pick one backend for websocket voice traffic.
+// Note: ELATO_MODE always uses Elato's hosted server, so this selector only
+// applies to DEV_MODE and PROD_MODE.
 
 // #define VOICE_SERVER_DENO
 #define VOICE_SERVER_CLOUDFLARE
