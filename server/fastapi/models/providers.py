@@ -52,6 +52,13 @@ PROVIDER_SPECS: dict[ProviderCategory, dict[str, ProviderSpec]] = {
             env=("XAI_API_KEY",),
             description="xAI Grok via Pipecat.",
         ),
+        "minimax": ProviderSpec(
+            name="minimax",
+            category="llm",
+            module="models.llm.minimax",
+            env=("MINIMAX_API_KEY",),
+            description="MiniMax (OpenAI-compatible) chat models such as MiniMax-M3.",
+        ),
     },
     "stt": {
         "deepgram": ProviderSpec(
