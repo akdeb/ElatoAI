@@ -40,7 +40,7 @@ ElatoAI 让你在 ESP32 上运行由 100 多种语音 AI 模型驱动的实时�
 
 <div align="center">
     <a href="https://www.youtube.com/watch?v=o1eIAwVll5I" target="_blank">
-    <img src="https://raw.githubusercontent.com/akdeb/ElatoAI/refs/heads/main/assets/thumbnail.png" alt="ElatoAI Demo Video" width="100%" style="border-radius:10px" />
+    <img src="https://raw.githubusercontent.com/akdeb/ElatoAI/refs/heads/main/assets/thumbnail1.png" alt="ElatoAI Demo Video" width="100%" style="border-radius:10px" />
   </a>
 </div>
 
