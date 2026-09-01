@@ -73,7 +73,6 @@ export const connectToBoson = async ({
         sendBoson({
             event_id: eventId(),
             type: "conversation.item.create",
-            previous_item_id: "root",
             item: {
                 type: "message",
                 role: "user",
