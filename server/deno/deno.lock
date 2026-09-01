@@ -21,9 +21,11 @@
     "npm:@supabase/storage-js@2.12.1": "2.12.1",
     "npm:@supabase/storage-js@2.7.1": "2.7.1",
     "npm:@types/node@*": "22.13.0",
-    "npm:@types/ws@*": "8.5.14",
+    "npm:@types/ws@*": "8.18.1",
+    "npm:@types/ws@^8.5.10": "8.18.1",
     "npm:wavefile@*": "11.0.0",
-    "npm:ws@*": "8.18.0"
+    "npm:ws@*": "8.18.3",
+    "npm:ws@^8.18.0": "8.18.3"
   },
   "jsr": {
     "@std/assert@1.0.14": {
@@ -76,7 +78,7 @@
       "dependencies": [
         "@modelcontextprotocol/sdk",
         "google-auth-library",
-        "ws@8.18.0",
+        "ws",
         "zod",
         "zod-to-json-schema"
       ]
@@ -153,8 +155,8 @@
       "dependencies": [
         "@supabase/node-fetch",
         "@types/phoenix",
-        "@types/ws@8.5.14",
-        "ws@8.18.0"
+        "@types/ws",
+        "ws"
       ]
     },
     "@supabase/realtime-js@2.15.5": {
@@ -162,8 +164,8 @@
       "dependencies": [
         "@supabase/node-fetch",
         "@types/phoenix",
-        "@types/ws@8.18.1",
-        "ws@8.18.3"
+        "@types/ws",
+        "ws"
       ]
     },
     "@supabase/storage-js@2.12.1": {
@@ -192,12 +194,6 @@
     },
     "@types/ws@8.18.1": {
       "integrity": "sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==",
-      "dependencies": [
-        "@types/node"
-      ]
-    },
-    "@types/ws@8.5.14": {
-      "integrity": "sha512-bd/YFLW+URhBzMXurx7lWByOu+xzU9+kb3RboOteXYDfW+tr+JZa99OyNmPINEGB/ahzKrEuc8rcv4gnpJmxTw==",
       "dependencies": [
         "@types/node"
       ]
@@ -837,9 +833,6 @@
     },
     "wrappy@1.0.2": {
       "integrity": "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ=="
-    },
-    "ws@8.18.0": {
-      "integrity": "sha512-8VbfWfHLbbwu3+N6OKsOMpBdT4kXPDDB9cJk2bJ6mh9ucxdlnNvH1e+roYkKmN9Nxw2yjz7VzeO9oOz2zJ04Pw=="
     },
     "ws@8.18.3": {
       "integrity": "sha512-PEIGCY5tSlUt50cqyMXfCzX+oOPqN0vuGqWzbcJ2xvnkzkq46oOpz7dQaTDBdfICb4N14+GARUDw2XV2N4tvzg=="

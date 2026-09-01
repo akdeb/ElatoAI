@@ -26,7 +26,7 @@ declare global {
         user_code: string;
     }
 
-    type ModelProvider = "openai" | "gemini" | "elevenlabs" | "hume" | "grok";
+    type ModelProvider = "openai" | "gemini" | "elevenlabs" | "hume" | "grok" | "boson";
 
     type GrokVoice = 
         | "Ara"
@@ -76,6 +76,16 @@ declare global {
         | "coral"
         | "sage"
         | "verse";
+
+    type BosonVoice =
+        | "chloe"
+        | "eleanor"
+        | "nora"
+        | "jake"
+        | "marcus"
+        | "oliver"
+        | "yujin"
+        | "jiho";
 
     /**
      * Note: oai_voice is essentially the name of the voice. 

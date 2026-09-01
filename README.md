@@ -56,7 +56,8 @@ Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https:/
 3. [xAI Grok Voice Agent API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/grok)
 4. [Eleven Labs Conversational AI Agents](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/elevenlabs)
 5. [Hume AI EVI-4](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/hume)
-6. More speech to speech models coming soon!
+6. [Boson Higgs Realtime](https://docs.boson.ai/models/higgs-realtime/quickstart)
+7. More speech to speech models coming soon!
 
 ### Cloudflare Workers
 1. LLM - [80+ Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Text+Generation) OpenAI, Gemini, xAI, and more.
@@ -83,7 +84,7 @@ Control your ESP32 AI device from your phone with the ElatoAI webapp.
 
 ## 🌟 Full feature list
 
-1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, xAI's Grok Voice Agent API, Eleven Labs Conversational AI Agents and Hume AI EVI4.
+1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, xAI's Grok Voice Agent API, Eleven Labs Conversational AI Agents, Hume AI EVI4, and Boson Higgs Realtime.
 2. **Create Custom AI Agents**: Create custom agents with different personalities and voices.
 3. **Customizable Voices**: Choose from a variety of voices and personalities.
 4. **Secure WebSockets**: Reliable, encrypted WebSocket communication.
@@ -145,11 +146,13 @@ flowchart TD
   Edge -->|xAI API| xAI[xAI Grok Voice Agent API]
   Edge -->|ElevenLabs API| ElevenLabs[ElevenLabs AI Agents]
   Edge -->|Hume API| Hume[Hume AI EVI4]
+  Edge -->|Boson API| Boson[Boson Higgs Realtime]
   OpenAI --> Edge
   Gemini --> Edge
   xAI --> Edge
   ElevenLabs --> Edge
   Hume --> Edge
+  Boson --> Edge
   Edge -->|WebSocket| ESP32
   ESP32 --> UserOutput
 ```
