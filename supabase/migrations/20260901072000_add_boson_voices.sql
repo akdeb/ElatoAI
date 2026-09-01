@@ -1,4 +1,23 @@
 ALTER TABLE personalities
+ADD COLUMN IF NOT EXISTS provider TEXT;
+
+UPDATE personalities AS personality
+SET provider = voice.provider
+FROM voices AS voice
+WHERE personality.voice_id = voice.voice_id
+  AND personality.provider IS DISTINCT FROM voice.provider;
+
+UPDATE personalities
+SET provider = 'openai'
+WHERE provider IS NULL;
+
+ALTER TABLE personalities
+ALTER COLUMN provider SET DEFAULT 'openai';
+
+ALTER TABLE personalities
+ALTER COLUMN provider SET NOT NULL;
+
+ALTER TABLE personalities
 DROP CONSTRAINT IF EXISTS personalities_provider_check;
 
 ALTER TABLE personalities
