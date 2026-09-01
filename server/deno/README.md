@@ -18,6 +18,7 @@ BOSON_API_KEY=<BOSON_API_KEY>
 Optional overrides are `BOSON_REALTIME_MODEL` (default `higgs-realtime`),
 `BOSON_TRANSCRIPTION_MODEL` (default `higgs-stt-3.1`), and
 `BOSON_TEMPERATURE` (default `0.3`). The bridge accepts the ESP32's binary
-audio stream, commits turns from the firmware's `end_of_speech` signal,
-packetizes Boson's 24 kHz PCM output as Opus, forwards transcripts, and
-supports interruption and end-session events.
+audio stream, uses tuned Boson server VAD for the firmware's continuous mic
+stream, packetizes Boson's 24 kHz PCM output as Opus, forwards transcripts,
+and supports interruption and end-session events. Tune far-field detection
+with `BOSON_ESP32_VAD_THRESHOLD` and `BOSON_ESP32_VAD_SILENCE_MS`.

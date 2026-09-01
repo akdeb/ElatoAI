@@ -148,7 +148,13 @@ export const connectToBoson = async ({
                     input: {
                         format: { type: "audio/pcm", rate: SAMPLE_RATE },
                         transcription: { model: BOSON_TRANSCRIPTION_MODEL },
-                        turn_detection: null,
+                        turn_detection: {
+                            type: "server_vad",
+                            threshold: Number(Deno.env.get("BOSON_ESP32_VAD_THRESHOLD") || "0.35"),
+                            prefix_padding_ms: 400,
+                            silence_duration_ms: Number(Deno.env.get("BOSON_ESP32_VAD_SILENCE_MS") || "700"),
+                            min_speech_duration: 0.125,
+                        },
                     },
                     output: {
                         format: { type: "audio/pcm", rate: SAMPLE_RATE },
@@ -262,11 +268,7 @@ export const connectToBoson = async ({
 
         if (message?.type !== "instruction") return;
 
-        if (message.msg === "end_of_speech") {
-            sendBoson({ event_id: eventId(), type: "input_audio_buffer.commit" });
-            sendBoson({ event_id: eventId(), type: "response.create" });
-            sendBoson({ event_id: eventId(), type: "input_audio_buffer.clear" });
-        } else if (message.msg === "INTERRUPT") {
+        if (message.msg === "INTERRUPT") {
             sendBoson({ event_id: eventId(), type: "response.cancel" });
             if (currentItemId) {
                 sendBoson({
