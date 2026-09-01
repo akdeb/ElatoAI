@@ -56,7 +56,7 @@ Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https:/
 3. [xAI Grok Voice Agent API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/grok)
 4. [Eleven Labs Conversational AI Agents](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/elevenlabs)
 5. [Hume AI EVI-4](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/hume)
-6. [Boson Higgs Realtime](https://docs.boson.ai/models/higgs-realtime/quickstart)
+6. [Boson Higgs Realtime](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/boson.ts)
 7. More speech to speech models coming soon!
 
 ### Cloudflare Workers
