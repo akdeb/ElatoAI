@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import { emotionOptions, geminiVoices, grokVoices, openaiVoices, r2UrlAudio } from "@/lib/data";
+import { bosonVoices, emotionOptions, geminiVoices, grokVoices, openaiVoices, r2UrlAudio } from "@/lib/data";
 import EmojiComponent from "./EmojiComponent";
 import { PitchFactors } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
@@ -26,7 +26,7 @@ interface SettingsDashboardProps {
 }
 
 const formSchema = z.object({
-  provider: z.enum(["openai", "gemini", "grok"]),
+  provider: z.enum(["openai", "gemini", "grok", "boson"]),
   title: z.string().min(2, "Minimum 2 characters").max(50, "Maximum 50 characters"),
   description: z.string().min(50, "Minimum 50 characters").max(200, "Maximum 200 characters"),
   prompt: z.string().min(100, "Minimum 100 characters").max(1000, "Maximum 1000 characters"),
@@ -260,7 +260,18 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
     if (provider === "grok") {
       return { label: "Grok", className: "bg-slate-900 text-white" };
     }
+    if (provider === "boson") {
+      return { label: "Boson", className: "bg-sky-600 text-white" };
+    }
     return { label: provider, className: "bg-gray-600 text-white" };
+  };
+
+  const getProviderVoices = (provider: ModelProvider): VoiceType[] => {
+    if (provider === "openai") return openaiVoices;
+    if (provider === "gemini") return geminiVoices;
+    if (provider === "grok") return grokVoices;
+    if (provider === "boson") return bosonVoices;
+    return [];
   };
 
   const Heading = () => {
@@ -290,11 +301,12 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                 Choose from a list of voices and model providers to create your AI character.
               </p>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {([
                   { provider: "openai" as ModelProvider, label: "OpenAI" },
                   { provider: "gemini" as ModelProvider, label: "Gemini" },
                   { provider: "grok" as ModelProvider, label: "Grok" },
+                  { provider: "boson" as ModelProvider, label: "Boson" },
                 ]).map((p) => (
                   <button
                     key={p.provider}
@@ -316,10 +328,10 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                     }}
                   >
                     <div className="flex flex-col gap-1">
-                      <div className="flex flex-col sm:flex-row gap-2 items-center justify-between">
+                      <div className="flex flex-col sm:flex-row gap-2 items-center">
                         <span className="font-semibold text-gray-900">{p.label}</span>
                         <span className="text-xs text-gray-500">
-                          {p.provider === "openai" ? openaiVoices.length : p.provider === "gemini" ? geminiVoices.length : grokVoices.length} voices
+                          ({getProviderVoices(p.provider).length})
                         </span>
                       </div>
                     </div>
@@ -330,7 +342,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
               {expandedProvider && (
                 <div className="overflow-x-auto px-2">
                   <div className="flex gap-3 w-max py-2">
-                    {(expandedProvider === "openai" ? openaiVoices : expandedProvider === "gemini" ? geminiVoices : grokVoices).map((voice: VoiceType) => (
+                    {getProviderVoices(expandedProvider).map((voice: VoiceType) => (
                       <div
                         key={voice.id}
                         className={`relative rounded-xl border-2 p-4 transition-all cursor-pointer hover:scale-[1.02] hover:shadow-lg w-48 flex-shrink-0 ${formData.voice === voice.id

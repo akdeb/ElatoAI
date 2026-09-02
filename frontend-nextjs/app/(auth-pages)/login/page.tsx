@@ -102,7 +102,7 @@ export default async function Login({ searchParams }: LoginProps) {
           )}
 
            <Separator className="mt-2" />
-           <span className="text-sm text-gray-500">If you've got your DB running locally, you can login with: <br/><span className="font-bold">Email</span> admin@elatoai.com<br /><span className="font-bold">Password</span> admin</span>
+           <span className="text-sm text-gray-500">If you've got your DB running locally and Docker running, you can login with: <br/><br/><span className="font-bold">Email</span> admin@elatoai.com<br /><span className="font-bold">Password</span> admin</span>
          
           <form className="flex-1 flex flex-col w-full justify-center gap-4">
             <Label className="text-md" htmlFor="email">

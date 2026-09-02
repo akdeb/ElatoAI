@@ -26,7 +26,7 @@ import { FaDiscord, FaGithub } from "react-icons/fa";
 import {
     businessDemoLink,
     discordInviteLink,
-    feedbackFormLink,
+    feedbackMailtoLink,
     githubPublicLink,
 } from "@/lib/data";
 import PremiumBadge from "../PremiumBadge";
@@ -156,15 +156,13 @@ export function NavbarDropdownMenu({ user, stars }: NavbarMenuButtonProps) {
                     </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                    <Link
-                        href={feedbackFormLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                    <a
+                        href={feedbackMailtoLink}
                         className="flex flex-row items-center gap-2 w-full"
                     >
                         <Mail size={ICON_SIZE - 2} />
                         <span>Send feedback</span>
-                    </Link>
+                    </a>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <div className="flex flex-row gap-2">

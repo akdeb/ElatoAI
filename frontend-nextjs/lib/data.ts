@@ -9,7 +9,11 @@ export const discordInviteLink = "https://discord.gg/KJWxDPBRUj";
 export const tiktokLink = "https://www.tiktok.com/@elatoai";
 export const githubPublicLink = "https://github.com/akdeb/ElatoAI";
 export const businessDemoLink = "https://calendly.com/akadeb/elato-ai-demo";
-export const feedbackFormLink = "https://forms.gle/2QmukEG2FXNwBdee7";
+export const feedbackMailtoLink = `mailto:akash@elatoai.com?subject=${encodeURIComponent(
+    "ElatoAI feedback"
+)}&body=${encodeURIComponent(
+    "What were you trying to do?\n\n\nWhat happened instead?\n\n"
+)}`;
 export const kickstarterLink = "https://www.kickstarter.com/projects/elatoai/elato-make-toys-talk-with-ai-voices";
 
 export const r2Url = "https://pub-cd736d767add4fecafea55c239c28497.r2.dev";
@@ -142,6 +146,73 @@ export const grokVoices: VoiceType[] = [
         color: "bg-green-100",
         provider: "grok",
     }
+];
+
+export const bosonVoices: VoiceType[] = [
+    {
+        id: "chloe",
+        name: "Chloe",
+        description: "Friendly and clear",
+        color: "bg-sky-50",
+        emoji: "🎙️",
+        provider: "boson",
+    },
+    {
+        id: "eleanor",
+        name: "Eleanor",
+        description: "Calm and articulate",
+        color: "bg-indigo-50",
+        emoji: "🎙️",
+        provider: "boson",
+    },
+    {
+        id: "nora",
+        name: "Nora",
+        description: "Calm and clear",
+        color: "bg-violet-50",
+        emoji: "🎙️",
+        provider: "boson",
+    },
+    {
+        id: "jake",
+        name: "Jake",
+        description: "Energetic",
+        color: "bg-emerald-50",
+        emoji: "🎙️",
+        provider: "boson",
+    },
+    {
+        id: "marcus",
+        name: "Marcus",
+        description: "Enthusiastic",
+        color: "bg-amber-50",
+        emoji: "🎙️",
+        provider: "boson",
+    },
+    {
+        id: "oliver",
+        name: "Oliver",
+        description: "Calm and articulate",
+        color: "bg-teal-50",
+        emoji: "🎙️",
+        provider: "boson",
+    },
+    {
+        id: "yujin",
+        name: "Yujin",
+        description: "Bright and personable",
+        color: "bg-rose-50",
+        emoji: "🎙️",
+        provider: "boson",
+    },
+    {
+        id: "jiho",
+        name: "Jiho",
+        description: "Friendly and reassuring",
+        color: "bg-blue-50",
+        emoji: "🎙️",
+        provider: "boson",
+    },
 ];
 
 export const geminiVoices: VoiceType[] = [

@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import { getOpenGraphMetadata } from "@/lib/utils";
 import { MobileNav } from "../components/Nav/MobileNav";
 import { getUserById } from "@/db/users";
+import { FeedbackButton } from "../components/Nav/FeedbackButton";
 
 const ICON_SIZE = 20;
 
@@ -68,11 +69,15 @@ export default async function RootLayout({
         <div className="flex flex-1 flex-col mx-auto w-full max-w-[1400px] gap-2 pb-2 md:flex-row">
             <aside className="w-full md:w-[270px] sm:py-4 pt-2 md:overflow-y-auto md:fixed md:h-screen">
                 <SidebarNav items={sidebarNavItems} />
+                <div className="mx-auto hidden max-w-[220px] md:block">
+                    <FeedbackButton />
+                </div>
             </aside>
             <main className="flex-1 sm:py-4 px-4 flex justify-center md:ml-[270px]">
                 <div className="max-w-5xl w-full">{children}</div>
             </main>
             <MobileNav items={mobileNavItems} />
+            <FeedbackButton mobile />
         </div>
     );
 }

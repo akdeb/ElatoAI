@@ -122,9 +122,17 @@ declare global {
             description: string;
             color: string;
             emoji?: string;
+        }
+        | {
+            provider: "boson";
+            id: BosonVoice;
+            name: string;
+            description: string;
+            color: string;
+            emoji?: string;
         };
 
-    type ModelProvider = "openai" | "gemini" | "grok" | "elevenlabs" | "hume";
+    type ModelProvider = "openai" | "gemini" | "grok" | "boson" | "elevenlabs" | "hume";
 
     type GrokVoice =
         | "Ara"
@@ -174,6 +182,16 @@ declare global {
         | "coral"
         | "sage"
         | "verse";
+
+    type BosonVoice =
+        | "chloe"
+        | "eleanor"
+        | "nora"
+        | "jake"
+        | "marcus"
+        | "oliver"
+        | "yujin"
+        | "jiho";
 
     // characters <-> personalities table
     /**
