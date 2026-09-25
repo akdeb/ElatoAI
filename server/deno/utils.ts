@@ -9,7 +9,7 @@ export const defaultVolume = 50;
 
 export const defaultGeminiVoice = "Sadachbia";
 export const defaultOpenAIVoice = "ash";
-export const defaultGrokVoice = "Ara";
+export const defaultGrokVoice = "ara";
 export const defaultBosonVoice = "chloe";
 
 // Define your audio parameters

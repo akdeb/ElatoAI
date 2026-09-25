@@ -100,7 +100,7 @@ declare global {
 
     type VoiceType =
         | {
-            provider: "openai";
+            provider: "openai" | "openai-live";
             id: OaiVoice;
             name: string;
             description: string;
@@ -132,7 +132,14 @@ declare global {
             emoji?: string;
         };
 
-    type ModelProvider = "openai" | "gemini" | "grok" | "boson" | "elevenlabs" | "hume";
+    type ModelProvider =
+        | "openai"
+        | "openai-live"
+        | "gemini"
+        | "grok"
+        | "boson"
+        | "elevenlabs"
+        | "hume";
 
     type GrokVoice =
         | "Ara"

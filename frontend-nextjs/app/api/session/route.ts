@@ -161,7 +161,7 @@ export async function GET(request: NextRequest) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "gpt-realtime-1.5",
+          model: "gpt-realtime-2.1",
           instructions: systemPrompt,
           voice: dbUser.personality?.oai_voice ?? "ballad",
         }),

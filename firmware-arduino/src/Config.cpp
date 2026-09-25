@@ -43,8 +43,12 @@ volatile bool sleepRequested = false;
  */
 
 #ifdef DEV_MODE
-const char *ws_server = "192.168.1.33";
+const char *ws_server = "172.20.10.4";
 const char *ws_path = "/";
+
+// Backend server details
+const char *backend_server = "172.20.10.4";
+const uint16_t backend_port = 3000;
 
 #if defined(VOICE_SERVER_DENO)
 const uint16_t ws_port = 8000;
@@ -52,9 +56,6 @@ const uint16_t ws_port = 8000;
 const uint16_t ws_port = 8787;
 #endif
 
-// Backend server details
-const char *backend_server = "192.168.1.33";
-const uint16_t backend_port = 3000;
 
 #elif defined(PROD_MODE)
 // PROD - self-hosted. Pick VOICE_SERVER_DENO or VOICE_SERVER_CLOUDFLARE above.

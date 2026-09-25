@@ -59,7 +59,8 @@ export const getMyPersonalities = async (
     const { data, error } = await supabase
         .from("personalities")
         .select(`*`)
-        .eq("creator_id", userId);
+        .eq("creator_id", userId)
+        .order("created_at", { ascending: false });
 
     if (error) {
         console.log("error getMyPersonalities", error);

@@ -21,7 +21,7 @@ export async function createRealtimeConnection(
   await pc.setLocalDescription(offer);
 
   const baseUrl = "https://api.openai.com/v1/realtime";
-  const model = "gpt-realtime-1.5";
+  const model = "gpt-realtime-2.1";
 
   const sdpResponse = await fetch(`${baseUrl}?model=${model}`, {
     method: "POST",

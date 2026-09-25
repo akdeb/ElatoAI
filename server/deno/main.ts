@@ -1,37 +1,33 @@
-import { createServer } from "node:http";
-import { WebSocketServer } from "npm:ws";
-import type {
-    WebSocket as WSWebSocket,
-    WebSocketServer as _WebSocketServer,
-} from "npm:@types/ws";
-import { authenticateUser } from "./utils.ts";
+import { createServer } from 'node:http';
+import { WebSocketServer } from 'npm:ws';
+import type { WebSocket as WSWebSocket, WebSocketServer as _WebSocketServer } from 'npm:@types/ws';
+import { authenticateUser } from './utils.ts';
 import {
     createFirstMessage,
     createSystemPrompt,
     getChatHistory,
     getSupabaseClient,
-} from "./supabase.ts";
-import { SupabaseClient } from "@supabase/supabase-js";
-import { isDev } from "./utils.ts";
-import { connectToOpenAI } from "./models/openai.ts";
-import { connectToGemini } from "./models/gemini.ts";
-import { connectToElevenLabs } from "./models/elevenlabs.ts";
-import { connectToHume } from "./models/hume.ts";
-import { connectToGrok } from "./models/grok.ts";
-import { connectToBoson } from "./models/boson.ts";
+} from './supabase.ts';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { isDev } from './utils.ts';
+import { connectToOpenAI } from './models/openai.ts';
+import { connectToOpenAILive } from './models/openai-live.ts';
+import { connectToGemini } from './models/gemini.ts';
+import { connectToElevenLabs } from './models/elevenlabs.ts';
+import { connectToHume } from './models/hume.ts';
+import { connectToGrok } from './models/grok.ts';
+import { connectToBoson } from './models/boson.ts';
 
 const server = createServer();
 
-const wss: _WebSocketServer = new WebSocketServer({ noServer: true,
-    perMessageDeflate: false,
- });
+const wss: _WebSocketServer = new WebSocketServer({ noServer: true, perMessageDeflate: false });
 
 wss.on('headers', (headers, req) => {
     // You should NOT see any "Sec-WebSocket-Extensions" here
     console.log('WS response headers :', headers);
 });
 
-wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
+wss.on('connection', async (ws: WSWebSocket, payload: IPayload) => {
     const { user, supabase } = payload;
 
     let connectionPcmFile: Deno.FsFile | null = null;
@@ -59,8 +55,8 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     // when DEV_MODE is true, we send the default values 100, false, false
     ws.send(
         JSON.stringify({
-            type: "auth",
-            volume_control: user.device?.volume ?? 50,
+            type: 'auth',
+            volume_control: user.device?.volume ?? 90,
             is_ota: user.device?.is_ota ?? false,
             is_reset: user.device?.is_reset ?? false,
             pitch_factor: user.personality?.pitch_factor ?? 1,
@@ -83,22 +79,25 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     };
 
     switch (provider) {
-        case "openai":
+        case 'openai':
             await connectToOpenAI(providerArgs);
             break;
-        case "gemini":
+        case 'openai-live':
+            await connectToOpenAILive(providerArgs);
+            break;
+        case 'gemini':
             await connectToGemini(providerArgs);
             break;
-        case "grok":
+        case 'grok':
             await connectToGrok(providerArgs);
             break;
-        case "elevenlabs":
+        case 'elevenlabs':
             await connectToElevenLabs(providerArgs);
             break;
-        case "hume":
+        case 'hume':
             await connectToHume(providerArgs);
             break;
-        case "boson":
+        case 'boson':
             await connectToBoson(providerArgs);
             break;
         default:
@@ -106,7 +105,7 @@ wss.on("connection", async (ws: WSWebSocket, payload: IPayload) => {
     }
 });
 
-server.on("upgrade", async (req, socket, head) => {
+server.on('upgrade', async (req, socket, head) => {
     console.log('foobar upgrade', req.headers);
     let user: IUser;
     let supabase: SupabaseClient;
@@ -114,18 +113,18 @@ server.on("upgrade", async (req, socket, head) => {
     try {
         const {
             authorization: authHeader,
-            "x-wifi-rssi": rssi,
-            "x-device-mac": deviceMac,
+            'x-wifi-rssi': rssi,
+            'x-device-mac': deviceMac,
         } = req.headers;
-        authToken = authHeader?.replace("Bearer ", "") ?? "";
+        authToken = authHeader?.replace('Bearer ', '') ?? '';
         const wifiStrength = parseInt(rssi as string); // Convert to number
 
         // You can now use wifiStrength in your code
-        console.log("WiFi RSSI:", wifiStrength); // Will log something like -50
+        console.log('WiFi RSSI:', wifiStrength); // Will log something like -50
 
         // Remove debug logging
         if (!authToken) {
-            socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+            socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
             socket.destroy();
             return;
         }
@@ -136,18 +135,18 @@ server.on("upgrade", async (req, socket, head) => {
         // allow any mac address for dev
         const expectedMac = user.device?.mac_address;
         if (!isDev && deviceMac && deviceMac !== expectedMac) {
-            socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+            socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
             socket.destroy();
             return;
         }
     } catch (_e: any) {
-        socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
+        socket.write('HTTP/1.1 401 Unauthorized\r\n\r\n');
         socket.destroy();
         return;
     }
 
     wss.handleUpgrade(req, socket, head, (ws) => {
-        wss.emit("connection", ws, {
+        wss.emit('connection', ws, {
             user,
             supabase,
             timestamp: new Date().toISOString(),
@@ -156,8 +155,8 @@ server.on("upgrade", async (req, socket, head) => {
 });
 
 if (isDev) { // RUN WITH: deno run -A --env-file=.env main.ts
-    const HOST = Deno.env.get("HOST") || "0.0.0.0";
-    const PORT = Deno.env.get("PORT") || "8000";
+    const HOST = Deno.env.get('HOST') || '0.0.0.0';
+    const PORT = Deno.env.get('PORT') || '8000';
     server.listen(Number(PORT), HOST, () => {
         console.log(`Audio capture server running on ws://${HOST}:${PORT}`);
     });
