@@ -15,6 +15,14 @@ TaskHandle_t networkTaskHandle = NULL;
 volatile bool scheduleListeningRestart = false;
 unsigned long scheduledTime = 0;
 unsigned long speakingStartTime = 0;
+// Live completion is a playback handoff, not a forced one-second restart.
+// Only networkTask accesses the IDs; speakerTask publishes its write status.
+uint32_t activePlaybackId = 0;
+uint32_t pendingPlaybackId = 0;
+volatile bool speakerCopyActive = false;
+volatile unsigned long lastSpeakerWriteTime = 0;
+unsigned long playbackDrainRequestedTime = 0;
+unsigned long speakerDrainGuardMs = 250;
 
 // AUDIO SETTINGS
 int currentVolume = 70;
@@ -74,7 +82,11 @@ unsigned long getSpeakingDuration() {
 
 // networkTask -> webSocket.loop() -> webSocketEvent(WStype_TEXT, ...) -> transitionToSpeaking()
 void transitionToSpeaking() {
+    if (shutdownInProgress) return;
+    scheduleListeningRestart = false;
+    pendingPlaybackId = 0;
     vTaskDelay(50);
+    if (shutdownInProgress) return;
 
     i2sInputFlushScheduled = true;
     
@@ -90,8 +102,10 @@ void transitionToSpeaking() {
 // networkTask -> transitionToListening()
 // ( networkTask -> webSocket.loop() -> webSocketEvent(WStype_TEXT, ...) -> (sets scheduleListeningRestart) -> networkTask -> transitionToListening() )
 void transitionToListening() {
+    if (shutdownInProgress) return;
     deviceState = PROCESSING;   
     scheduleListeningRestart = false;
+    pendingPlaybackId = 0;
     Serial.println("Transitioning to listening mode");
 
     i2sInputFlushScheduled = true;
@@ -137,6 +151,10 @@ void audioStreamTask(void *parameter) {
     config.port_no = I2S_PORT_OUT;
 
     config.copyFrom(info);  
+    // Cover all configured DMA samples plus an acoustic tail after the last
+    // blocking write. Queue-empty alone does not mean I2S finished playing.
+    speakerDrainGuardMs = 250 +
+        (1000UL * config.buffer_count * config.buffer_size + SAMPLE_RATE - 1) / SAMPLE_RATE;
     i2s.begin(config);  
 
     // Initialize both volume streams once
@@ -151,6 +169,13 @@ void audioStreamTask(void *parameter) {
     volumePitch.begin(vcfgPitch);
 
     while (1) {
+        if (shutdownInProgress) {
+            // Drain a producer already inside the decoder so shutdown can
+            // acquire wsMutex, but never write more data to the speaker.
+            while (queue.available() > 0) queue.read();
+            vTaskDelay(1);
+            continue;
+        }
         if ( i2sOutputFlushScheduled) {
             i2sOutputFlushScheduled = false;
             i2s.flush();
@@ -160,11 +185,15 @@ void audioStreamTask(void *parameter) {
         }
 
         if (webSocket.isConnected() && deviceState == SPEAKING) {
+            speakerCopyActive = true;
+            size_t copied = 0;
             if (currentPitchFactor != 1.0f) {
-                pitchCopier.copy();
+                copied = pitchCopier.copy();
             } else {
-                copier.copy();
+                copied = copier.copy();
             }
+            if (copied > 0) lastSpeakerWriteTime = millis();
+            speakerCopyActive = false;
         }
         else {
             //we should always read from audioBuffer, otherwise writing thread can stuck
@@ -179,24 +208,24 @@ class WebsocketStream : public Print {
 public:
     // micTask -> micToWsCopier.copyBytes() -> wsStream.write()
     virtual size_t write(uint8_t b) override {
-        if (!webSocket.isConnected() || deviceState != LISTENING) {
+        if (shutdownInProgress || !webSocket.isConnected() || deviceState != LISTENING) {
             return 1;
         }
         
         xSemaphoreTake(wsMutex, portMAX_DELAY);
-        webSocket.sendBIN(&b, 1);
+        if (!shutdownInProgress && webSocket.isConnected() && deviceState == LISTENING) webSocket.sendBIN(&b, 1);
         xSemaphoreGive(wsMutex);
         return 1;
     }
     
     // micTask -> micToWsCopier.copyBytes() -> wsStream.write()
     virtual size_t write(const uint8_t *buffer, size_t size) override {
-        if (size == 0 || !webSocket.isConnected() || deviceState != LISTENING) {
+        if (shutdownInProgress || size == 0 || !webSocket.isConnected() || deviceState != LISTENING) {
             return size;
         }
         
         xSemaphoreTake(wsMutex, portMAX_DELAY);
-        webSocket.sendBIN(buffer, size);
+        if (!shutdownInProgress && webSocket.isConnected() && deviceState == LISTENING) webSocket.sendBIN(buffer, size);
         xSemaphoreGive(wsMutex);
         return size;
     }
@@ -207,6 +236,20 @@ I2SStream i2sInput; //access from micTask only
 StreamCopy micToWsCopier(wsStream, i2sInput);
 volatile bool i2sInputFlushScheduled = false;
 const int MIC_COPY_SIZE = 64;
+size_t micDiscardLimit = 0;
+
+// I2SStream::flush() is a no-op in the bundled audio-tools version. Drain RX
+// with zero timeout so recorded speaker echo cannot survive a mic handoff.
+void discardMicAudio() {
+    uint8_t scratch[256];
+    size_t discarded = 0;
+    while (discarded < micDiscardLimit) {
+        size_t bytesRead = 0;
+        if (i2s_read(I2S_PORT_IN, scratch, sizeof(scratch), &bytesRead, 0) != ESP_OK ||
+            bytesRead == 0) break;
+        discarded += bytesRead;
+    }
+}
 
 void micTask(void *parameter) {
     // Configure and start I2S input stream.
@@ -221,14 +264,19 @@ void micTask(void *parameter) {
     i2sConfig.pin_ws  = I2S_WS;
     i2sConfig.pin_data = I2S_SD;
     i2sConfig.port_no = I2S_PORT_IN;
+    micDiscardLimit = i2sConfig.buffer_count * i2sConfig.buffer_size * 4;
     i2sInput.begin(i2sConfig);
 
     micToWsCopier.setDelayOnNoData(0);
 
     while (1) {
+        if (shutdownInProgress) {
+            vTaskDelay(pdMS_TO_TICKS(10));
+            continue;
+        }
         if (i2sInputFlushScheduled) {
             i2sInputFlushScheduled = false;
-            i2sInput.flush();
+            discardMicAudio();
         }
 
         if (deviceState == LISTENING && webSocket.isConnected()) {
@@ -238,6 +286,7 @@ void micTask(void *parameter) {
             // Yield more frequently
             vTaskDelay(1);
         } else {
+            discardMicAudio();
             vTaskDelay(10);
         }
     }
@@ -247,11 +296,15 @@ void micTask(void *parameter) {
 // networkTask -> webSocket.loop() -> webSocketEvent()
 void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
 {
+    if (shutdownInProgress) return;
     switch (type)
     {
     case WStype_DISCONNECTED:
         Serial.printf("[WSc] Disconnected!\n");
         deviceState = IDLE;
+        scheduleListeningRestart = false;
+        activePlaybackId = pendingPlaybackId = 0;
+        i2sOutputFlushScheduled = true;
         break;
     case WStype_CONNECTED:
         Serial.printf("[WSc] Connected to url: %s\n", payload);
@@ -313,7 +366,19 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
             Serial.println(msg);
 
             if (strcmp((char*)msg.c_str(), "RESPONSE.COMPLETE") == 0 || strcmp((char*)msg.c_str(), "RESPONSE.ERROR") == 0) {
+                // A playback_id means the server wants a handoff: finish playing the
+                // queued audio, then ack with PLAYBACK.COMPLETE before listening.
+                uint32_t playbackId = doc["playback_id"] | 0UL;
+                if (msg == "RESPONSE.COMPLETE" && playbackId != 0) {
+                    if (playbackId == activePlaybackId &&
+                        (deviceState == SPEAKING || deviceState == LISTENING)) {
+                        pendingPlaybackId = playbackId;
+                        playbackDrainRequestedTime = millis();
+                    }
+                    break;
+                }
                 Serial.println("Received RESPONSE.COMPLETE or RESPONSE.ERROR, starting listening again");
+                pendingPlaybackId = 0;
 
                 // Check if volume_control is included in the message
                 if (doc.containsKey("volume_control")) {
@@ -328,6 +393,7 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
             } else if (strcmp((char*)msg.c_str(), "RESPONSE.CREATED") == 0) {
                 Serial.println("Received RESPONSE.CREATED, transitioning to speaking");
                 transitionToSpeaking();
+                activePlaybackId = doc["playback_id"] | 0UL;
             } else if (strcmp((char*)msg.c_str(), "SESSION.END") == 0) {
                 Serial.println("Received SESSION.END, going to sleep");
                 sleepRequested = true;
@@ -365,12 +431,18 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
 // wifiTask -> WIFIMANAGER::loop() -> WIFIMANAGER::tryConnect() -> connectCb() -> websocketSetup()
 void websocketSetup(const String& server_domain, int port, const String& path)
 {
+    if (shutdownInProgress) return;
     const String headers =
         "Authorization: Bearer " + String(authTokenGlobal) + "\r\n" +
         "X-Wifi-Rssi: " + String(WiFi.RSSI()) + "\r\n" +
+        "X-Elato-Playback-Ack: 1\r\n" +
         "X-Device-Mac: " + WiFi.macAddress();
 
     xSemaphoreTake(wsMutex, portMAX_DELAY);
+    if (shutdownInProgress) {
+        xSemaphoreGive(wsMutex);
+        return;
+    }
 
     webSocket.setExtraHeaders(headers.c_str());
     webSocket.onEvent(webSocketEvent);
@@ -391,14 +463,38 @@ void websocketSetup(const String& server_domain, int port, const String& path)
 // networkTask -> webSocket.loop()
 void networkTask(void *parameter) {
     while (1) {
+        if (shutdownInProgress) {
+            vTaskDelay(pdMS_TO_TICKS(10));
+            continue;
+        }
         xSemaphoreTake(wsMutex, portMAX_DELAY);
+        if (shutdownInProgress) {
+            xSemaphoreGive(wsMutex);
+            continue;
+        }
 
         // Check to see if a transition to listening mode is scheduled.
-        if (scheduleListeningRestart && millis() >= scheduledTime) {
+        if (scheduleListeningRestart && (long)(millis() - scheduledTime) >= 0) {
             transitionToListening();
         }
 
         webSocket.loop();
+        if (pendingPlaybackId != 0 &&
+            (deviceState == SPEAKING || deviceState == LISTENING) &&
+            !speakerCopyActive && audioBuffer.available() == 0 &&
+            millis() - lastSpeakerWriteTime >= speakerDrainGuardMs &&
+            millis() - playbackDrainRequestedTime >= speakerDrainGuardMs) {
+            uint32_t completedId = pendingPlaybackId;
+            // Turn the amp off and flush input before permitting mic frames.
+            transitionToListening();
+            JsonDocument ack;
+            ack["type"] = "instruction";
+            ack["msg"] = "PLAYBACK.COMPLETE";
+            ack["playback_id"] = completedId;
+            String text;
+            serializeJson(ack, text);
+            webSocket.sendTXT(text);
+        }
         xSemaphoreGive(wsMutex);
 
         vTaskDelay(1);

@@ -102,6 +102,8 @@ extern const i2s_port_t I2S_PORT_OUT;
 extern const int I2S_SD_OUT;
 
 extern volatile bool sleepRequested;
+// Latched until reboot; disconnect callbacks must not undo shutdown.
+extern volatile bool shutdownInProgress;
 
 // SSL certificate
 extern const char *CA_cert;

@@ -49,7 +49,16 @@ wss.on('connection', async (ws: WSWebSocket, payload: IPayload) => {
     const firstMessage = createFirstMessage(payload);
     const systemPrompt = createSystemPrompt(chatHistory, payload);
 
-    const provider = user.personality?.provider;
+    // OPENAI_LIVE_USER_IDS (comma-separated user ids): try GPT-Live on those
+    // users' OpenAI characters while everyone else stays on the Realtime API.
+    const openaiLiveUserIds = (Deno.env.get('OPENAI_LIVE_USER_IDS') ?? '')
+        .split(',')
+        .map((id) => id.trim())
+        .filter(Boolean);
+    let provider = user.personality?.provider;
+    if (provider === 'openai' && openaiLiveUserIds.includes(String(user.user_id))) {
+        provider = 'openai-live';
+    }
 
     // send user details to client
     // when DEV_MODE is true, we send the default values 100, false, false

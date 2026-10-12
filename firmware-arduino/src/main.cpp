@@ -19,11 +19,14 @@ esp_err_t getErr = ESP_OK;
 // Touch Task -> touchTask -> enterSleep()
 // Main Thread -> loop() (inactivity timeout) -> enterSleep()
 void enterSleep() {
+  if (shutdownInProgress) return;
+  shutdownInProgress = true;
   Serial.println("Going to sleep...");
 
   // First, change device state to prevent any new data processing
   deviceState = SLEEP;
   scheduleListeningRestart = false;
+  digitalWrite(I2S_SD_OUT, LOW); // mute the amplifier
   i2sOutputFlushScheduled = true;
   i2sInputFlushScheduled = true;
   vTaskDelay(10); // let all tasks accept state
@@ -42,9 +45,8 @@ void enterSleep() {
   xSemaphoreGive(wsMutex);
   delay(100);
 
-  // Stop all tasks that might be using I2S or other peripherals
-  i2s_driver_uninstall(I2S_PORT_IN);
-  i2s_driver_uninstall(I2S_PORT_OUT);
+  // Deep sleep resets the drivers. Do not free them here while another task
+  // may still be returning from an in-flight I2S read/write.
 
   // Flush any remaining serial output
   Serial.flush();

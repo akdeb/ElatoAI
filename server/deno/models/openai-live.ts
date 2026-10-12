@@ -27,6 +27,11 @@ const OPENAI_LIVE_VOICE = Deno.env.get('OPENAI_LIVE_VOICE') || 'marin';
 // mid-turn by design and the firmware drops inbound audio once it leaves
 // SPEAKING, so too low clips responses and too high delays listening.
 const TURN_IDLE_MS = Number(Deno.env.get('OPENAI_LIVE_TURN_IDLE_MS') || '900');
+// How long to wait for GPT-Live's opening line before letting the user speak
+// first. It owns turn-taking and often waits for the user, and the ESP32 only
+// starts sending microphone audio after a turn completes.
+const OPENING_GRACE_MS =
+    Number(Deno.env.get('OPENAI_LIVE_OPENING_GRACE_SECONDS') || '2.5') * 1000;
 
 const ESP32_INPUT_RATE = 16000;
 // Live fixes one format for both directions at session.start; 24kHz is what the
@@ -137,17 +142,29 @@ export const connectToOpenAILive = async ({
 
     const sendFirstMessage = () => {
         if (!firstMessage.trim()) return;
-        // Live has no conversation.item.create; commentary.append is the
-        // documented way to give the model something to say aloud (it
-        // paraphrases). delegation_id is required even when null.
+        // Live has no conversation.item.create; instructions.append is the
+        // documented way to have the model open the conversation. delegation_id
+        // is required even when null.
         liveWs.send(
             JSON.stringify({
                 event_id: eventId(),
-                type: 'session.commentary.append',
+                type: 'session.instructions.append',
                 delegation_id: null,
-                content: firstMessage,
+                content: `Greet the user now with this opening, then pause and listen: ${firstMessage}`,
             }),
         );
+    };
+
+    // If the model hasn't started talking shortly after the session is ready,
+    // tell the device to listen; a later greeting still moves it to speaking
+    // through the usual RESPONSE.CREATED.
+    let openingTimer: ReturnType<typeof setTimeout> | undefined;
+    const startListeningIfQuiet = () => {
+        openingTimer = setTimeout(() => {
+            if (speaking || ws.readyState !== WebSocket.OPEN) return;
+            console.log('GPT-Live: no opening line yet, starting the device listening');
+            ws.send(JSON.stringify({ type: 'server', msg: 'RESPONSE.COMPLETE' }));
+        }, OPENING_GRACE_MS);
     };
 
     liveWs.on('open', () => {
@@ -243,6 +260,7 @@ export const connectToOpenAILive = async ({
                     console.log(`GPT-Live session ready with model ${OPENAI_LIVE_MODEL}`);
                     sessionReady = true;
                     sendFirstMessage();
+                    startListeningIfQuiet();
                     while (messageQueue.length > 0) {
                         const queued = messageQueue.shift();
                         if (queued) await messageHandler(queued.data, queued.isBinary);
@@ -290,6 +308,7 @@ export const connectToOpenAILive = async ({
 
     liveWs.on('close', () => {
         clearInterval(turnWatchdog);
+        clearTimeout(openingTimer);
         ws.close();
     });
 
@@ -349,6 +368,7 @@ export const connectToOpenAILive = async ({
     ws.on('close', async (code: number, reason: string) => {
         console.log(`ESP32 WebSocket closed with code ${code}, reason: ${reason}`);
         clearInterval(turnWatchdog);
+        clearTimeout(openingTimer);
         await closeHandler();
         opus.close();
         liveWs.close();

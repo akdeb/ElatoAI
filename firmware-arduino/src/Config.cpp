@@ -6,6 +6,7 @@ Preferences preferences;
 OtaStatus otaState = OTA_IDLE;
 bool factory_reset_status = false;
 volatile bool sleepRequested = false;
+volatile bool shutdownInProgress = false;
 
 /**
  * Configuration for Elato Firmware
