@@ -6,7 +6,6 @@ import os
 from dataclasses import asdict, dataclass
 from typing import Literal
 
-
 ProviderCategory = Literal["llm", "stt", "tts"]
 
 
@@ -28,6 +27,14 @@ PROVIDER_SPECS: dict[ProviderCategory, dict[str, ProviderSpec]] = {
             module="models.llm.openai",
             env=("OPENAI_API_KEY",),
             description="OpenAI chat-completions compatible LLM.",
+        ),
+        "atlascloud": ProviderSpec(
+            name="atlascloud",
+            category="llm",
+            module="models.llm.atlascloud",
+            env=("ATLASCLOUD_API_KEY",),
+            aliases=("atlas_cloud",),
+            description="Atlas Cloud via its OpenAI-compatible chat-completions API.",
         ),
         "claude": ProviderSpec(
             name="claude",
@@ -117,7 +124,9 @@ def get_provider_spec(category: ProviderCategory, provider_name: str) -> Provide
         if normalized == key or normalized in spec.aliases:
             return spec
     available = ", ".join(sorted(PROVIDER_SPECS[category]))
-    raise ValueError(f"Unknown {category} provider '{provider_name}'. Available providers: {available}")
+    raise ValueError(
+        f"Unknown {category} provider '{provider_name}'. Available providers: {available}"
+    )
 
 
 def validate_provider_env(category: ProviderCategory, provider_name: str) -> None:
