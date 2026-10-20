@@ -130,6 +130,14 @@ declare global {
             description: string;
             color: string;
             emoji?: string;
+        }
+        | {
+            provider: "mistral";
+            id: MistralVoice;
+            name: string;
+            description: string;
+            color: string;
+            emoji?: string;
         };
 
     type ModelProvider =
@@ -138,6 +146,7 @@ declare global {
         | "gemini"
         | "grok"
         | "boson"
+        | "mistral"
         | "elevenlabs"
         | "hume";
 
@@ -189,6 +198,38 @@ declare global {
         | "coral"
         | "sage"
         | "verse";
+
+    type MistralVoice =
+        | "en_paul_neutral"
+        | "en_paul_happy"
+        | "en_paul_cheerful"
+        | "en_paul_excited"
+        | "en_paul_confident"
+        | "en_paul_sad"
+        | "en_paul_frustrated"
+        | "en_paul_angry"
+        | "gb_oliver_neutral"
+        | "gb_oliver_cheerful"
+        | "gb_oliver_curious"
+        | "gb_oliver_confident"
+        | "gb_oliver_excited"
+        | "gb_oliver_sad"
+        | "gb_oliver_angry"
+        | "gb_jane_neutral"
+        | "gb_jane_curious"
+        | "gb_jane_confident"
+        | "gb_jane_confused"
+        | "gb_jane_sarcasm"
+        | "gb_jane_shameful"
+        | "gb_jane_sad"
+        | "gb_jane_jealousy"
+        | "gb_jane_frustrated"
+        | "fr_marie_neutral"
+        | "fr_marie_happy"
+        | "fr_marie_curious"
+        | "fr_marie_excited"
+        | "fr_marie_sad"
+        | "fr_marie_angry";
 
     type BosonVoice =
         | "chloe"

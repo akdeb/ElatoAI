@@ -17,6 +17,7 @@ import { connectToElevenLabs } from './models/elevenlabs.ts';
 import { connectToHume } from './models/hume.ts';
 import { connectToGrok } from './models/grok.ts';
 import { connectToBoson } from './models/boson.ts';
+import { connectToMistral } from './models/mistral.ts';
 
 const server = createServer();
 
@@ -108,6 +109,9 @@ wss.on('connection', async (ws: WSWebSocket, payload: IPayload) => {
             break;
         case 'boson':
             await connectToBoson(providerArgs);
+            break;
+        case 'mistral':
+            await connectToMistral(providerArgs);
             break;
         default:
             throw new Error(`Unknown provider: ${provider}`);

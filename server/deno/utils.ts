@@ -108,6 +108,7 @@ export const elevenLabsApiKey = Deno.env.get("ELEVENLABS_API_KEY");
 export const humeApiKey = Deno.env.get('HUME_API_KEY');
 export const xaiApiKey = Deno.env.get('XAI_API_KEY');
 export const bosonApiKey = Deno.env.get('BOSON_API_KEY');
+export const mistralApiKey = Deno.env.get('MISTRAL_API_KEY');
 
 export { encoder, FRAME_SIZE };
 
