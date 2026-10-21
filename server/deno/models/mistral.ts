@@ -21,11 +21,13 @@ import {
 //  - barge-in aborts the LLM + TTS requests and drops queued audio
 const MISTRAL_API = "https://api.mistral.ai/v1";
 const STT_URL = "wss://api.mistral.ai/v1/audio/transcriptions/realtime";
-const STT_MODEL = Deno.env.get("MISTRAL_STT_MODEL") || "voxtral-mini-transcribe-realtime-2602";
+const STT_MODEL = Deno.env.get("MISTRAL_STT_MODEL") || "voxtral-mini-transcribe-realtime-3";
 const STT_DELAY_MS = Number(Deno.env.get("MISTRAL_STT_DELAY_MS") || "200");
 const STT_SAMPLE_RATE = 16000;
-const LLM_MODEL = Deno.env.get("MISTRAL_LLM_MODEL") || "mistral-small-latest";
-const TTS_MODEL = Deno.env.get("MISTRAL_TTS_MODEL") || "voxtral-mini-tts-2603";
+const LLM_MODEL = Deno.env.get("MISTRAL_LLM_MODEL") || "mistral-large-4";
+// Large 4 is a reasoning model; "none" skips thinking so the first words arrive fast.
+const REASONING_EFFORT = Deno.env.get("MISTRAL_REASONING_EFFORT") || "none";
+const TTS_MODEL = Deno.env.get("MISTRAL_TTS_MODEL") || "voxtral-mini-tts-3";
 const TTS_SAMPLE_RATE = Number(Deno.env.get("MISTRAL_TTS_SAMPLE_RATE") || "24000");
 const DEFAULT_TTS_VOICE = Deno.env.get("MISTRAL_TTS_VOICE") || undefined;
 const TEMPERATURE = Number(Deno.env.get("MISTRAL_TEMPERATURE") || "0.5");
@@ -411,6 +413,7 @@ export const connectToMistral = async ({
                     stream: true,
                     temperature: TEMPERATURE,
                     max_tokens: MAX_TOKENS,
+                    reasoning_effort: REASONING_EFFORT,
                 }),
             });
             if (!res.ok || !res.body) {

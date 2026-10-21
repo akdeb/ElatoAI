@@ -40,7 +40,8 @@ Two behaviours differ from the Realtime bridge and are worth knowing:
 `MISTRAL_API_KEY`. Turn detection is an energy VAD on the server; STT sockets are
 pre-warmed, the LLM streams, and text is sent to TTS clause-by-clause.
 
-Optional overrides: `MISTRAL_LLM_MODEL` (default `mistral-small-latest`),
+Optional overrides: `MISTRAL_LLM_MODEL` (default `mistral-large-4`),
+`MISTRAL_REASONING_EFFORT` (default `none`; `high` enables thinking, much slower),
 `MISTRAL_STT_MODEL`, `MISTRAL_TTS_MODEL`, `MISTRAL_TTS_VOICE`,
 `MISTRAL_TTS_SAMPLE_RATE` (default `24000`), `MISTRAL_VAD_THRESHOLD` (min level, default `120`), `MISTRAL_VAD_SNR` (default `3`), `MISTRAL_PLAYBACK_LEAD_MS` (default `800`)
 and `MISTRAL_VAD_SILENCE_MS` (default `550`).
