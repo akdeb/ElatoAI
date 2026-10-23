@@ -78,6 +78,9 @@ export class RealtimeAPI extends RealtimeEventHandler {
                 `openai-insecure-api-key.${this.apiKey}`,
             ]);
             ws.addEventListener('message', (event) => {
+                // disconnect() clears conversation state before the socket's
+                // close handshake finishes. Ignore frames from that old socket.
+                if (this.ws !== ws) return;
                 const message = JSON.parse(event.data);
                 this.receive(message.type, message);
             });
@@ -123,6 +126,7 @@ export class RealtimeAPI extends RealtimeEventHandler {
                 },
             );
             ws.on('message', (data) => {
+                if (this.ws !== ws) return;
                 const message = JSON.parse(data.toString());
                 this.receive(message.type, message);
             });

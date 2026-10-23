@@ -1,6 +1,7 @@
 #include "OTA.h"
 #include "Audio.h"
 #include "PitchShift.h"
+#include <atomic>
 
 // WEBSOCKET
 SemaphoreHandle_t wsMutex;
@@ -23,6 +24,14 @@ volatile bool speakerCopyActive = false;
 volatile unsigned long lastSpeakerWriteTime = 0;
 unsigned long playbackDrainRequestedTime = 0;
 unsigned long speakerDrainGuardMs = 250;
+std::atomic<bool> speechInterruptRequested{false};
+bool interruptedResponse = false; // accessed only by networkTask
+
+void requestSpeechInterrupt() {
+    if (!shutdownInProgress && deviceState == SPEAKING) {
+        speechInterruptRequested.store(true);
+    }
+}
 
 // AUDIO SETTINGS
 int currentVolume = 70;
@@ -181,7 +190,13 @@ void audioStreamTask(void *parameter) {
             i2s.flush();
             volume.flush();
             volumePitch.flush();
-            queue.flush();
+            // QueueStream::flush() does not empty its buffer. Drain on the
+            // consumer task so interrupted PCM cannot leak into the next turn,
+            // and a producer blocked in the decoder can finish safely.
+            uint8_t discarded[256];
+            while (queue.available() > 0) {
+                queue.readBytes(discarded, min(int(sizeof(discarded)), queue.available()));
+            }
         }
 
         if (webSocket.isConnected() && deviceState == SPEAKING) {
@@ -300,6 +315,8 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
     switch (type)
     {
     case WStype_DISCONNECTED:
+        interruptedResponse = false;
+        speechInterruptRequested.store(false);
         Serial.printf("[WSc] Disconnected!\n");
         deviceState = IDLE;
         scheduleListeningRestart = false;
@@ -366,6 +383,7 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
             Serial.println(msg);
 
             if (strcmp((char*)msg.c_str(), "RESPONSE.COMPLETE") == 0 || strcmp((char*)msg.c_str(), "RESPONSE.ERROR") == 0) {
+                if (interruptedResponse) break;
                 // A playback_id means the server wants a handoff: finish playing the
                 // queued audio, then ack with PLAYBACK.COMPLETE before listening.
                 uint32_t playbackId = doc["playback_id"] | 0UL;
@@ -391,6 +409,7 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
             } else if (strcmp((char*)msg.c_str(), "AUDIO.COMMITTED") == 0) {
                 deviceState = PROCESSING; 
             } else if (strcmp((char*)msg.c_str(), "RESPONSE.CREATED") == 0) {
+                interruptedResponse = false;
                 Serial.println("Received RESPONSE.CREATED, transitioning to speaking");
                 transitionToSpeaking();
                 activePlaybackId = doc["playback_id"] | 0UL;
@@ -471,6 +490,21 @@ void networkTask(void *parameter) {
         if (shutdownInProgress) {
             xSemaphoreGive(wsMutex);
             continue;
+        }
+
+        if (speechInterruptRequested.exchange(false) && deviceState == SPEAKING) {
+            unsigned long playedMs = getSpeakingDuration();
+            interruptedResponse = true;
+            // Mute immediately, discard queued playback, and resume listening.
+            transitionToListening();
+            JsonDocument interrupt;
+            interrupt["type"] = "instruction";
+            interrupt["msg"] = "INTERRUPT";
+            interrupt["audio_end_ms"] = playedMs;
+            String text;
+            serializeJson(interrupt, text);
+            if (webSocket.isConnected()) webSocket.sendTXT(text);
+            Serial.printf("Input short press: interrupted speech at %lu ms\n", playedMs);
         }
 
         // Check to see if a transition to listening mode is scheduled.

@@ -46,6 +46,8 @@ extern volatile bool i2sInputFlushScheduled;
 void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length);
 void websocketSetup(const String& server_domain, int port, const String& path);
 void networkTask(void *parameter);
+// Safe to call from the input task; WebSocket work runs in networkTask.
+void requestSpeechInterrupt();
 
 // AUDIO OUTPUT
 unsigned long getSpeakingDuration();

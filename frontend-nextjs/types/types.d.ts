@@ -25,6 +25,9 @@ declare global {
     type ProductColor = "black" | "white" | "gray";
 
     interface IDevice {
+        battery_percent?: number | null;
+        battery_voltage_mv?: number | null;
+        battery_updated_at?: string | null;
         device_id: string;
         is_reset: boolean;
         is_ota: boolean;

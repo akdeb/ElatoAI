@@ -65,6 +65,9 @@ export type Database = {
       }
       devices: {
         Row: {
+          battery_percent: number | null
+          battery_voltage_mv: number | null
+          battery_updated_at: string | null
           created_at: string
           device_id: string
           mac_address: string | null
@@ -72,6 +75,9 @@ export type Database = {
           user_id: string | null
         }
         Insert: {
+          battery_percent?: number | null
+          battery_voltage_mv?: number | null
+          battery_updated_at?: string | null
           created_at?: string
           device_id?: string
           mac_address?: string | null
@@ -79,6 +85,9 @@ export type Database = {
           user_id?: string | null
         }
         Update: {
+          battery_percent?: number | null
+          battery_voltage_mv?: number | null
+          battery_updated_at?: string | null
           created_at?: string
           device_id?: string
           mac_address?: string | null

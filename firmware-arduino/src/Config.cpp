@@ -44,12 +44,12 @@ volatile bool shutdownInProgress = false;
  */
 
 #ifdef DEV_MODE
-const char *ws_server = "172.20.10.4";
+const char *ws_server = "192.168.1.3";
 const char *ws_path = "/";
 
 // Backend server details
-const char *backend_server = "172.20.10.4";
-const uint16_t backend_port = 3000;
+const char *backend_server = "192.168.1.3";
+const uint16_t backend_port = 3100;
 
 #if defined(VOICE_SERVER_DENO)
 const uint16_t ws_port = 8000;

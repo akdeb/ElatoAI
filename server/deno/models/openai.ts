@@ -41,6 +41,9 @@ export const connectToOpenAI = async ({
 
     let currentItemId: string | null = null;
     let currentCallId: string | null = null;
+    let responseActive = false;
+    let interrupted = false;
+    let receivedAudioMs = 0;
 
     // Instantiate new client
     console.log(`Connecting with key "${openaiApiKey?.slice(0, 3)}..."`);
@@ -87,10 +90,11 @@ export const connectToOpenAI = async ({
         } else if (event.type === "error") {
             console.log("error", event);
         } else if (event.type === "response.done") {
+            responseActive = false;
             console.log("response.done", event);
             const hasNoAudio = event.response?.usage?.output_token_details?.audio_tokens === 0;
-            opus.flush(true);
-            if (!hasNoAudio) {
+            if (!interrupted) opus.flush(true);
+            if (!interrupted && !hasNoAudio) {
                 ws.send(
                     JSON.stringify({
                         type: "server",
@@ -114,6 +118,10 @@ export const connectToOpenAI = async ({
             try {
                 switch (event.type) {
                     case "response.created":
+                        responseActive = true;
+                        interrupted = false;
+                        currentItemId = null;
+                        receivedAudioMs = 0;
                         console.log("response.created", event);
                         opus.reset();
                         try {
@@ -147,7 +155,7 @@ export const connectToOpenAI = async ({
                         break;
                     case "response.output_item.added":
                         console.log("response.output_item.added", event);
-                        if (event.item.id) {
+                        if (event.item.id && event.item.type === "message" && event.item.role === "assistant") {
                             console.log("foobar", event.item.id);
                             currentItemId = event.item.id;
                             currentCallId = event.item.call_id;
@@ -155,6 +163,7 @@ export const connectToOpenAI = async ({
                         break;
                     case "response.output_audio.delta":
                         {
+                            if (interrupted) break;
                             const { delta } = client.conversation.processEvent(
                                 event,
                             );
@@ -163,6 +172,7 @@ export const connectToOpenAI = async ({
                                     const pcmBuffer = Buffer.from(
                                         delta.audio.buffer,
                                     );
+                                    receivedAudioMs += pcmBuffer.length / (24000 * 2) * 1000;
                                     opus.push(pcmBuffer);
                                 }
                             } catch (audioError) {
@@ -254,15 +264,27 @@ export const connectToOpenAI = async ({
                     message.msg === "INTERRUPT"
                 ) {
                     console.log("interrupt detected", message);
-                    const audioEndMs = message.audio_end_ms;
-
-                    client.realtime.send("conversation.item.truncate", {
-                        event_id: RealtimeUtils.generateId("evt_"), // Generate unique ID
-                        type: "conversation.item.truncate",
-                        item_id: currentItemId,
-                        content_index: 0,
-                        audio_end_ms: audioEndMs,
-                    });
+                    interrupted = true;
+                    opus.reset();
+                    if (responseActive) {
+                        client.realtime.send("response.cancel", {
+                            event_id: RealtimeUtils.generateId("evt_"),
+                            type: "response.cancel",
+                        });
+                        responseActive = false;
+                    }
+                    const requestedMs = Number.isFinite(message.audio_end_ms)
+                        ? message.audio_end_ms : 0;
+                    const audioEndMs = Math.floor(Math.max(0, Math.min(requestedMs, receivedAudioMs)));
+                    if (currentItemId && receivedAudioMs > 0) {
+                        client.realtime.send("conversation.item.truncate", {
+                            event_id: RealtimeUtils.generateId("evt_"),
+                            type: "conversation.item.truncate",
+                            item_id: currentItemId,
+                            content_index: 0,
+                            audio_end_ms: audioEndMs,
+                        });
+                    }
 
                     client.realtime.send("input_audio_buffer.clear", {
                         event_id: RealtimeUtils.generateId("evt_"), // Generate unique ID

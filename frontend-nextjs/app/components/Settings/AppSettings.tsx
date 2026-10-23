@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { LogOut } from "lucide-react";
 
 import GeneralUserForm from "./UserForm";
+import DeviceBattery from "./DeviceBattery";
 import { Slider } from "@/components/ui/slider";
 import { updateUser } from "@/db/users";
 import _ from "lodash";
@@ -166,6 +167,7 @@ const AppSettings: React.FC<AppSettingsProps> = ({
                             }}
                         />
                     </div>
+                    {(isConnected || skipDeviceRegistration) && <DeviceBattery userId={selectedUser.user_id} />}
                     {isConnected && <div className="flex flex-col gap-4 mt-6">
                         <Label className="text-sm font-medium text-gray-700">
                             Device volume
