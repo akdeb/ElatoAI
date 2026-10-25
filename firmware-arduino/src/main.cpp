@@ -146,6 +146,17 @@ void printOutESP32Error(esp_err_t err) {
 void getAuthTokenFromNVS() {
   preferences.begin("auth", false);
   authTokenGlobal = preferences.getString("auth_token", "");
+  if (!authTokenGlobal.isEmpty() &&
+      preferences.getString("auth_server", "") != deviceAuthServer()) {
+    // Legacy tokens have no server marker. Refresh them once as well: a DEV
+    // token must never be carried into ELATO_MODE or a different self-host.
+    authTokenGlobal = "";
+    preferences.remove("auth_token");
+    preferences.remove("auth_server");
+    Serial.println("[Auth] Server changed or legacy cache; fresh registration required");
+  } else if (!authTokenGlobal.isEmpty()) {
+    Serial.printf("[Auth] Using cached token for %s\n", backend_server);
+  }
   preferences.end();
 }
 
@@ -222,6 +233,8 @@ void setupDeviceMetadata() {
 void setup() {
   Serial.begin(115200);
   delay(500);
+  Serial.printf("[Memory] PSRAM: %u bytes, free: %u bytes\n",
+                ESP.getPsramSize(), ESP.getFreePsram());
 
   // SETUP
   setupDeviceMetadata();

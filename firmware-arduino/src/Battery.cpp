@@ -13,6 +13,7 @@ constexpr uint32_t SYNC_INTERVAL_MS = 300000;
 constexpr uint32_t RETRY_INTERVAL_MS = 60000;
 SemaphoreHandle_t busMutex = nullptr;
 bool busStarted = false;
+bool uploadsEnabled = true;
 
 struct Reading {
   float percent;
@@ -74,9 +75,21 @@ bool syncBattery(const Reading &reading) {
   String payload;
   serializeJson(doc, payload);
   int status = http.POST(payload);
+  JsonDocument reply;
+  bool acknowledged = status == HTTP_CODE_OK &&
+      deserializeJson(reply, http.getString()) == DeserializationError::Ok &&
+      reply["success"].is<bool>() && reply["success"].as<bool>();
+  if (status == HTTP_CODE_NOT_FOUND || status == HTTP_CODE_METHOD_NOT_ALLOWED ||
+      (status == HTTP_CODE_OK && !acknowledged)) {
+    // Some hosted deployments do not expose this optional endpoint yet and
+    // return their HTML not-found page with HTTP 200. Keep local readings but
+    // stop uploading this boot instead of reporting success or retrying forever.
+    uploadsEnabled = false;
+    Serial.println("[Battery] No supported telemetry endpoint; uploads disabled this boot");
+  }
   http.end();
-  Serial.printf("[Battery] sync HTTP %d\n", status);
-  return status == HTTP_CODE_OK;
+  Serial.printf("[Battery] sync HTTP %d, acknowledged=%s\n", status, acknowledged ? "yes" : "no");
+  return acknowledged;
 }
 
 void batteryTask(void *) {
@@ -97,7 +110,7 @@ void batteryTask(void *) {
       lastSample = now;
       valid = sampleBattery(cached);
     }
-    if (valid && millis() - cached.sampledAt < SAMPLE_INTERVAL_MS &&
+    if (uploadsEnabled && valid && millis() - cached.sampledAt < SAMPLE_INTERVAL_MS &&
         WiFi.status() == WL_CONNECTED && !authTokenGlobal.isEmpty() &&
         otaState == OTA_IDLE &&
         (!attemptedSync || now - lastAttempt >= syncDelay)) {

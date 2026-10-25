@@ -13,6 +13,14 @@
 #include <Preferences.h>
 #include <Config.h>
 
+String deviceAuthServer() {
+#ifdef DEV_MODE
+  return "http://" + String(backend_server) + ":" + String(backend_port);
+#else
+  return "https://" + String(backend_server);
+#endif
+}
+
 bool isDeviceRegistered() {
   if (!authTokenGlobal.isEmpty()) {
     return true;
@@ -33,6 +41,7 @@ bool isDeviceRegistered() {
     http.setTimeout(10000);
 
     int httpCode = http.GET();
+    Serial.printf("[Auth] Registration HTTP %d for %s\n", httpCode, backend_server);
 
     if (httpCode == HTTP_CODE_OK) {
         String payload = http.getString();
@@ -46,14 +55,16 @@ bool isDeviceRegistered() {
             return false;
         }
 
-        String authToken = doc["token"];
+        String authToken = doc["token"].is<String>() ? doc["token"].as<String>() : String();
         if (!authToken.isEmpty()) {
             // Store the auth token in NVS
             preferences.begin("auth", false);
             preferences.putString("auth_token", authToken);
+            preferences.putString("auth_server", deviceAuthServer());
             preferences.end();
 
             authTokenGlobal = String(authToken);
+            Serial.println("[Auth] Registration succeeded; token cached for this server");
             http.end();
             return true;
         }
@@ -376,7 +387,11 @@ void WIFIMANAGER::loop() {
   if (millis() - lastWifiCheckMillis < intervalWifiCheckMillis) return;
   lastWifiCheckMillis = millis();
 
-  if(WiFi.waitForConnectResult() == WL_CONNECTED) {
+  // Match production: a health check must not block for a connection attempt.
+  if(WiFi.status() == WL_CONNECTED) {
+    // A user can register the board after Wi-Fi connected. Retry registration
+    // on this existing 10-second health-check cadence, without rebooting Wi-Fi.
+    if (authTokenGlobal.isEmpty() && !shutdownInProgress) connectCb();
     // Check if we are connected to a well known SSID
     for(uint8_t i=0; i<WIFIMANAGER_MAX_APS; i++) {
       if (WiFi.SSID() == apList[i].apName) {

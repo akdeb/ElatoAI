@@ -40,3 +40,24 @@ the LAN address because an unrelated Docker service occupies localhost:8000.
 
 Initial battery-test application SHA-256 (before the voice address update):
 `a39f52ab5c57dceac680072b1beef6870881594801a85b03183955df1e23933a`
+
+## Hosted Elato follow-up — 25 October 2026 (India time)
+
+- Confirmed a cached development token caused hosted authentication failures.
+  Tokens now record their backend; legacy tokens and backend changes trigger
+  fresh registration without clearing saved Wi-Fi settings.
+- Flashed the physical-button build using `esp32-s3-n16r8`. The board detected
+  approximately 8 MB PSRAM, authenticated with the hosted voice server using its
+  cached hosted token after reboot, and completed an AI response without the
+  Opus allocation crash observed with PSRAM disabled. The server then ended the
+  session and the board entered sleep.
+- The hosted battery endpoint is not deployed: it returned HTML with HTTP 200.
+  Firmware now requires a JSON success acknowledgement and disables unsupported
+  telemetry uploads for that boot while continuing local gauge readings.
+- Firmware builds, all 11 battery/voice regression tests, button gesture tests,
+  and whitespace checks passed. The production repository was not modified.
+
+When deploying this branch, apply the battery migration and deploy the matching
+API/frontend together. Hosted battery persistence remains unverified until that
+deployment is available. Personal deployment/input selections in `Config.h`
+are not included in the shared connection fixes.

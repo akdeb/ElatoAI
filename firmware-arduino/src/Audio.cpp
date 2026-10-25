@@ -345,6 +345,7 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
 
         // auth messages
         if (strcmp((char*)type.c_str(), "auth") == 0) {
+            Serial.println("[Auth] Voice server authenticated the device");
             currentVolume = doc["volume_control"].as<int>();
             currentPitchFactor = doc["pitch_factor"].as<float>();
 
@@ -411,6 +412,12 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
             } else if (strcmp((char*)msg.c_str(), "RESPONSE.CREATED") == 0) {
                 interruptedResponse = false;
                 Serial.println("Received RESPONSE.CREATED, transitioning to speaking");
+                // Production sends live volume changes on RESPONSE.CREATED.
+                if (doc["volume_control"].is<int>()) {
+                    int newVolume = constrain(doc["volume_control"].as<int>(), 0, 100);
+                    volume.setVolume(newVolume / 100.0f);
+                    volumePitch.setVolume(newVolume / 100.0f);
+                }
                 transitionToSpeaking();
                 activePlaybackId = doc["playback_id"] | 0UL;
             } else if (strcmp((char*)msg.c_str(), "SESSION.END") == 0) {
@@ -451,7 +458,8 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
 void websocketSetup(const String& server_domain, int port, const String& path)
 {
     if (shutdownInProgress) return;
-    const String headers =
+    static String wsExtraHeaders;
+    wsExtraHeaders =
         "Authorization: Bearer " + String(authTokenGlobal) + "\r\n" +
         "X-Wifi-Rssi: " + String(WiFi.RSSI()) + "\r\n" +
         "X-Elato-Playback-Ack: 1\r\n" +
@@ -463,7 +471,7 @@ void websocketSetup(const String& server_domain, int port, const String& path)
         return;
     }
 
-    webSocket.setExtraHeaders(headers.c_str());
+    webSocket.setExtraHeaders(wsExtraHeaders.c_str());
     webSocket.onEvent(webSocketEvent);
     webSocket.setReconnectInterval(1000);
     webSocket.disableHeartbeat();

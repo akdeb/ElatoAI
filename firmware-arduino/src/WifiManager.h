@@ -29,6 +29,7 @@ void wifiTask(void* param);
 
 // Callback for when the device connects to Wifi
 void connectCb();
+String deviceAuthServer();
 
 
 class WIFIMANAGER {
