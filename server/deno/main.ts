@@ -18,6 +18,7 @@ import { connectToHume } from './models/hume.ts';
 import { connectToGrok } from './models/grok.ts';
 import { connectToBoson } from './models/boson.ts';
 import { connectToMistral } from './models/mistral.ts';
+import { connectToAssemblyAI } from './models/assemblyai.ts';
 
 const server = createServer();
 
@@ -112,6 +113,9 @@ wss.on('connection', async (ws: WSWebSocket, payload: IPayload) => {
             break;
         case 'mistral':
             await connectToMistral(providerArgs);
+            break;
+        case 'assemblyai':
+            await connectToAssemblyAI(providerArgs);
             break;
         default:
             throw new Error(`Unknown provider: ${provider}`);

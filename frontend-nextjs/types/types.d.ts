@@ -141,6 +141,14 @@ declare global {
             description: string;
             color: string;
             emoji?: string;
+        }
+        | {
+            provider: "assemblyai";
+            id: AssemblyAIVoice;
+            name: string;
+            description: string;
+            color: string;
+            emoji?: string;
         };
 
     type ModelProvider =
@@ -150,6 +158,7 @@ declare global {
         | "grok"
         | "boson"
         | "mistral"
+        | "assemblyai"
         | "elevenlabs"
         | "hume";
 
@@ -201,6 +210,11 @@ declare global {
         | "coral"
         | "sage"
         | "verse";
+
+    type AssemblyAIVoice =
+        | "alba" | "eve" | "george" | "jane" | "jean" | "mary" | "michael"
+        | "anna" | "charles" | "paul" | "vera"
+        | "giovanni" | "lola" | "juergen" | "rafael" | "estelle";
 
     type MistralVoice =
         | "en_paul_neutral"
