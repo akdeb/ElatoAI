@@ -77,16 +77,6 @@ resampled to 24 kHz PCM, output PCM is packetized as Opus, and the character gre
 via `reply.create`. AssemblyAI owns semantic turn-taking; `INTERRUPT` flushes local
 playback and `END_SESSION` sends `session.end` to avoid the billable reconnect window.
 
-## AssemblyAI STT + LLM Gateway + TTS
-
-`models/assemblyai-pipeline.ts` runs the same voice loop as separate AssemblyAI products, so
-you choose each model: Streaming STT (`universal-3-6-pro`), any LLM Gateway model, and a
-Text-to-Speech voice. Set `ASSEMBLYAI_API_KEY` and use the `assemblyai-pipeline` personality
-provider. The voice is an AssemblyAI TTS voice id, and `ASSEMBLYAI_LLM_MODEL` (optional)
-picks the LLM Gateway model. The server reacts to each `end_of_turn`, asks the LLM, speaks
-the reply, and cancels TTS on barge-in. Use `assemblyai` (above) if you'd rather have the
-managed Voice Agent API run the whole loop.
-
 ## xAI Grok Voice
 
 The Grok bridge uses xAI's current Realtime Voice API with

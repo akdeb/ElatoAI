@@ -790,16 +790,3 @@ export const assemblyaiVoices: VoiceType[] = [
         provider: "assemblyai",
     },
 ];
-
-// AssemblyAI Text-to-Speech voices for the STT + LLM Gateway + TTS pipeline provider.
-// The id is the TTS voice_id sent to the server.
-export const assemblyaiPipelineVoices: VoiceType[] = [
-    {
-        id: "49c443a4-8a1d-5f7e-b70b-98bdbd9823c3",
-        name: "Default",
-        description: "AssemblyAI TTS default voice",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai-pipeline",
-    },
-];

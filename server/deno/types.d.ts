@@ -26,7 +26,7 @@ declare global {
         user_code: string;
     }
 
-    type ModelProvider = "openai" | "gemini" | "elevenlabs" | "hume" | "grok" | "boson" | "mistral" | "assemblyai" | "assemblyai-pipeline";
+    type ModelProvider = "openai" | "gemini" | "elevenlabs" | "hume" | "grok" | "boson" | "mistral" | "assemblyai";
 
     type GrokVoice = 
         | "Ara"

@@ -57,9 +57,7 @@ Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https:/
 4. [Eleven Labs Conversational AI Agents](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/elevenlabs)
 5. [Hume AI EVI-4](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/hume)
 6. [Boson Higgs Realtime](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/boson.ts)
-7. [AssemblyAI Voice Agent API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/assemblyai.ts)
-8. [AssemblyAI Streaming STT + LLM Gateway + Text-to-Speech](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/assemblyai-pipeline.ts)
-9. More speech to speech models coming soon!
+7. More speech to speech models coming soon!
 
 ### Cloudflare Workers
 1. LLM - [80+ Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Text+Generation) OpenAI, Gemini, xAI, and more.
