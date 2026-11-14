@@ -12,6 +12,8 @@ export const defaultOpenAIVoice = "ash";
 export const defaultGrokVoice = "ara";
 export const defaultBosonVoice = "chloe";
 export const defaultAssemblyAIVoice = "alba";
+// Pipeline provider (STT + LLM Gateway + TTS): the voice is a TTS voice id.
+export const defaultAssemblyAIPipelineVoice = "49c443a4-8a1d-5f7e-b70b-98bdbd9823c3";
 
 // Define your audio parameters
 export const SAMPLE_RATE = 24000; // For example, 24000 Hz
@@ -111,6 +113,7 @@ export const xaiApiKey = Deno.env.get('XAI_API_KEY');
 export const bosonApiKey = Deno.env.get('BOSON_API_KEY');
 export const mistralApiKey = Deno.env.get('MISTRAL_API_KEY');
 export const assemblyaiApiKey = Deno.env.get('ASSEMBLYAI_API_KEY');
+export const assemblyaiLlmModel = Deno.env.get('ASSEMBLYAI_LLM_MODEL') ?? 'claude-haiku-4-5-20251001';
 
 export { encoder, FRAME_SIZE };
 

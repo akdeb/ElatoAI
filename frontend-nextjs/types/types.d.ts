@@ -149,6 +149,14 @@ declare global {
             description: string;
             color: string;
             emoji?: string;
+        }
+        | {
+            provider: "assemblyai-pipeline";
+            id: string; // AssemblyAI TTS voice id
+            name: string;
+            description: string;
+            color: string;
+            emoji?: string;
         };
 
     type ModelProvider =
@@ -159,6 +167,7 @@ declare global {
         | "boson"
         | "mistral"
         | "assemblyai"
+        | "assemblyai-pipeline"
         | "elevenlabs"
         | "hume";
 
