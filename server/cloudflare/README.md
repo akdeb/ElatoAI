@@ -11,8 +11,8 @@ This server keeps the existing Elato device protocol and routes audio through Cl
 
 If you are new to the overall project, start with the root README first:
 
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/README.md`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/README.md`
+- `README.md`
+- `server/README.md`
 
 ## What This Server Does
 
@@ -83,7 +83,7 @@ You need:
 ### 1. Install dependencies
 
 ```bash
-cd /Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare
+cd server/cloudflare
 npm install
 ```
 
@@ -150,7 +150,7 @@ Set the runtime secrets in Cloudflare:
 ### 2. Deploy
 
 ```bash
-cd /Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare
+cd server/cloudflare
 npm run deploy
 ```
 
@@ -173,11 +173,11 @@ That is the sensible default for realtime voice apps because:
 - turn state is easier to reason about
 - cleanup is straightforward
 
-This is what the Worker does in `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare/src/index.ts`.
+This is what the Worker does in `server/cloudflare/src/index.ts`.
 
 ## Migrations
 
-This backend already has a Durable Object rename migration in `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare/wrangler.toml`:
+This backend already has a Durable Object rename migration in `server/cloudflare/wrangler.toml`:
 
 - `ElatoOpenAiVoiceAgent` -> `ElatoVoiceSession`
 
@@ -229,21 +229,21 @@ Current caveats:
 
 If you are modifying this backend, read these first:
 
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare/src/index.ts`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare/models/session.ts`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare/models/stt.ts`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare/models/llm.ts`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare/models/tts.ts`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/firmware-arduino/src/Audio.cpp`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/firmware-arduino/src/Config.cpp`
+- `server/cloudflare/src/index.ts`
+- `server/cloudflare/models/session.ts`
+- `server/cloudflare/models/stt.ts`
+- `server/cloudflare/models/llm.ts`
+- `server/cloudflare/models/tts.ts`
+- `firmware-arduino/src/Audio.cpp`
+- `firmware-arduino/src/Config.cpp`
 
 ## Relationship To Other Servers
 
 Elato currently includes multiple backend paths:
 
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/deno`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi`
+- `server/deno`
+- `server/cloudflare`
+- `server/fastapi`
 
 Use Cloudflare when you want:
 

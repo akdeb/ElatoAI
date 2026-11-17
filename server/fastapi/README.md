@@ -11,8 +11,8 @@ Use this if you want:
 
 If you are new to the project, read these first:
 
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/README.md`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/README.md`
+- `README.md`
+- `server/README.md`
 
 ## The Simple Provider Set
 
@@ -68,9 +68,9 @@ server/fastapi/
 
 Elato has three backend options right now:
 
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/deno`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/cloudflare`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi`
+- `server/deno`
+- `server/cloudflare`
+- `server/fastapi`
 
 A clean way to think about them is:
 
@@ -91,14 +91,14 @@ This repo uses `pyproject.toml`, so install from that environment rather than a 
 With `uv`:
 
 ```bash
-cd /Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi
+cd server/fastapi
 uv sync
 ```
 
 Or with plain pip in your venv:
 
 ```bash
-cd /Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi
+cd server/fastapi
 pip install -e .
 ```
 
@@ -106,7 +106,7 @@ pip install -e .
 
 Copy the example values from:
 
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/env.example`
+- `server/fastapi/env.example`
 
 Minimum example for the default route:
 
@@ -136,14 +136,14 @@ PORT=7860
 If you use `uv`:
 
 ```bash
-cd /Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi
+cd server/fastapi
 uv run server.py
 ```
 
 If you use your activated venv directly:
 
 ```bash
-cd /Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi
+cd server/fastapi
 python server.py
 ```
 
@@ -187,7 +187,7 @@ In other words, Pipecat stitches the pipeline together, but Elato still needs to
 
 That is why this FastAPI backend now has a simple provider catalog and validation layer in:
 
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/providers.py`
+- `server/fastapi/models/providers.py`
 
 This lets the app answer questions like:
 
@@ -216,16 +216,16 @@ At startup, the server now validates the selected `CLASSIC_*_PROVIDER` values an
 
 Each supported provider now has its own module file so the layout is easy to understand:
 
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/llm/openai.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/llm/anthropic.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/llm/gemini.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/llm/grok.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/stt/deepgram.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/stt/whisper.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/tts/elevenlabs.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/tts/cartesia.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/tts/deepgram.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/tts/openai.py`
+- `server/fastapi/models/llm/openai.py`
+- `server/fastapi/models/llm/anthropic.py`
+- `server/fastapi/models/llm/gemini.py`
+- `server/fastapi/models/llm/grok.py`
+- `server/fastapi/models/stt/deepgram.py`
+- `server/fastapi/models/stt/whisper.py`
+- `server/fastapi/models/tts/elevenlabs.py`
+- `server/fastapi/models/tts/cartesia.py`
+- `server/fastapi/models/tts/deepgram.py`
+- `server/fastapi/models/tts/openai.py`
 
 Under the hood, these modules delegate to Pipecat service implementations. We keep that wiring thin on purpose so users mostly think in terms of:
 
@@ -326,12 +326,12 @@ That gives users one obvious starting point without taking away flexibility.
 
 If you want to change the FastAPI backend, start here:
 
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/server.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/voice_pipeline.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/esp32_transport.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/llm/__init__.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/stt/__init__.py`
-- `/Users/akashdeepdeb/Desktop/Projects/ElatoAI/server/fastapi/models/tts/__init__.py`
+- `server/fastapi/server.py`
+- `server/fastapi/voice_pipeline.py`
+- `server/fastapi/esp32_transport.py`
+- `server/fastapi/models/llm/__init__.py`
+- `server/fastapi/models/stt/__init__.py`
+- `server/fastapi/models/tts/__init__.py`
 
 ## Current Notes
 
