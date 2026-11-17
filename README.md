@@ -46,7 +46,7 @@ Realtime AI Speech powered by 100+ Voice AI models on ESP32, with Secure WebSock
   </a>
 </div>
 
-Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https://youtu.be/_zUBue3pfVI) | [Eleven Labs Demo](https://youtu.be/7LKTIuEW-hg) | [Hume AI EVI-4 Demo](https://youtu.be/Gtann5pdV0I)
+Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https://youtu.be/_zUBue3pfVI) | [Eleven Labs Demo](https://youtu.be/7LKTIuEW-hg)
 
 ## 🧠 Models
 
@@ -55,9 +55,8 @@ Video links: [OpenAI Demo](https://youtu.be/o1eIAwVll5I) | [Gemini Demo](https:/
 2. [Gemini Live API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/gemini)
 3. [xAI Grok Voice Agent API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/grok)
 4. [Eleven Labs Conversational AI Agents](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/elevenlabs)
-5. [Hume AI EVI-4](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/hume)
-6. [Boson Higgs Realtime](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/boson.ts)
-7. More speech to speech models coming soon!
+5. [Boson Higgs Realtime](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/boson.ts)
+6. [AssemblyAI Voice Agent API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/assemblyai.ts)
 
 ### Cloudflare Workers
 1. LLM - [80+ Models](https://developers.cloudflare.com/workers-ai/models/?tasks=Text+Generation) OpenAI, Gemini, xAI, and more.
@@ -84,7 +83,7 @@ Control your ESP32 AI device from your phone with the ElatoAI webapp.
 
 ## 🌟 Full feature list
 
-1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, xAI's Grok Voice Agent API, Eleven Labs Conversational AI Agents, Hume AI EVI4, and Boson Higgs Realtime.
+1. **Realtime Speech-to-Speech**: Instant speech conversion powered by OpenAI's Realtime API, Gemini's Live API, xAI's Grok Voice Agent API, Eleven Labs Conversational AI Agents, Boson Higgs Realtime, and AssemblyAI Voice Agent API.
 2. **Create Custom AI Agents**: Create custom agents with different personalities and voices.
 3. **Customizable Voices**: Choose from a variety of voices and personalities.
 4. **Secure WebSockets**: Reliable, encrypted WebSocket communication.
@@ -145,14 +144,14 @@ flowchart TD
   Edge -->|Gemini API| Gemini[Gemini Live API]
   Edge -->|xAI API| xAI[xAI Grok Voice Agent API]
   Edge -->|ElevenLabs API| ElevenLabs[ElevenLabs AI Agents]
-  Edge -->|Hume API| Hume[Hume AI EVI4]
   Edge -->|Boson API| Boson[Boson Higgs Realtime]
+  Edge -->|AssemblyAI API| AssemblyAI[AssemblyAI Voice Agent API]
   OpenAI --> Edge
   Gemini --> Edge
   xAI --> Edge
   ElevenLabs --> Edge
-  Hume --> Edge
   Boson --> Edge
+  AssemblyAI --> Edge
   Edge -->|WebSocket| ESP32
   ESP32 --> UserOutput
 ```
@@ -198,17 +197,7 @@ graph TD
 
 ## 🙌 Contributing
 
-We value your contributions! Here are some ideas to get you started:
-1. Speech Interruption on ESP32 (works with OpenAI)
-2. ~~Adding Arduino IDE support~~
-3. ~~Add Hume API client for emotion detection~~
-4. Add MCP support on Deno Edge
-5. ~~Plug in Eleven Labs API for voice generation~~
-6. Add Azure OpenAI Support (easy pickens) - in review
-7. Add Cartesia Support
-8. Add Amazon Nova Support
-9. Add Deepgram
-10. ~~Add Cloudflare Workers support~~
+We value your contributions! Please open an issue describing what you want to change before sending a large PR, and test it on real hardware.
 
 
 ## License

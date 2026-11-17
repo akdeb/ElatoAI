@@ -44,7 +44,7 @@ ElatoAI 让你在 ESP32 上运行由 100 多种语音 AI 模型驱动的实时�
   </a>
 </div>
 
-视频链接：[OpenAI 演示](https://youtu.be/o1eIAwVll5I) | [Gemini 演示](https://youtu.be/_zUBue3pfVI) | [Eleven Labs 演示](https://youtu.be/7LKTIuEW-hg) | [Hume AI EVI-4 演示](https://youtu.be/Gtann5pdV0I)
+视频链接：[OpenAI 演示](https://youtu.be/o1eIAwVll5I) | [Gemini 演示](https://youtu.be/_zUBue3pfVI) | [Eleven Labs 演示](https://youtu.be/7LKTIuEW-hg)
 
 ## 🧠 模型
 
@@ -53,7 +53,8 @@ ElatoAI 让你在 ESP32 上运行由 100 多种语音 AI 模型驱动的实时�
 2. [Gemini Live API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/gemini)
 3. [xAI Grok Voice Agent API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/grok)
 4. [Eleven Labs Conversational AI Agents](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/elevenlabs)
-5. [Hume AI EVI-4](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/hume)
+5. [Boson Higgs Realtime](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/boson.ts)
+6. [AssemblyAI Voice Agent API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/assemblyai.ts)
 
 ### Cloudflare Workers
 1. LLM - [80 多种模型](https://developers.cloudflare.com/workers-ai/models/?tasks=Text+Generation)，包括 OpenAI、Gemini、xAI 等。
@@ -72,7 +73,7 @@ ElatoAI 让你在 ESP32 上运行由 100 多种语音 AI 模型驱动的实时�
 
 ## 🌟 完整功能列表
 
-1. **实时语音转语音**：由 OpenAI Realtime API、Gemini Live API、xAI Grok Voice Agent API、Eleven Labs Conversational AI Agents 和 Hume AI EVI4 驱动的即时语音转换。
+1. **实时语音转语音**：由 OpenAI Realtime API、Gemini Live API、xAI Grok Voice Agent API、Eleven Labs Conversational AI Agents、Boson Higgs Realtime 和 AssemblyAI Voice Agent API 驱动的即时语音转换。
 2. **创建自定义 AI 智能体**：创建具有不同人格和声音的 AI 智能体。
 3. **可自定义语音**：从多种声音和人格配置中进行选择。
 4. **安全 WebSocket**：可靠且加密的 WebSocket 通信。
@@ -132,12 +133,14 @@ flowchart TD
   Edge -->|Gemini API| Gemini[Gemini Live API]
   Edge -->|xAI API| xAI[xAI Grok Voice Agent API]
   Edge -->|ElevenLabs API| ElevenLabs[ElevenLabs AI Agents]
-  Edge -->|Hume API| Hume[Hume AI EVI4]
+  Edge -->|Boson API| Boson[Boson Higgs Realtime]
+  Edge -->|AssemblyAI API| AssemblyAI[AssemblyAI Voice Agent API]
   OpenAI --> Edge
   Gemini --> Edge
   xAI --> Edge
   ElevenLabs --> Edge
-  Hume --> Edge
+  Boson --> Edge
+  AssemblyAI --> Edge
   Edge -->|WebSocket| ESP32
   ESP32 --> UserOutput
 ```
@@ -182,17 +185,7 @@ graph TD
 
 ## 🙌 贡献
 
-欢迎贡献。你可以从这些方向开始：
-1. ESP32 上的语音打断（已支持 OpenAI）
-2. ~~添加 Arduino IDE 支持~~
-3. ~~添加 Hume API 客户端用于情绪检测~~
-4. 在 Deno Edge 上添加 MCP 支持
-5. ~~接入 Eleven Labs API 进行语音生成~~
-6. 添加 Azure OpenAI 支持（容易上手）- 审核中
-7. 添加 Cartesia 支持
-8. 添加 Amazon Nova 支持
-9. 添加 Deepgram 支持
-10. ~~添加 Cloudflare Workers 支持~~
+欢迎贡献。提交较大的 PR 之前，请先开一个 issue 说明你想要的改动，并在真实硬件上测试。
 
 ## 许可证
 
