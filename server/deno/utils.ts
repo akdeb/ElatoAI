@@ -11,6 +11,7 @@ export const defaultGeminiVoice = "Sadachbia";
 export const defaultOpenAIVoice = "ash";
 export const defaultGrokVoice = "ara";
 export const defaultBosonVoice = "chloe";
+export const defaultAssemblyAIVoice = "alba";
 
 // Define your audio parameters
 export const SAMPLE_RATE = 24000; // For example, 24000 Hz
@@ -109,6 +110,7 @@ export const humeApiKey = Deno.env.get('HUME_API_KEY');
 export const xaiApiKey = Deno.env.get('XAI_API_KEY');
 export const bosonApiKey = Deno.env.get('BOSON_API_KEY');
 export const mistralApiKey = Deno.env.get('MISTRAL_API_KEY');
+export const assemblyaiApiKey = Deno.env.get('ASSEMBLYAI_API_KEY');
 
 export { encoder, FRAME_SIZE };
 

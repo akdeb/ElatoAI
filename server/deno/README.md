@@ -67,6 +67,16 @@ stream, packetizes Boson's 24 kHz PCM output as Opus, forwards transcripts,
 and supports interruption and end-session events. Tune far-field detection
 with `BOSON_ESP32_VAD_THRESHOLD` and `BOSON_ESP32_VAD_SILENCE_MS`.
 
+## AssemblyAI Voice Agent
+
+`models/assemblyai.ts` bridges AssemblyAI's managed Voice Agent API
+(`wss://agents.assemblyai.com/v1/ws`). Set `ASSEMBLYAI_API_KEY` (the account needs
+Voice Agent API access) and use the `assemblyai` personality provider; the voice's
+name is the AssemblyAI voice id (e.g. `alba`, `eve`, `george`). The 16 kHz mic stream is
+resampled to 24 kHz PCM, output PCM is packetized as Opus, and the character greets first
+via `reply.create`. AssemblyAI owns semantic turn-taking; `INTERRUPT` flushes local
+playback and `END_SESSION` sends `session.end` to avoid the billable reconnect window.
+
 ## xAI Grok Voice
 
 The Grok bridge uses xAI's current Realtime Voice API with

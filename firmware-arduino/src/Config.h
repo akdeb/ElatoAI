@@ -12,9 +12,9 @@
 // Pick one of the following (DEV_MODE, PROD_MODE, ELATO_MODE) , comment the rest
 // For ELATO_MODE, you will need to register your DIY Hardware on the Elato website
 
-#define DEV_MODE
+// #define DEV_MODE
 // #define PROD_MODE
-// #define ELATO_MODE
+#define ELATO_MODE
 
 // ---------- CHOOSE YOUR VOICE SERVER ----------
 // Keep this separate from DEV/PROD/ELATO so the deployment mode and the voice backend stay independent.
@@ -29,7 +29,7 @@
 // ---------- CHOOSE YOUR INPUT MODE ----------
 // If you want to use the touch sensor to wake up the device, uncomment the following line
 // If you want to use the button to wake up the device, comment the following line
-#define TOUCH_MODE
+// #define TOUCH_MODE
 
 extern Preferences preferences;
 extern bool factory_reset_status;
