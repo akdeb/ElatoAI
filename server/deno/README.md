@@ -67,15 +67,41 @@ stream, packetizes Boson's 24 kHz PCM output as Opus, forwards transcripts,
 and supports interruption and end-session events. Tune far-field detection
 with `BOSON_ESP32_VAD_THRESHOLD` and `BOSON_ESP32_VAD_SILENCE_MS`.
 
-## AssemblyAI Voice Agent
+## AssemblyAI (STT + LLM Gateway + TTS)
+
+`models/assemblyai-pipeline.ts` runs a streaming cascade on one `ASSEMBLYAI_API_KEY`
+and is selected by the `assemblyai-pipeline` personality provider:
+
+```
+ESP32 --16 kHz PCM--> STT (wss://streaming.assemblyai.com/v3/ws)
+                          | end_of_turn
+                          v
+                  LLM Gateway (SSE, /v1/chat/completions)
+                          | sentences
+                          v
+        TTS (wss://tts.us.assemblyai.com/v1/ws) --24 kHz PCM--> Opus --> ESP32
+```
+
+It uses only Deno's built-in `WebSocket` and `fetch` for the upstream hops. The STT and TTS
+sessions open when the call starts and stay open, mic audio is forwarded without
+resampling, TTS audio goes straight to Opus, and sentences are sent to TTS with
+`Generate` + `Flush` while the LLM is still writing. `INTERRUPT` aborts the LLM request, sends TTS
+`Cancel` and drops queued audio. Each turn logs `end_of_turn->llm_first_token` and
+`end_of_turn->first_audio` latencies.
+
+The character's voice is a TTS `voice_id` such as `aai-kyla` (a bare `kyla` works too).
+Optional settings: `ASSEMBLYAI_STT_MODEL`, `ASSEMBLYAI_LLM_MODEL`, `ASSEMBLYAI_REGION`
+(`us` or `eu`), `ASSEMBLYAI_MIN_TURN_SILENCE` / `ASSEMBLYAI_MAX_TURN_SILENCE`,
+`ASSEMBLYAI_LLM_MAX_TOKENS`, `ASSEMBLYAI_LLM_TEMPERATURE`, `ASSEMBLYAI_LLM_REASONING_EFFORT`,
+`ASSEMBLYAI_PLAYBACK_LEAD_MS`, and `ASSEMBLYAI_BARGE_IN=True` (only for hardware with echo
+cancellation).
+
+### AssemblyAI Voice Agent API (deprecated)
 
 `models/assemblyai.ts` bridges AssemblyAI's managed Voice Agent API
-(`wss://agents.assemblyai.com/v1/ws`). Set `ASSEMBLYAI_API_KEY` (the account needs
-Voice Agent API access) and use the `assemblyai` personality provider; the voice's
-name is the AssemblyAI voice id (e.g. `alba`, `eve`, `george`). The 16 kHz mic stream is
-resampled to 24 kHz PCM, output PCM is packetized as Opus, and the character greets first
-via `reply.create`. AssemblyAI owns semantic turn-taking; `INTERRUPT` flushes local
-playback and `END_SESSION` sends `session.end` to avoid the billable reconnect window.
+(`wss://agents.assemblyai.com/v1/ws`) under the `assemblyai` provider. AssemblyAI is
+sunsetting that API in favor of the STT / LLM Gateway / TTS products, so use
+`assemblyai-pipeline` for new characters. The file is kept until the API shuts down.
 
 ## xAI Grok Voice
 

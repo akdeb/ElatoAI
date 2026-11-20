@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import { assemblyaiVoices, bosonVoices, emotionOptions, geminiVoices, grokVoices, mistralVoices, openaiVoices, r2UrlAudio } from "@/lib/data";
+import { assemblyaiPipelineVoices, assemblyaiVoices, bosonVoices, emotionOptions, geminiVoices, grokVoices, mistralVoices, openaiVoices, r2UrlAudio } from "@/lib/data";
 import EmojiComponent from "./EmojiComponent";
 import { PitchFactors } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
@@ -26,7 +26,7 @@ interface SettingsDashboardProps {
 }
 
 const formSchema = z.object({
-  provider: z.enum(["openai", "gemini", "grok", "boson", "mistral", "assemblyai"]),
+  provider: z.enum(["openai", "gemini", "grok", "boson", "mistral", "assemblyai", "assemblyai-pipeline"]),
   title: z.string().min(2, "Minimum 2 characters").max(50, "Maximum 50 characters"),
   description: z.string().min(50, "Minimum 50 characters").max(200, "Maximum 200 characters"),
   prompt: z.string().min(100, "Minimum 100 characters").max(1000, "Maximum 1000 characters"),
@@ -267,6 +267,9 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
       return { label: "Mistral", className: "bg-orange-500 text-white" };
     }
     if (provider === "assemblyai") {
+      return { label: "AssemblyAI Agent", className: "bg-teal-600 text-white" };
+    }
+    if (provider === "assemblyai-pipeline") {
       return { label: "AssemblyAI", className: "bg-teal-600 text-white" };
     }
     return { label: provider, className: "bg-gray-600 text-white" };
@@ -279,6 +282,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
     if (provider === "boson") return bosonVoices;
     if (provider === "mistral") return mistralVoices;
     if (provider === "assemblyai") return assemblyaiVoices;
+    if (provider === "assemblyai-pipeline") return assemblyaiPipelineVoices;
     return [];
   };
 
@@ -316,7 +320,8 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                   { provider: "grok" as ModelProvider, label: "Grok" },
                   { provider: "boson" as ModelProvider, label: "Boson" },
                   { provider: "mistral" as ModelProvider, label: "Mistral" },
-                  { provider: "assemblyai" as ModelProvider, label: "AssemblyAI" },
+                  { provider: "assemblyai-pipeline" as ModelProvider, label: "AssemblyAI" },
+                  { provider: "assemblyai" as ModelProvider, label: "AssemblyAI Agent (sunsetting)" },
                 ]).map((p) => (
                   <button
                     key={p.provider}

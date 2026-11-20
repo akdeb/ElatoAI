@@ -149,6 +149,14 @@ declare global {
             description: string;
             color: string;
             emoji?: string;
+        }
+        | {
+            provider: "assemblyai-pipeline";
+            id: AssemblyAIPipelineVoice;
+            name: string;
+            description: string;
+            color: string;
+            emoji?: string;
         };
 
     type ModelProvider =
@@ -159,6 +167,7 @@ declare global {
         | "boson"
         | "mistral"
         | "assemblyai"
+        | "assemblyai-pipeline"
         | "elevenlabs"
         | "hume";
 
@@ -215,6 +224,10 @@ declare global {
         | "alba" | "eve" | "george" | "jane" | "jean" | "mary" | "michael"
         | "anna" | "charles" | "paul" | "vera"
         | "giovanni" | "lola" | "juergen" | "rafael" | "estelle";
+
+    // Streaming TTS voice slugs (any catalog voice_id works on the server; these are the picker presets)
+    type AssemblyAIPipelineVoice =
+        | "aai-kyla" | "aai-sara" | "aai-peter" | "aai-titus" | "aai-audrey" | "aai-ernest" | "aai-nancy" | "aai-percival" | "aai-steven" | "aai-troy" | "aai-constanza" | "aai-magdalena" | "aai-giada" | "aai-donatien" | "aai-nelson";
 
     type MistralVoice =
         | "en_paul_neutral"
