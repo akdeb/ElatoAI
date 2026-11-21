@@ -5,6 +5,7 @@
 #include "LEDHandler.h"
 #include "OTA.h"
 #include "WifiManager.h"
+#include "CodecBoard.h"
 #include <driver/touch_sensor.h>
 #include <driver/rtc_io.h>
 #include <algorithm>
@@ -62,7 +63,7 @@ void enterSleep() {
   // First, change device state to prevent any new data processing
   deviceState = SLEEP;
   scheduleListeningRestart = false;
-  digitalWrite(I2S_SD_OUT, LOW); // mute the amplifier
+  audioBoardSetAmp(false); // mute the amplifier
   i2sOutputFlushScheduled = true;
   i2sInputFlushScheduled = true;
   vTaskDelay(10); // let all tasks accept state
@@ -71,7 +72,10 @@ void enterSleep() {
 
   // Stop audio tasks first
   i2s_stop(I2S_PORT_IN);
-  i2s_stop(I2S_PORT_OUT);
+  if (I2S_PORT_OUT != I2S_PORT_IN) i2s_stop(I2S_PORT_OUT);
+#ifdef ELATO_BOARD_VOICE_V1
+  audioBoardSleep();
+#endif
 
   // Properly disconnect WebSocket and wait for it to complete
   if (webSocket.isConnected()) {
@@ -233,8 +237,9 @@ void setupDeviceMetadata() {
 void setup() {
   Serial.begin(115200);
   delay(500);
-  Serial.printf("[Memory] PSRAM: %u bytes, free: %u bytes\n",
-                ESP.getPsramSize(), ESP.getFreePsram());
+  Serial.printf("[Memory] PSRAM: %u bytes, free: %u bytes; internal heap free: %u, largest block: %u\n",
+                ESP.getPsramSize(), ESP.getFreePsram(), ESP.getFreeHeap(),
+                (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
 
   // SETUP
   setupDeviceMetadata();
@@ -267,7 +272,11 @@ void setup() {
 
   xTaskCreatePinnedToCore(audioStreamTask, // Function
                           "Speaker Task",  // Name
+#ifdef ELATO_BOARD_VOICE_V1
+                          6144,            // Stack size (also runs codec init)
+#else
                           4096,            // Stack size
+#endif
                           NULL,            // Parameters
                           3,               // Priority
                           NULL,            // Handle

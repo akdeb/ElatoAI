@@ -98,6 +98,39 @@ const uint32_t SAMPLE_RATE = 48000;
 const uint32_t MIC_SAMPLE_RATE = 16000;
 
 // ----------------- Pin Definitions -----------------
+#ifdef ELATO_BOARD_VOICE_V1
+// elato-voice-cam v1 PCB (ESP32-S3-WROOM-1, no PSRAM used).
+// Mic and speaker share one I2S port; the firmware is half duplex, so the
+// port runs at MIC_SAMPLE_RATE while listening and SAMPLE_RATE while speaking.
+const i2s_port_t I2S_PORT_IN = I2S_NUM_0;
+const i2s_port_t I2S_PORT_OUT = I2S_NUM_0;
+
+// Plain common-anode RGB LED, active low (same polarity as the DevKit build).
+// Checked on the first board: GPIO38 is the blue die, GPIO47 the red one.
+const int RED_LED_PIN = 47;
+const int GREEN_LED_PIN = 39;
+const int BLUE_LED_PIN = 38;
+
+const int I2S_MCLK_PIN = 12;
+const int I2S_BCLK_PIN = 13;
+const int I2S_LRCK_PIN = 14;
+const int I2S_DIN_PIN = 15;
+const int I2S_DOUT_PIN = 16;
+const int I2C_SDA_PIN = 11;
+const int I2C_SCL_PIN = 10;
+
+const int I2S_SD = I2S_DIN_PIN;
+const int I2S_WS = I2S_LRCK_PIN;
+const int I2S_SCK = I2S_BCLK_PIN;
+
+const int I2S_WS_OUT = I2S_LRCK_PIN;
+const int I2S_BCK_OUT = I2S_BCLK_PIN;
+const int I2S_DATA_OUT = I2S_DOUT_PIN;
+const int I2S_SD_OUT = -1;  // amp enable is on the TCA9555 (see CodecBoard.cpp)
+
+const gpio_num_t BUTTON_PIN = GPIO_NUM_6; // centre tactile button, RTC IO, active low
+
+#else
 const i2s_port_t I2S_PORT_IN = I2S_NUM_1;
 const i2s_port_t I2S_PORT_OUT = I2S_NUM_0;
 
@@ -115,6 +148,7 @@ const int I2S_DATA_OUT = 7;
 const int I2S_SD_OUT = 10;
 
 const gpio_num_t BUTTON_PIN = GPIO_NUM_2; // Only RTC IO are allowed - ESP32 Pin example
+#endif
 
 
 // ----------------- SSL Certificates -----------------

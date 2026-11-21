@@ -101,6 +101,18 @@ extern const int I2S_DATA_OUT;
 extern const i2s_port_t I2S_PORT_OUT;
 extern const int I2S_SD_OUT;
 
+#ifdef ELATO_BOARD_VOICE_V1
+// elato-voice-cam v1: one full-duplex I2S bus shared by ES8311 + ES7210
+// (I2S_PORT_IN == I2S_PORT_OUT). The pins above alias these.
+extern const int I2S_MCLK_PIN;
+extern const int I2S_BCLK_PIN;
+extern const int I2S_LRCK_PIN;
+extern const int I2S_DIN_PIN;   // ES7210 SDOUT -> ESP32
+extern const int I2S_DOUT_PIN;  // ESP32 -> ES8311 DSDIN
+extern const int I2C_SDA_PIN;
+extern const int I2C_SCL_PIN;
+#endif
+
 extern volatile bool sleepRequested;
 // Latched until reboot; disconnect callbacks must not undo shutdown.
 extern volatile bool shutdownInProgress;

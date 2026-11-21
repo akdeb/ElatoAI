@@ -1,7 +1,11 @@
 #include "OTA.h"
 #include "Audio.h"
 #include "PitchShift.h"
+#include "CodecBoard.h"
 #include <atomic>
+
+// libopus pseudo-stack pointer (diagnostics)
+extern "C" char *global_stack;
 
 // WEBSOCKET
 SemaphoreHandle_t wsMutex;
@@ -26,6 +30,24 @@ unsigned long playbackDrainRequestedTime = 0;
 unsigned long speakerDrainGuardMs = 250;
 std::atomic<bool> speechInterruptRequested{false};
 bool interruptedResponse = false; // accessed only by networkTask
+
+#ifdef ELATO_BOARD_VOICE_V1
+// Half duplex on one shared I2S port: networkTask requests the rate for the
+// next turn, audioStreamTask (the port owner) applies it. Mic frames are only
+// sent once the port really runs at MIC_SAMPLE_RATE, speaker frames only at
+// SAMPLE_RATE.
+volatile uint32_t i2sRateRequested = MIC_SAMPLE_RATE;
+volatile uint32_t i2sRateActive = 0;
+volatile bool i2sPortReady = false;
+static constexpr int VOICE_V1_I2S_DMA_FRAMES = 256;
+static inline void requestI2SRate(uint32_t rate) { i2sRateRequested = rate; }
+static inline bool speakerRateReady() { return i2sRateActive == SAMPLE_RATE; }
+static inline bool micRateReady() { return i2sPortReady && i2sRateActive == MIC_SAMPLE_RATE; }
+#else
+static inline void requestI2SRate(uint32_t) {}
+static inline bool speakerRateReady() { return true; }
+static inline bool micRateReady() { return true; }
+#endif
 
 void requestSpeechInterrupt() {
     if (!shutdownInProgress && deviceState == SPEAKING) {
@@ -98,9 +120,10 @@ void transitionToSpeaking() {
     if (shutdownInProgress) return;
 
     i2sInputFlushScheduled = true;
+    requestI2SRate(SAMPLE_RATE);
     
     deviceState = SPEAKING;
-    digitalWrite(I2S_SD_OUT, HIGH);
+    audioBoardSetAmp(true);
     speakingStartTime = millis();
     
     // webSocket.enableHeartbeat(30000, 15000, 3);
@@ -122,8 +145,9 @@ void transitionToListening() {
 
     Serial.println("Transitioned to listening mode");
 
+    requestI2SRate(MIC_SAMPLE_RATE);
     deviceState = LISTENING;
-    digitalWrite(I2S_SD_OUT, LOW);
+    audioBoardSetAmp(false);
     // webSocket.disableHeartbeat();
 }
 
@@ -131,7 +155,7 @@ void transitionToListening() {
 void audioStreamTask(void *parameter) {
     Serial.println("Starting I2S stream pipeline...");
     
-    pinMode(I2S_SD_OUT, OUTPUT);
+    audioBoardSetAmp(false);
 
     OpusSettings cfg;
     cfg.sample_rate = SAMPLE_RATE;
@@ -144,6 +168,27 @@ void audioStreamTask(void *parameter) {
     xSemaphoreTake(wsMutex, portMAX_DELAY);
     opusDecoder.setOutput(bufferPrint);
     opusDecoder.begin(cfg);
+    // libopus (NONTHREADSAFE_PSEUDOSTACK) mallocs a 60 KB scratch block on
+    // its first decode and keeps it. Without PSRAM, after the TLS handshake
+    // the largest free block can be smaller than that, ALLOC returns NULL and
+    // the first server reply crashes in silk_decode_frame. Decode one empty
+    // (lost) packet now so the scratch is taken while the heap is contiguous.
+    Serial.printf("[Opus] before warm-up: scratch=%p free=%u largest=%u\n", global_stack,
+                  (unsigned)ESP.getFreeHeap(), (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
+    {
+        // A throwaway decoder: the scratch block is global to libopus. Must be
+        // a valid PLC frame size (multiple of 2.5 ms), or opus_decode returns
+        // OPUS_BAD_ARG before it allocates anything.
+        int size = opus_decoder_get_size(1);
+        OpusDecoder *warm = (OpusDecoder *)malloc(size);
+        if (warm && opus_decoder_init(warm, 48000, 1) == OPUS_OK) {
+            static int16_t pcm[960];  // 20 ms at 48 kHz
+            opus_decode(warm, nullptr, 0, pcm, 960, 0);
+        }
+        free(warm);
+    }
+    Serial.printf("[Opus] after warm-up:  scratch=%p free=%u largest=%u\n", global_stack,
+                  (unsigned)ESP.getFreeHeap(), (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
     xSemaphoreGive(wsMutex);
 
     audioBuffer.setReadMaxWait(0);
@@ -160,11 +205,42 @@ void audioStreamTask(void *parameter) {
     config.port_no = I2S_PORT_OUT;
 
     config.copyFrom(info);  
+#ifdef ELATO_BOARD_VOICE_V1
+    // One full-duplex port for ES8311 (out) and ES7210 (in). Stays mono
+    // 16-bit like the MAX98357A path; I2SStream expands/reduces the two slots.
+    config.rx_tx_mode = RXTX_MODE;
+    config.pin_mck = I2S_MCLK_PIN;
+    config.pin_data_rx = I2S_DIN_PIN;
+    config.i2s_format = I2S_STD_FORMAT;
+    // One port carries both DMA directions in stereo (24 KB at the default
+    // 6 x 512 frames vs 18 KB on the two-port MAX98357A/INMP441 board).
+    // Without PSRAM that RAM is needed by WiFi RX buffers: at 6 x 512 the
+    // heap left during a reply was ~3 KB largest block and the TCP stream
+    // stalled. 6 x 256 frames = 32 ms of DMA, 12 KB total.
+    config.buffer_size = VOICE_V1_I2S_DMA_FRAMES;
+#endif
     // Cover all configured DMA samples plus an acoustic tail after the last
     // blocking write. Queue-empty alone does not mean I2S finished playing.
     speakerDrainGuardMs = 250 +
         (1000UL * config.buffer_count * config.buffer_size + SAMPLE_RATE - 1) / SAMPLE_RATE;
     i2s.begin(config);  
+#ifdef ELATO_BOARD_VOICE_V1
+    i2sRateActive = SAMPLE_RATE;
+    audioBoardBeginCodecs();  // codecs need MCLK running first
+    {
+        // Bring-up: 0.6 s, 1 kHz beep straight to I2S (bypasses server/Opus).
+        Serial.println("[Beep] playing 1 kHz test tone");
+        audioBoardSetAmp(true);
+        static int16_t tone[480];
+        for (int i = 0; i < 480; ++i)
+            tone[i] = (int16_t)(8000.0f * sinf(2.0f * PI * 1000.0f * i / 48000.0f));
+        for (int n = 0; n < 60; ++n) i2s.write((uint8_t *)tone, sizeof(tone));  // 60 x 10 ms
+        delay(100);
+        audioBoardSetAmp(false);
+        Serial.println("[Beep] done");
+    }
+    i2sPortReady = true;
+#endif
 
     // Initialize both volume streams once
     auto vcfg = volume.defaultConfig();
@@ -185,6 +261,15 @@ void audioStreamTask(void *parameter) {
             vTaskDelay(1);
             continue;
         }
+#ifdef ELATO_BOARD_VOICE_V1
+        if (i2sRateRequested != i2sRateActive) {
+            uint32_t rate = i2sRateRequested;
+            i2s.setAudioInfo(AudioInfo(rate, CHANNELS, BITS_PER_SAMPLE));
+            i2sInputFlushScheduled = true;  // drop samples taken at the old rate
+            i2sRateActive = rate;
+            Serial.printf("[I2S] rate -> %lu Hz\n", (unsigned long)rate);
+        }
+#endif
         if ( i2sOutputFlushScheduled) {
             i2sOutputFlushScheduled = false;
             i2s.flush();
@@ -199,7 +284,7 @@ void audioStreamTask(void *parameter) {
             }
         }
 
-        if (webSocket.isConnected() && deviceState == SPEAKING) {
+        if (webSocket.isConnected() && deviceState == SPEAKING && speakerRateReady()) {
             speakerCopyActive = true;
             size_t copied = 0;
             if (currentPitchFactor != 1.0f) {
@@ -239,6 +324,23 @@ public:
             return size;
         }
         
+#ifdef ELATO_BOARD_VOICE_V1
+        // Bring-up: mic level once per second of audio sent.
+        {
+            static double sumSq = 0; static int32_t peak = 0; static uint32_t n = 0;
+            const int16_t *smp = (const int16_t *)buffer;
+            for (size_t i = 0; i < size / 2; ++i) {
+                int32_t v = smp[i]; sumSq += (double)v * v;
+                if (abs(v) > peak) peak = abs(v);
+            }
+            n += size / 2;
+            if (n >= MIC_SAMPLE_RATE) {
+                Serial.printf("[Mic] rms=%d peak=%d (sent %lu samples)\n",
+                              (int)sqrt(sumSq / n), (int)peak, (unsigned long)n);
+                sumSq = 0; peak = 0; n = 0;
+            }
+        }
+#endif
         xSemaphoreTake(wsMutex, portMAX_DELAY);
         if (!shutdownInProgress && webSocket.isConnected() && deviceState == LISTENING) webSocket.sendBIN(buffer, size);
         xSemaphoreGive(wsMutex);
@@ -248,7 +350,12 @@ public:
 
 WebsocketStream wsStream; //guard with wsMutex
 I2SStream i2sInput; //access from micTask only
+#ifdef ELATO_BOARD_VOICE_V1
+// Shared port: the mic reads the same I2SStream the speaker task started.
+StreamCopy micToWsCopier(wsStream, i2s);
+#else
 StreamCopy micToWsCopier(wsStream, i2sInput);
+#endif
 volatile bool i2sInputFlushScheduled = false;
 const int MIC_COPY_SIZE = 64;
 size_t micDiscardLimit = 0;
@@ -267,6 +374,14 @@ void discardMicAudio() {
 }
 
 void micTask(void *parameter) {
+#ifdef ELATO_BOARD_VOICE_V1
+    // audioStreamTask owns and starts the shared port.
+    while (!i2sPortReady) vTaskDelay(pdMS_TO_TICKS(10));
+    {
+        auto c = i2s.defaultConfig(RXTX_MODE);
+        micDiscardLimit = c.buffer_count * VOICE_V1_I2S_DMA_FRAMES * 4;
+    }
+#else
     // Configure and start I2S input stream.
     auto i2sConfig = i2sInput.defaultConfig(RX_MODE);
     i2sConfig.bits_per_sample = BITS_PER_SAMPLE;
@@ -281,6 +396,7 @@ void micTask(void *parameter) {
     i2sConfig.port_no = I2S_PORT_IN;
     micDiscardLimit = i2sConfig.buffer_count * i2sConfig.buffer_size * 4;
     i2sInput.begin(i2sConfig);
+#endif
 
     micToWsCopier.setDelayOnNoData(0);
 
@@ -294,7 +410,7 @@ void micTask(void *parameter) {
             discardMicAudio();
         }
 
-        if (deviceState == LISTENING && webSocket.isConnected()) {
+        if (deviceState == LISTENING && webSocket.isConnected() && micRateReady()) {
             // Use smaller chunk size to avoid blocking too long
             micToWsCopier.copyBytes(MIC_COPY_SIZE);
             
@@ -410,6 +526,8 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
             } else if (strcmp((char*)msg.c_str(), "AUDIO.COMMITTED") == 0) {
                 deviceState = PROCESSING; 
             } else if (strcmp((char*)msg.c_str(), "RESPONSE.CREATED") == 0) {
+                Serial.printf("[Opus] at RESPONSE.CREATED: scratch=%p free=%u largest=%u\n", global_stack,
+                              (unsigned)ESP.getFreeHeap(), (unsigned)heap_caps_get_largest_free_block(MALLOC_CAP_8BIT));
                 interruptedResponse = false;
                 Serial.println("Received RESPONSE.CREATED, transitioning to speaking");
                 // Production sends live volume changes on RESPONSE.CREATED.
@@ -521,6 +639,18 @@ void networkTask(void *parameter) {
         }
 
         webSocket.loop();
+#ifdef ELATO_BOARD_VOICE_V1
+        {   // Bring-up: why is playback not handing back to listening?
+            static unsigned long lastDbg = 0;
+            if (deviceState == SPEAKING && millis() - lastDbg >= 1000) {
+                lastDbg = millis();
+                Serial.printf("[Drain] active=%lu pending=%lu copyActive=%d buf=%d sinceWrite=%lu sinceReq=%lu guard=%lu rate=%lu\n",
+                    (unsigned long)activePlaybackId, (unsigned long)pendingPlaybackId, (int)speakerCopyActive,
+                    audioBuffer.available(), millis() - lastSpeakerWriteTime,
+                    millis() - playbackDrainRequestedTime, speakerDrainGuardMs, (unsigned long)i2sRateActive);
+            }
+        }
+#endif
         if (pendingPlaybackId != 0 &&
             (deviceState == SPEAKING || deviceState == LISTENING) &&
             !speakerCopyActive && audioBuffer.available() == 0 &&

@@ -4,6 +4,13 @@
 #include <WiFi.h>
 #include <driver/gpio.h>
 
+#ifdef ELATO_BOARD_VOICE_V1
+// elato-voice-cam v1 has no fuel gauge (MAX17048 removed); its I2C bus
+// (GPIO11/10) belongs to the codecs. Battery telemetry is disabled.
+void setupBattery() { Serial.println("[Battery] no fuel gauge on this board"); }
+void prepareBatteryForSleep() {}
+#else
+
 namespace {
 constexpr int SDA_PIN = 18;
 constexpr int SCL_PIN = 17;
@@ -151,3 +158,4 @@ void prepareBatteryForSleep() {
   gpio_set_pull_mode(gpio_num_t(SCL_PIN), GPIO_FLOATING);
   xSemaphoreGive(busMutex);
 }
+#endif // ELATO_BOARD_VOICE_V1
