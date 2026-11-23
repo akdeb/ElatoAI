@@ -49,10 +49,10 @@ ElatoAI 让你在 ESP32 上运行由 100 多种语音 AI 模型驱动的实时�
 ## 🧠 模型
 
 ### Deno Edge
-1. **[OpenAI Realtime API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/openai.ts)** — 📖 [收录于 OpenAI Cookbook](https://cookbook.openai.com/examples/voice_solutions/running_realtime_api_speech_on_esp32_arduino_edge_runtime_elatoai)
+1. **[OpenAI Realtime API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/openai.ts)** — 📖 [OpenAI Cookbook](https://cookbook.openai.com/examples/voice_solutions/running_realtime_api_speech_on_esp32_arduino_edge_runtime_elatoai)
 2. **[Gemini Live API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/gemini.ts)**
-3. **[AssemblyAI Voice AI Pipeline](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/pipeline)** — 📖 [AssemblyAI 的 ESP32 指南](https://www.assemblyai.com/docs/getting-started/end-to-end-examples/realtime-esp32)
-4. **[Boson Higgs Realtime](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/boson.ts)** — 📖 [Boson AI 博客文章](https://www.boson.ai/blog/higgs-realtime-esp32)
+3. **[AssemblyAI Voice AI Pipeline](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/pipeline)** — 📖 [AssemblyAI 文档](https://www.assemblyai.com/docs/getting-started/end-to-end-examples/realtime-esp32)
+4. **[Boson Higgs Realtime](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/boson.ts)** — 📖 [Boson AI 博客](https://www.boson.ai/blog/higgs-realtime-esp32)
 5. **[xAI Grok Voice Agent API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/grok.ts)**
 6. **[Eleven Labs Conversational AI Agents](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/elevenlabs.ts)**
 7. **[Mistral Voxtral Pipeline](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/pipeline)**
