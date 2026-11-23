@@ -54,10 +54,12 @@ protected:
 
 PinsElatoVoiceV1 boardPins;
 AudioDriver &board = AudioDriverES8311_ES7210;
-SemaphoreHandle_t i2cMutex = nullptr;
 bool codecsReady = false;
 
 }  // namespace
+
+// Shared I2C bus lock; the plant demo's OLED (PlantDemo.cpp) takes it too.
+SemaphoreHandle_t i2cMutex = nullptr;
 
 // Bring-up aid: expect 0x18 (ES8311), 0x20 (TCA9555), 0x40 (ES7210).
 void scanI2C() {
@@ -125,9 +127,18 @@ static int readExpander(uint8_t reg) {
   return Wire.read();
 }
 
+// Takes the bus lock, but never forever: names the holder and gives up after `ms`.
+static bool takeBus(const char *who, uint32_t ms) {
+  if (xSemaphoreTake(i2cMutex, pdMS_TO_TICKS(ms)) == pdTRUE) return true;
+  TaskHandle_t holder = xSemaphoreGetMutexHolder(i2cMutex);
+  Serial.printf("[I2C] %s: bus lock busy for %lu ms, held by '%s'; skipping\n",
+                who, (unsigned long)ms, holder ? pcTaskGetName(holder) : "?");
+  return false;
+}
+
 void audioBoardSetAmp(bool on) {
   if (!i2cMutex || !codecsReady) return;
-  xSemaphoreTake(i2cMutex, portMAX_DELAY);
+  if (!takeBus("amp", 1000)) return;
   board.setPAPower(on);
   int out1 = readExpander(0x03), cfg1 = readExpander(0x07);
   xSemaphoreGive(i2cMutex);
@@ -138,7 +149,7 @@ void audioBoardSetAmp(bool on) {
 
 void audioBoardSleep() {
   if (!i2cMutex || !codecsReady) return;
-  xSemaphoreTake(i2cMutex, portMAX_DELAY);
+  if (!takeBus("sleep", 500)) return;
   board.setPAPower(false);
   board.setMute(true);
   AudioDriverES8311.driver().ctrlStateActive(CODEC_MODE_DECODE, false);

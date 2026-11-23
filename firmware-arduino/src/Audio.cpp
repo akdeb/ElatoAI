@@ -2,6 +2,7 @@
 #include "Audio.h"
 #include "PitchShift.h"
 #include "CodecBoard.h"
+#include "PlantDemo.h"
 #include <atomic>
 
 // libopus pseudo-stack pointer (diagnostics)
@@ -228,16 +229,49 @@ void audioStreamTask(void *parameter) {
     i2sRateActive = SAMPLE_RATE;
     audioBoardBeginCodecs();  // codecs need MCLK running first
     {
-        // Bring-up: 0.6 s, 1 kHz beep straight to I2S (bypasses server/Opus).
-        Serial.println("[Beep] playing 1 kHz test tone");
+        // Startup chime: a soft rising E5-G5-C6 bell arpeggio straight to I2S
+        // (bypasses server/Opus). Each note is a sine plus a quiet octave with a
+        // short attack and exponential decay, so it rings instead of beeping.
+        Serial.println("[Chime] playing startup chime");
         audioBoardSetAmp(true);
-        static int16_t tone[480];
-        for (int i = 0; i < 480; ++i)
-            tone[i] = (int16_t)(8000.0f * sinf(2.0f * PI * 1000.0f * i / 48000.0f));
-        for (int n = 0; n < 60; ++n) i2s.write((uint8_t *)tone, sizeof(tone));  // 60 x 10 ms
+        // Each partial is a rotating phasor (cos/sin pair advanced by a fixed
+        // rotation each sample), so there is no trig per sample and the DMA
+        // never runs dry. Decay is a per-sample multiplier.
+        static const float freq[3]  = {659.25f, 783.99f, 1046.50f};
+        static const int   startS[3] = {0, 5760, 11520};           // 0, 120, 240 ms
+        const float decay = expf(-1.0f / (0.28f * 48000.0f));
+        float c[6], sn[6], rc[6], rs[6], amp[6];
+        for (int p = 0; p < 6; ++p) {
+            float f = freq[p / 2] * (p % 2 ? 2.0f : 1.0f);      // fundamental + octave
+            rc[p] = cosf(2.0f * PI * f / 48000.0f);
+            rs[p] = sinf(2.0f * PI * f / 48000.0f);
+            c[p] = 1.0f; sn[p] = 0.0f;
+            amp[p] = p % 2 ? 0.2f : 1.0f;
+        }
+        static int16_t chunk[480];                                 // 10 ms @ 48 kHz
+        const int chunks = 110, total = chunks * 480;
+        for (int n = 0; n < chunks; ++n) {
+            for (int i = 0; i < 480; ++i) {
+                int t = n * 480 + i;
+                float s = 0;
+                for (int p = 0; p < 6; ++p) {
+                    int u = t - startS[p / 2];
+                    if (u < 0) continue;
+                    float nc = c[p] * rc[p] - sn[p] * rs[p];
+                    sn[p] = sn[p] * rc[p] + c[p] * rs[p];
+                    c[p] = nc;
+                    float attack = u < 384 ? u / 384.0f : 1.0f;    // 8 ms
+                    s += amp[p] * attack * sn[p];
+                    amp[p] *= decay;
+                }
+                float fade = t > total - 4800 ? (total - t) / 4800.0f : 1.0f;
+                chunk[i] = (int16_t)(3000.0f * s * fade);
+            }
+            i2s.write((uint8_t *)chunk, sizeof(chunk));
+        }
         delay(100);
         audioBoardSetAmp(false);
-        Serial.println("[Beep] done");
+        Serial.println("[Chime] done");
     }
     i2sPortReady = true;
 #endif
@@ -498,6 +532,9 @@ void webSocketEvent(WStype_t type, const uint8_t *payload, size_t length)
         if (strcmp((char*)type.c_str(), "server") == 0) {
             String msg = doc["msg"];
             Serial.println(msg);
+#ifdef PLANT_DEMO
+            if (plantHandleServerMessage(msg, doc)) break;
+#endif
 
             if (strcmp((char*)msg.c_str(), "RESPONSE.COMPLETE") == 0 || strcmp((char*)msg.c_str(), "RESPONSE.ERROR") == 0) {
                 if (interruptedResponse) break;
@@ -639,6 +676,9 @@ void networkTask(void *parameter) {
         }
 
         webSocket.loop();
+#ifdef PLANT_DEMO
+        plantSensorTick();
+#endif
 #ifdef ELATO_BOARD_VOICE_V1
         {   // Bring-up: why is playback not handing back to listening?
             static unsigned long lastDbg = 0;

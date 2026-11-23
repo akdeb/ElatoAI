@@ -6,6 +6,7 @@
 #include "OTA.h"
 #include "WifiManager.h"
 #include "CodecBoard.h"
+#include "PlantDemo.h"
 #include <driver/touch_sensor.h>
 #include <driver/rtc_io.h>
 #include <algorithm>
@@ -63,26 +64,36 @@ void enterSleep() {
   // First, change device state to prevent any new data processing
   deviceState = SLEEP;
   scheduleListeningRestart = false;
+  Serial.println("[Sleep] 1 amp off");
   audioBoardSetAmp(false); // mute the amplifier
+  Serial.println("[Sleep] 2 amp off done");
   i2sOutputFlushScheduled = true;
   i2sInputFlushScheduled = true;
   vTaskDelay(10); // let all tasks accept state
 
-  xSemaphoreTake(wsMutex, portMAX_DELAY);
+  // Never block shutdown: if the network task is wedged, sleep anyway.
+  bool haveWs = xSemaphoreTake(wsMutex, pdMS_TO_TICKS(1000)) == pdTRUE;
+  Serial.printf("[Sleep] 3 wsMutex %s\n", haveWs ? "taken" : "busy, continuing");
 
   // Stop audio tasks first
   i2s_stop(I2S_PORT_IN);
   if (I2S_PORT_OUT != I2S_PORT_IN) i2s_stop(I2S_PORT_OUT);
 #ifdef ELATO_BOARD_VOICE_V1
+  Serial.println("[Sleep] 4 i2s stopped");
   audioBoardSleep();
+  Serial.println("[Sleep] 5 codecs asleep");
 #endif
 
   // Properly disconnect WebSocket and wait for it to complete
-  if (webSocket.isConnected()) {
+  if (haveWs && webSocket.isConnected()) { // never touch the socket without its lock
     webSocket.disconnect();
     // Give some time for the disconnect to process
   }
-  xSemaphoreGive(wsMutex);
+  if (haveWs) xSemaphoreGive(wsMutex);
+  Serial.println("[Sleep] 6 ws closed");
+#ifdef PLANT_DEMO
+  plantDisplayOff();
+#endif
   delay(100);
 
   // Deep sleep resets the drivers. Do not free them here while another task
@@ -192,7 +203,13 @@ void inputTask(void *parameter) {
       vTaskDelete(NULL);
       return;
     }
-    switch (gesture.update(inputPressed(), millis())) {
+    bool pressedNow = inputPressed();
+    static bool lastPressed = false;
+    if (pressedNow != lastPressed) {
+      lastPressed = pressedNow;
+      Serial.printf("[Input] GPIO%d %s\n", int(BUTTON_PIN), pressedNow ? "pressed" : "released");
+    }
+    switch (gesture.update(pressedNow, millis())) {
     case InputGesture::Event::ShortPress:
       requestSpeechInterrupt();
       break;
@@ -301,6 +318,12 @@ void setup() {
                           &networkTaskHandle,       // Handle
                           0                         // Core 0 (protocol core)
   );
+
+#ifdef PLANT_DEMO
+  plantSetup();
+  // Core 1 below the audio tasks (3-5): core 0's network task would starve it while it holds the bus.
+  xTaskCreatePinnedToCore(plantDisplayTask, "Plant Display", 6144, NULL, 2, NULL, 1);
+#endif
 
   // WIFI
   setupWiFi();
