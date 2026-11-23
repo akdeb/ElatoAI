@@ -1,8 +1,8 @@
 import { Buffer } from 'node:buffer';
 import type { RawData } from 'npm:@types/ws';
 import { WebSocket } from 'npm:ws';
-import { addConversation } from '../supabase.ts';
-import { createOpusPacketizer, defaultGrokVoice, isDev, xaiApiKey } from '../utils.ts';
+import { addConversation } from '../../supabase.ts';
+import { createOpusPacketizer, defaultGrokVoice, isDev, xaiApiKey } from '../../utils.ts';
 
 const XAI_REALTIME_URL = 'wss://api.x.ai/v1/realtime';
 const GROK_REALTIME_MODEL = Deno.env.get('GROK_REALTIME_MODEL') || 'grok-voice-latest';

@@ -1,8 +1,8 @@
 import { Buffer } from 'node:buffer';
 import type { RawData } from 'npm:@types/ws';
 import { WebSocket } from 'npm:ws';
-import { addConversation } from '../supabase.ts';
-import { createOpusPacketizer, isDev, openaiApiKey } from '../utils.ts';
+import { addConversation } from '../../supabase.ts';
+import { createOpusPacketizer, isDev, openaiApiKey } from '../../utils.ts';
 
 /**
  * OpenAI GPT-Live bridge.

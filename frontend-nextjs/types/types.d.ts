@@ -150,14 +150,7 @@ declare global {
             color: string;
             emoji?: string;
         }
-        | {
-            provider: "assemblyai-pipeline";
-            id: AssemblyAIPipelineVoice;
-            name: string;
-            description: string;
-            color: string;
-            emoji?: string;
-        };
+        ;
 
     type ModelProvider =
         | "openai"
@@ -167,7 +160,7 @@ declare global {
         | "boson"
         | "mistral"
         | "assemblyai"
-        | "assemblyai-pipeline"
+        | "pipeline"
         | "elevenlabs"
         | "hume";
 
@@ -220,13 +213,9 @@ declare global {
         | "sage"
         | "verse";
 
+    // AssemblyAI TTS-1 voice slugs (any catalog voice_id or a cloned voice id works on the
+    // server; these are the picker presets)
     type AssemblyAIVoice =
-        | "alba" | "eve" | "george" | "jane" | "jean" | "mary" | "michael"
-        | "anna" | "charles" | "paul" | "vera"
-        | "giovanni" | "lola" | "juergen" | "rafael" | "estelle";
-
-    // Streaming TTS voice slugs (any catalog voice_id works on the server; these are the picker presets)
-    type AssemblyAIPipelineVoice =
         | "aai-kyla" | "aai-sara" | "aai-peter" | "aai-titus" | "aai-audrey" | "aai-ernest" | "aai-nancy" | "aai-percival" | "aai-steven" | "aai-troy" | "aai-constanza" | "aai-magdalena" | "aai-giada" | "aai-donatien" | "aai-nelson";
 
     type MistralVoice =
@@ -292,6 +281,11 @@ declare global {
         first_message_prompt: string;
         creator_id: string | null;
         pitch_factor: number;
+        // Pipeline characters (provider "pipeline"): one provider per stage
+        stt_provider?: string | null;
+        llm_provider?: string | null;
+        llm_model?: string | null; // null = that LLM provider's default
+        tts_provider?: string | null;
     }
 
     type PersonalityFilter = "is_child_voice" | "is_doctor" | "is_story";

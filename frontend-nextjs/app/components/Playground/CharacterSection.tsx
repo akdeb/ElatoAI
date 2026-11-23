@@ -1,4 +1,5 @@
 import ModifyCharacterSheet from "./ModifyCharacterSheet";
+import Link from "next/link";
 import Image from "next/image";
 import { cn, getPersonalityImageSrc } from "@/lib/utils";
 import {
@@ -8,7 +9,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Check, CheckCircle } from "lucide-react";
+import { Check, CheckCircle, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EmojiComponent } from "./EmojiImage";
 
@@ -96,6 +97,24 @@ const CharacterSection = ({
                                         <CheckCircle className="h-4 w-4" strokeWidth={3} />
                                     )}
                                 </Button>
+                                {/* Your own characters (built-ins have no creator) get an edit shortcut. */}
+                                {personality.creator_id !== null && (
+                                    <Button
+                                        asChild
+                                        size="sm"
+                                        variant="ghost"
+                                        className="absolute top-2 right-12 h-9 w-9 p-0 text-gray-600 hover:text-gray-900 hover:bg-transparent"
+                                    >
+                                        <Link
+                                            href={`/home/edit/${personality.personality_id}`}
+                                            aria-label={`Edit ${personality.title}`}
+                                            // Don't also open the character sheet this card triggers.
+                                            onClick={(e) => e.stopPropagation()}
+                                        >
+                                            <Pencil className="h-4 w-4" strokeWidth={2.5} />
+                                        </Link>
+                                    </Button>
+                                )}
                             </CardContent>
                             <CardHeader className="flex-shrink-0 gap-0 px-4 py-2">
                                 <CardTitle className="font-semibold text-md flex flex-row items-center gap-2">

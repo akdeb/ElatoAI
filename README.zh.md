@@ -49,12 +49,18 @@ ElatoAI 让你在 ESP32 上运行由 100 多种语音 AI 模型驱动的实时�
 ## 🧠 模型
 
 ### Deno Edge
-1. [OpenAI Realtime API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/openai)
-2. [Gemini Live API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/gemini)
-3. [AssemblyAI Voice Agent API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/assemblyai.ts)
-4. [Boson Higgs Realtime](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/boson.ts)
-5. [xAI Grok Voice Agent API](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/grok)
-6. [Eleven Labs Conversational AI Agents](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/elevenlabs)
+**实时（语音到语音）** — 由一个模型完成听、想、说。
+1. [OpenAI Realtime API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/openai.ts)
+2. [Gemini Live API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/gemini.ts)
+3. [Boson Higgs Realtime](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/boson.ts)
+4. [xAI Grok Voice Agent API](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/grok.ts)
+5. [Eleven Labs Conversational AI Agents](https://github.com/akdeb/ElatoAI/blob/main/server/deno/models/realtime/elevenlabs.ts)
+
+**流水线（STT → LLM → TTS）** — 各阶段独立，可自选 LLM、使用工具和克隆声音。
+每个阶段可单独选择、自由混搭提供商（[代码](https://github.com/akdeb/ElatoAI/tree/main/server/deno/models/pipeline)），LLM 还可以调用工具。
+- 语音转文字：AssemblyAI Universal-3.7 Realtime、Mistral Voxtral Realtime
+- LLM：AssemblyAI LLM Gateway（Claude、GPT、Gemini、Gemma 等）、Mistral Large
+- 文字转语音：AssemblyAI TTS-1（支持克隆声音）、Mistral Voxtral TTS
 
 ### Cloudflare Workers
 1. LLM - [80 多种模型](https://developers.cloudflare.com/workers-ai/models/?tasks=Text+Generation)，包括 OpenAI、Gemini、xAI 等。
@@ -73,7 +79,7 @@ ElatoAI 让你在 ESP32 上运行由 100 多种语音 AI 模型驱动的实时�
 
 ## 🌟 完整功能列表
 
-1. **实时语音转语音**：由 OpenAI Realtime API、Gemini Live API、AssemblyAI Voice Agent API、Boson Higgs Realtime、xAI Grok Voice Agent API 和 Eleven Labs Conversational AI Agents 驱动的即时语音转换。
+1. **实时语音转语音**：由 OpenAI Realtime API、Gemini Live API、Boson Higgs Realtime、xAI Grok Voice Agent API 和 Eleven Labs Conversational AI Agents 驱动的即时语音转换，也可使用 AssemblyAI 或 Mistral 的流式 STT → LLM → TTS 流水线。
 2. **创建自定义 AI 智能体**：创建具有不同人格和声音的 AI 智能体。
 3. **可自定义语音**：从多种声音和人格配置中进行选择。
 4. **安全 WebSocket**：可靠且加密的 WebSocket 通信。
@@ -131,7 +137,7 @@ flowchart TD
   ESP32[ESP32 设备] -->|WebSocket| Edge[Deno Edge / Cloudflare Workers]
   Edge -->|OpenAI API| OpenAI[OpenAI Realtime API]
   Edge -->|Gemini API| Gemini[Gemini Live API]
-  Edge -->|AssemblyAI API| AssemblyAI[AssemblyAI Voice Agent API]
+  Edge -->|AssemblyAI API| AssemblyAI[AssemblyAI STT + LLM Gateway + TTS]
   Edge -->|Boson API| Boson[Boson Higgs Realtime]
   Edge -->|xAI API| xAI[xAI Grok Voice Agent API]
   Edge -->|ElevenLabs API| ElevenLabs[ElevenLabs AI Agents]

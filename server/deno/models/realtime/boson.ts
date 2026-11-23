@@ -1,14 +1,14 @@
 import { Buffer } from "node:buffer";
 import type { RawData } from "npm:@types/ws@^8.5.10";
 import { WebSocket } from "npm:ws@^8.18.0";
-import { addConversation, getDeviceInfo } from "../supabase.ts";
+import { addConversation, getDeviceInfo } from "../../supabase.ts";
 import {
     bosonApiKey,
     createOpusPacketizer,
     defaultBosonVoice,
     isDev,
     SAMPLE_RATE,
-} from "../utils.ts";
+} from "../../utils.ts";
 
 const BOSON_REALTIME_URL = "wss://api.boson.ai/v1/realtime";
 const BOSON_MODEL = Deno.env.get("BOSON_REALTIME_MODEL") || "higgs-realtime";

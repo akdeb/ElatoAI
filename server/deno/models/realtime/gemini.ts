@@ -8,8 +8,8 @@ import {
     Modality,
     Session,
 } from "npm:@google/genai";
-import { createOpusPacketizer, geminiApiKey, isDev, defaultGeminiVoice } from "../utils.ts";
-import { addConversation } from "../supabase.ts";
+import { createOpusPacketizer, geminiApiKey, isDev, defaultGeminiVoice } from "../../utils.ts";
+import { addConversation } from "../../supabase.ts";
 
 export const connectToGemini = async ({
     ws,

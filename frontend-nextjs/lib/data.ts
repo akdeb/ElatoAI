@@ -660,145 +660,15 @@ export const emotionOptions = [
     },
 ];
 
+// AssemblyAI TTS-1 voices (pipeline: Streaming STT -> LLM Gateway -> TTS-1)
 export const assemblyaiVoices: VoiceType[] = [
-    {
-        id: "alba",
-        name: "Alba",
-        description: "American English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "eve",
-        name: "Eve",
-        description: "American English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "george",
-        name: "George",
-        description: "American English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "jane",
-        name: "Jane",
-        description: "American English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "jean",
-        name: "Jean",
-        description: "American English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "mary",
-        name: "Mary",
-        description: "American English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "michael",
-        name: "Michael",
-        description: "American English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "anna",
-        name: "Anna",
-        description: "British English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "charles",
-        name: "Charles",
-        description: "British English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "paul",
-        name: "Paul",
-        description: "British English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "vera",
-        name: "Vera",
-        description: "British English",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "giovanni",
-        name: "Giovanni",
-        description: "Italian",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "lola",
-        name: "Lola",
-        description: "Spanish",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "juergen",
-        name: "Juergen",
-        description: "German",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "rafael",
-        name: "Rafael",
-        description: "Portuguese",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-    {
-        id: "estelle",
-        name: "Estelle",
-        description: "French",
-        color: "bg-teal-50",
-        emoji: "🎙️",
-        provider: "assemblyai",
-    },
-];
-
-export const assemblyaiPipelineVoices: VoiceType[] = [
     {
         id: "aai-kyla",
         name: "Kyla",
         description: "Young woman, American English",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-sara",
@@ -806,7 +676,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Young woman, American English",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-peter",
@@ -814,7 +684,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Middle-aged man, American English",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-titus",
@@ -822,7 +692,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Young man, deep, American English",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-audrey",
@@ -830,7 +700,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Middle-aged woman, American English",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-ernest",
@@ -838,7 +708,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Middle-aged man, American English",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-nancy",
@@ -846,7 +716,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Middle-aged woman, British English",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-percival",
@@ -854,7 +724,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Older man, British English",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-steven",
@@ -862,7 +732,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Middle-aged man, Australian English",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-troy",
@@ -870,7 +740,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Young man, Scottish English",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-constanza",
@@ -878,7 +748,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Young woman, Mexican Spanish",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-magdalena",
@@ -886,7 +756,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Young woman, German",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-giada",
@@ -894,7 +764,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Young woman, Italian",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-donatien",
@@ -902,7 +772,7 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Middle-aged man, French",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
     {
         id: "aai-nelson",
@@ -910,6 +780,6 @@ export const assemblyaiPipelineVoices: VoiceType[] = [
         description: "Older man, Brazilian Portuguese",
         color: "bg-teal-50",
         emoji: "🎙️",
-        provider: "assemblyai-pipeline",
+        provider: "assemblyai",
     },
 ];

@@ -11,8 +11,7 @@ export const defaultGeminiVoice = "Sadachbia";
 export const defaultOpenAIVoice = "ash";
 export const defaultGrokVoice = "ara";
 export const defaultBosonVoice = "chloe";
-export const defaultAssemblyAIVoice = "alba";
-export const defaultAssemblyAIPipelineVoice = "aai-kyla"; // streaming TTS default voice
+export const defaultAssemblyAIVoice = "aai-kyla"; // streaming TTS default voice
 
 // Define your audio parameters
 export const SAMPLE_RATE = 24000; // For example, 24000 Hz
@@ -22,22 +21,27 @@ const BYTES_PER_SAMPLE = 2; // 16-bit PCM: 2 bytes per sample
 const FRAME_SIZE = (SAMPLE_RATE * FRAME_DURATION / 1000) * CHANNELS *
     BYTES_PER_SAMPLE; // 960 bytes for 24000 Hz mono 16-bit
 
-export function createOpusEncoder() {
+// Defaults are tuned for low bandwidth (24 kbps "voip"). Providers whose TTS is clean
+// studio audio can ask for more: "audio" mode at 48 kbps is near transparent for speech.
+export type OpusQuality = { bitrate?: number; application?: "voip" | "audio" };
+
+export function createOpusEncoder(quality: OpusQuality = {}) {
     const enc = new Encoder({
         channels: CHANNELS,
         sample_rate: SAMPLE_RATE,
-        application: "voip",
+        application: quality.application ?? "voip",
     });
 
     enc.expert_frame_duration = FRAME_DURATION;
-    enc.bitrate = 24000;
+    enc.bitrate = quality.bitrate ?? 24000;
     return enc;
 }
 
 export function createOpusPacketizer(
     sendPacket: (packet: Uint8Array) => void,
+    quality: OpusQuality = {},
 ) {
-    const enc = createOpusEncoder();
+    const enc = createOpusEncoder(quality);
     let pending = Buffer.alloc(0);
     let closed = false;
 
@@ -112,7 +116,8 @@ export const xaiApiKey = Deno.env.get('XAI_API_KEY');
 export const bosonApiKey = Deno.env.get('BOSON_API_KEY');
 export const mistralApiKey = Deno.env.get('MISTRAL_API_KEY');
 export const assemblyaiApiKey = Deno.env.get('ASSEMBLYAI_API_KEY');
-// Pipeline provider (STT + LLM Gateway + TTS) models
+// AssemblyAI pipeline (Streaming STT + LLM Gateway + TTS). The LLM is per character
+// (personalities.llm_model); ASSEMBLYAI_LLM_MODEL is the fallback.
 export const assemblyaiSttModel = Deno.env.get('ASSEMBLYAI_STT_MODEL') ?? 'assemblyai-stt-3-7-realtime-agent';
 export const assemblyaiLlmModel = Deno.env.get('ASSEMBLYAI_LLM_MODEL') ?? 'claude-haiku-4-5-20251001';
 

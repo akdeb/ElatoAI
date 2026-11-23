@@ -10,16 +10,16 @@ import {
 } from './supabase.ts';
 import { SupabaseClient } from '@supabase/supabase-js';
 import { isDev } from './utils.ts';
-import { connectToOpenAI } from './models/openai.ts';
-import { connectToOpenAILive } from './models/openai-live.ts';
-import { connectToGemini } from './models/gemini.ts';
-import { connectToElevenLabs } from './models/elevenlabs.ts';
-import { connectToHume } from './models/hume.ts';
-import { connectToGrok } from './models/grok.ts';
-import { connectToBoson } from './models/boson.ts';
-import { connectToMistral } from './models/mistral.ts';
-import { connectToAssemblyAI } from './models/assemblyai.ts';
-import { connectToAssemblyAIPipeline } from './models/assemblyai-pipeline.ts';
+// Realtime: one speech-to-speech model does listening, thinking and talking.
+import { connectToOpenAI } from './models/realtime/openai.ts';
+import { connectToOpenAILive } from './models/realtime/openai-live.ts';
+import { connectToGemini } from './models/realtime/gemini.ts';
+import { connectToElevenLabs } from './models/realtime/elevenlabs.ts';
+import { connectToHume } from './models/realtime/hume.ts';
+import { connectToGrok } from './models/realtime/grok.ts';
+import { connectToBoson } from './models/realtime/boson.ts';
+// Pipeline: swappable speech-to-text -> LLM -> text-to-speech stages (models/pipeline/).
+import { connectToPipeline } from './models/pipeline/index.ts';
 
 const server = createServer();
 
@@ -91,6 +91,7 @@ wss.on('connection', async (ws: WSWebSocket, payload: IPayload) => {
     };
 
     switch (provider) {
+        // ---- realtime (speech-to-speech) ----
         case 'openai':
             await connectToOpenAI(providerArgs);
             break;
@@ -112,14 +113,11 @@ wss.on('connection', async (ws: WSWebSocket, payload: IPayload) => {
         case 'boson':
             await connectToBoson(providerArgs);
             break;
+        // ---- pipeline (STT -> LLM -> TTS), any mix of providers ----
+        case 'pipeline':
+        case 'assemblyai': // characters saved before the split: all stages on that provider
         case 'mistral':
-            await connectToMistral(providerArgs);
-            break;
-        case 'assemblyai':
-            await connectToAssemblyAI(providerArgs);
-            break;
-        case 'assemblyai-pipeline':
-            await connectToAssemblyAIPipeline(providerArgs);
+            await connectToPipeline(providerArgs);
             break;
         default:
             throw new Error(`Unknown provider: ${provider}`);

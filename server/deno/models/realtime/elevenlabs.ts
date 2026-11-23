@@ -7,13 +7,13 @@ import {
 	type IncomingSocketEvent,
 	type DisconnectionDetails
 } from "npm:@elevenlabs/client";
-import { addConversation, getDeviceInfo } from "../supabase.ts";
+import { addConversation, getDeviceInfo } from "../../supabase.ts";
 import {
 	createOpusPacketizer,
 	isDev,
 	elevenLabsApiKey,
 	SAMPLE_RATE,
-} from "../utils.ts";
+} from "../../utils.ts";
 
 // Calculate audio level for debugging
 function calculateAudioLevel(audioData: any): number {
