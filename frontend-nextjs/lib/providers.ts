@@ -71,7 +71,7 @@ export const PIPELINE_STAGES: Record<PipelineStage, { label: string; groups: Pip
     stt: {
         label: "Speech-to-text",
         groups: [
-            { provider: "assemblyai", company: "AssemblyAI", options: [{ id: null, label: "Universal-3.7 Realtime" }] },
+            { provider: "assemblyai", company: "AssemblyAI", options: [{ id: null, label: "STT-3.7 Realtime Agent" }] },
             { provider: "mistral", company: "Mistral", options: [{ id: null, label: "Voxtral Realtime" }] },
         ],
     },

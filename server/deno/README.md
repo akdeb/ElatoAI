@@ -73,7 +73,7 @@ ESP32 --16 kHz PCM--> stt/  (owns turn detection)
 
 | Stage | `assemblyai` | `mistral` |
 |---|---|---|
-| `stt/` | Streaming STT, server-side turn detection | Voxtral Realtime + local energy VAD |
+| `stt/` | Streaming STT (`assemblyai-stt-3-7-realtime-agent`), server-side turn detection | Voxtral Realtime + local energy VAD |
 | `llm/openai-compatible.ts` | LLM Gateway: any model id (Claude, GPT, Gemini, Gemma, …) | Mistral Large 4 |
 | `tts/` | TTS-1 over one WebSocket (library or cloned voice ids) | Voxtral TTS, one streaming request per sentence |
 
