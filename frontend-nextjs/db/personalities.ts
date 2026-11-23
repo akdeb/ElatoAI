@@ -20,6 +20,27 @@ export const createPersonality = async (
     return data ? data[0] : null;
 };
 
+// Only the creator can update (RLS: personalities_update_own).
+export const updatePersonality = async (
+    supabase: SupabaseClient,
+    personalityId: string,
+    fields: Partial<IPersonality>,
+): Promise<IPersonality | null> => {
+    const { data, error } = await supabase
+        .from("personalities")
+        .update(fields)
+        .eq("personality_id", personalityId)
+        .select();
+
+    if (error) {
+        console.error("Error updating personality:", error);
+        throw error;
+    }
+    // RLS filters out rows you don't own: no row back means nothing was updated.
+    if (!data?.length) throw new Error("Character not found or not yours");
+    return data[0];
+};
+
 export const getPersonalityById = async (
     supabase: SupabaseClient,
     personalityId: string,

@@ -8,12 +8,13 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, ArrowRight, Check, Volume2, Plus } from "lucide-react";
-import { createPersonality } from "@/db/personalities";
+import { createPersonality, updatePersonality } from "@/db/personalities";
 import { v4 as uuidv4 } from 'uuid';
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
-import { assemblyaiPipelineVoices, assemblyaiVoices, bosonVoices, emotionOptions, geminiVoices, grokVoices, mistralVoices, openaiVoices, r2UrlAudio } from "@/lib/data";
+import { emotionOptions, r2UrlAudio } from "@/lib/data";
+import { COMPANY_TAG, PIPELINE_STAGES, PROVIDERS, VOICE_MODES, providerInfo, stageGroup, type PipelineStage, type StageProvider, type VoiceMode } from "@/lib/providers";
 import EmojiComponent from "./EmojiComponent";
 import { PitchFactors } from "@/lib/utils";
 import { Slider } from "@/components/ui/slider";
@@ -23,10 +24,13 @@ import Image from "next/image";
 interface SettingsDashboardProps {
   selectedUser: IUser;
   allLanguages: ILanguage[];
+  // Set to edit an existing character instead of creating one.
+  personality?: IPersonality;
 }
 
 const formSchema = z.object({
-  provider: z.enum(["openai", "gemini", "grok", "boson", "mistral", "assemblyai", "assemblyai-pipeline"]),
+  provider: z.enum(["openai", "gemini", "grok", "boson", "pipeline"]),
+  llmModel: z.string().nullable(),
   title: z.string().min(2, "Minimum 2 characters").max(50, "Maximum 50 characters"),
   description: z.string().min(50, "Minimum 50 characters").max(200, "Maximum 200 characters"),
   prompt: z.string().min(100, "Minimum 100 characters").max(1000, "Maximum 1000 characters"),
@@ -41,32 +45,86 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+// voice_prompt is saved as "<features>\nThe voice should be <emotion>"; split it back for editing.
+const parseVoicePrompt = (voicePrompt: string) => {
+  const m = voicePrompt.match(/^([\s\S]*)\nThe voice should be (\S+)\s*$/);
+  return m ? { features: m[1], emotion: m[2] } : { features: voicePrompt, emotion: "neutral" };
+};
+
 const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
   selectedUser,
+  personality: editing,
 }) => {
   const supabase = createClient();
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<'personality' | 'voice'>('personality');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [formData, setFormData] = useState({
-    provider: 'openai' as ModelProvider,
-    title: '',
-    description: '',
-    prompt: '',
-    firstMessagePrompt: '',
-    voice: '',
+  const [formData, setFormData] = useState(() => ({
+    provider: (editing?.provider ?? 'openai') as ModelProvider,
+    // Pipeline characters: one provider per stage (any mix works).
+    sttProvider: (editing?.stt_provider ?? "assemblyai") as StageProvider,
+    llmProvider: (editing?.llm_provider ?? "assemblyai") as StageProvider,
+    llmModel: editing?.llm_model ?? null,
+    ttsProvider: (editing?.tts_provider ?? "assemblyai") as StageProvider,
+    title: editing?.title ?? '',
+    description: editing?.short_description ?? '',
+    prompt: editing?.character_prompt ?? '',
+    firstMessagePrompt: editing?.first_message_prompt ?? '',
+    voice: editing?.oai_voice ?? '',
     voiceCharacteristics: {
-      features: '',
-      emotion: 'neutral',
-      pitchFactor: 1.0,
+      ...(editing ? parseVoicePrompt(editing.voice_prompt) : { features: '', emotion: 'neutral' }),
+      pitchFactor: editing?.pitch_factor ?? 1.0,
     }
-  });
+  }));
 
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({});
   const [formErrors, setFormErrors] = useState<Partial<Record<keyof FormData | 'features', string>>>({});
   const [previewingVoice, setPreviewingVoice] = useState<string | null>(null);
-  const [expandedProvider, setExpandedProvider] = useState<ModelProvider | null>("openai");
+  const [expandedProvider, setExpandedProvider] = useState<ModelProvider | null>(editing?.provider ?? "openai");
+  const [voiceMode, setVoiceMode] = useState<VoiceMode>(
+    editing ? (providerInfo(editing.provider)?.mode ?? "realtime") : "realtime",
+  );
+
+  const selectProvider = (provider: ModelProvider) => {
+    setExpandedProvider(provider);
+    setFormData(prev => ({
+      ...prev,
+      provider,
+      voice: prev.provider !== provider ? "" : prev.voice,
+    }));
+  };
+
+  const selectMode = (mode: VoiceMode) => {
+    setVoiceMode(mode);
+    if (providerInfo(formData.provider)?.mode === mode) return;
+    if (mode === "pipeline") {
+      setExpandedProvider("pipeline");
+      // Start on the first option of each stage; the voice comes from the TTS provider.
+      setFormData(prev => ({
+        ...prev,
+        provider: "pipeline",
+        voice: stageGroup("tts", prev.ttsProvider)?.options[0]?.id ?? "",
+      }));
+    } else {
+      selectProvider(PROVIDERS.find(p => p.mode === "realtime")!.provider);
+    }
+  };
+
+  // Pipeline dropdowns: each <option> value is "provider::id" (id empty for a provider default).
+  const stageSelection = (stage: PipelineStage): { provider: StageProvider; id: string | null } => {
+    if (stage === "stt") return { provider: formData.sttProvider, id: null };
+    if (stage === "llm") return { provider: formData.llmProvider, id: formData.llmModel };
+    return { provider: formData.ttsProvider, id: formData.voice || null };
+  };
+  const pickStage = (stage: PipelineStage, value: string) => {
+    const [provider, id] = value.split("::") as [StageProvider, string];
+    setFormData(prev => {
+      if (stage === "stt") return { ...prev, sttProvider: provider };
+      if (stage === "llm") return { ...prev, llmProvider: provider, llmModel: id || null };
+      return { ...prev, ttsProvider: provider, voice: id };
+    });
+  };
 
   const handleBlur = (field: keyof FormData | 'features') => {
     // Mark the field as touched
@@ -161,40 +219,69 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
       });
       setFormErrors(errors);
       setIsSubmitting(false); // Reset submitting state
+      // Say what's wrong, and go to the step that has the problem (most fields are on step 1,
+      // so an error there would otherwise be invisible from the voice step's Save button).
+      const LABELS: Record<string, string> = {
+        title: "Name", description: "Description", prompt: "Character prompt",
+        firstMessagePrompt: "First message", voice: "Voice", features: "Voice features",
+        provider: "Provider", llmModel: "LLM",
+      };
+      const keys = Object.keys(errors);
+      const onVoiceStep = (k: string) => k === "features" || k === "voiceCharacteristics";
+      if (keys.some(k => !onVoiceStep(k))) setCurrentStep('personality');
+      toast({
+        title: "Please fix before saving",
+        description: keys.map(k => `${LABELS[k] ?? k}: ${errors[k as keyof typeof errors]}`).join(" · "),
+        variant: "destructive",
+        duration: 6000,
+      });
       return;
     }
 
     try {
-      const personality = await createPersonality(supabase, selectedUser.user_id, {
+      const isPipeline = formData.provider === "pipeline";
+      const fields = {
         provider: formData.provider as ModelProvider,
         title: formData.title,
-        subtitle: "",
         character_prompt: formData.prompt,
         oai_voice: formData.voice as OaiVoice,
         voice_prompt: formData.voiceCharacteristics.features + "\nThe voice should be " + formData.voiceCharacteristics.emotion,
-        is_doctor: false,
-        is_child_voice: false,
-        is_story: false,
-        key: formData.title.toLowerCase().replace(/ /g, '_') + "_" + uuidv4(),
-        creator_id: selectedUser.user_id,
         short_description: formData.description,
         pitch_factor: formData.voiceCharacteristics.pitchFactor,
-        first_message_prompt: formData.firstMessagePrompt
-      });
+        first_message_prompt: formData.firstMessagePrompt,
+        // Stage columns only mean something for pipeline characters; clear them otherwise.
+        stt_provider: isPipeline ? formData.sttProvider : null,
+        llm_provider: isPipeline ? formData.llmProvider : null,
+        llm_model: isPipeline ? formData.llmModel : null,
+        tts_provider: isPipeline ? formData.ttsProvider : null,
+      };
 
-      if (personality) {
+      const saved = editing
+        ? await updatePersonality(supabase, editing.personality_id!, fields)
+        : await createPersonality(supabase, selectedUser.user_id, {
+          ...fields,
+          subtitle: "",
+          is_doctor: false,
+          is_child_voice: false,
+          is_story: false,
+          key: formData.title.toLowerCase().replace(/ /g, '_') + "_" + uuidv4(),
+          creator_id: selectedUser.user_id,
+        });
+
+      if (saved) {
         toast({
-          title: "New AI Character created",
-          description: "Your character has been created!",
+          title: editing ? "Character updated" : "New AI Character created",
+          description: editing ? "Your changes are saved. The device picks them up on its next session." : "Your character has been created!",
           duration: 3000,
         });
         router.push(`/home`);
+        router.refresh();
       }
     } catch (error) {
-      console.error("Error creating personality:", error);
+      console.error("Error saving personality:", error);
       toast({
         title: "Error",
-        description: "Failed to create your character. Please try again.",
+        description: editing ? "Failed to save your changes. Please try again." : "Failed to create your character. Please try again.",
         variant: "destructive",
         duration: 3000,
       });
@@ -251,47 +338,19 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
   }
 
   const getProviderBadge = (provider: ModelProvider) => {
-    if (provider === "openai") {
-      return { label: "OpenAI", className: "bg-emerald-500 text-white" };
-    }
-    if (provider === "gemini") {
-      return { label: "Gemini", className: "bg-purple-500 text-white" };
-    }
-    if (provider === "grok") {
-      return { label: "Grok", className: "bg-slate-900 text-white" };
-    }
-    if (provider === "boson") {
-      return { label: "Boson", className: "bg-sky-600 text-white" };
-    }
-    if (provider === "mistral") {
-      return { label: "Mistral", className: "bg-orange-500 text-white" };
-    }
-    if (provider === "assemblyai") {
-      return { label: "AssemblyAI Agent", className: "bg-teal-600 text-white" };
-    }
-    if (provider === "assemblyai-pipeline") {
-      return { label: "AssemblyAI", className: "bg-teal-600 text-white" };
-    }
-    return { label: provider, className: "bg-gray-600 text-white" };
+    const info = providerInfo(provider);
+    return { label: info?.label ?? provider, className: info?.badgeClass ?? "bg-gray-600 text-white" };
   };
 
-  const getProviderVoices = (provider: ModelProvider): VoiceType[] => {
-    if (provider === "openai") return openaiVoices;
-    if (provider === "gemini") return geminiVoices;
-    if (provider === "grok") return grokVoices;
-    if (provider === "boson") return bosonVoices;
-    if (provider === "mistral") return mistralVoices;
-    if (provider === "assemblyai") return assemblyaiVoices;
-    if (provider === "assemblyai-pipeline") return assemblyaiPipelineVoices;
-    return [];
-  };
+  const getProviderVoices = (provider: ModelProvider): VoiceType[] =>
+    providerInfo(provider)?.voices ?? [];
 
   const Heading = () => {
     return (
       <div className="flex flex-col gap-2">
         <div className="flex flex-row gap-4 items-center sm:justify-normal justify-between max-w-screen-sm">
           <div className="flex flex-row gap-4 items-center justify-between w-full">
-            <h1 className="text-3xl font-normal">Create your AI Character</h1>
+            <h1 className="text-3xl font-normal">{editing ? `Edit ${editing.title}` : "Create your AI Character"}</h1>
           </div>
         </div>
         {/* <HomePageSubtitles user={selectedUser} page="create" /> */}
@@ -313,16 +372,27 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                 Choose from a list of voices and model providers to create your AI character.
               </p>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {([
-                  { provider: "openai" as ModelProvider, label: "OpenAI" },
-                  { provider: "gemini" as ModelProvider, label: "Gemini" },
-                  { provider: "grok" as ModelProvider, label: "Grok" },
-                  { provider: "boson" as ModelProvider, label: "Boson" },
-                  { provider: "mistral" as ModelProvider, label: "Mistral" },
-                  { provider: "assemblyai-pipeline" as ModelProvider, label: "AssemblyAI" },
-                  { provider: "assemblyai" as ModelProvider, label: "AssemblyAI Agent (sunsetting)" },
-                ]).map((p) => (
+              {/* 1. How it talks: realtime vs pipeline */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {VOICE_MODES.map((m) => (
+                  <button
+                    key={m.mode}
+                    type="button"
+                    className={`text-left bg-white shadow-md rounded-xl border-2 p-4 transition-all hover:shadow-md ${voiceMode === m.mode
+                      ? "border-blue-500 ring-2 ring-blue-200"
+                      : "border-gray-200 hover:border-gray-300"
+                      }`}
+                    onClick={() => selectMode(m.mode)}
+                  >
+                    <div className="font-semibold text-gray-900">{m.title}</div>
+                    <p className="text-xs text-gray-500 mt-1">{m.blurb}</p>
+                  </button>
+                ))}
+              </div>
+
+              {/* 2a. Realtime: pick a provider, then a voice below */}
+              {voiceMode === "realtime" && <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {PROVIDERS.filter(p => p.mode === voiceMode).map((p) => (
                   <button
                     key={p.provider}
                     type="button"
@@ -330,31 +400,53 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                       ? "border-blue-500 ring-2 ring-blue-200"
                       : "border-gray-200 hover:border-gray-300"
                       }`}
-                    onClick={() => {
-                      setExpandedProvider(prev => prev === p.provider ? null : p.provider);
-                      setFormData(prev => {
-                        const switchingProvider = prev.provider !== p.provider;
-                        return {
-                          ...prev,
-                          provider: p.provider,
-                          voice: switchingProvider ? "" : prev.voice,
-                        };
-                      });
-                    }}
+                    onClick={() => selectProvider(p.provider)}
                   >
-                    <div className="flex flex-col gap-1">
-                      <div className="flex flex-col sm:flex-row gap-2 items-center">
-                        <span className="font-semibold text-gray-900">{p.label}</span>
-                        <span className="text-xs text-gray-500">
-                          ({getProviderVoices(p.provider).length})
-                        </span>
-                      </div>
+                    <div className="flex flex-col sm:flex-row gap-2 items-center">
+                      <span className="font-semibold text-gray-900">{p.label}</span>
+                      <span className="text-xs text-gray-500">({p.voices.length})</span>
                     </div>
                   </button>
                 ))}
-              </div>
+              </div>}
 
-              {expandedProvider && (
+              {/* 2b. Pipeline: three independent dropdowns, any mix of providers */}
+              {voiceMode === "pipeline" && (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {(Object.keys(PIPELINE_STAGES) as PipelineStage[]).map(stage => {
+                    const sel = stageSelection(stage);
+                    const company = stageGroup(stage, sel.provider)?.company;
+                    return (
+                      <div key={stage} className="space-y-1">
+                        <div className="flex items-center gap-2">
+                          <Label htmlFor={`pipeline-${stage}`} className="text-sm">{PIPELINE_STAGES[stage].label}</Label>
+                          {company && (
+                            <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${COMPANY_TAG[company] ?? "bg-gray-100 text-gray-700"}`}>
+                              {company}
+                            </span>
+                          )}
+                        </div>
+                        <select
+                          id={`pipeline-${stage}`}
+                          className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
+                          value={`${sel.provider}::${sel.id ?? ""}`}
+                          onChange={(e) => pickStage(stage, e.target.value)}
+                        >
+                          {PIPELINE_STAGES[stage].groups.map(g => (
+                            <optgroup key={g.provider} label={g.company}>
+                              {g.options.map(o => (
+                                <option key={o.id ?? "default"} value={`${g.provider}::${o.id ?? ""}`}>{o.label}</option>
+                              ))}
+                            </optgroup>
+                          ))}
+                        </select>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {voiceMode === "realtime" && expandedProvider && (
                 <div className="overflow-x-auto px-2">
                   <div className="flex gap-3 w-max py-2">
                     {getProviderVoices(expandedProvider).map((voice: VoiceType) => (
@@ -637,7 +729,7 @@ const SettingsDashboard: React.FC<SettingsDashboardProps> = ({
                 formData.voiceCharacteristics.features === ''
               }
             >
-              {isSubmitting ? "Creating..." : "Create"} {!isSubmitting && <Check className="w-4 h-4" />}
+              {isSubmitting ? (editing ? "Saving..." : "Creating...") : (editing ? "Save changes" : "Create")} {!isSubmitting && <Check className="w-4 h-4" />}
             </Button>
           </div>
         )}

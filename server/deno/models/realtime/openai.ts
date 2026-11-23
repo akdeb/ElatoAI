@@ -1,9 +1,9 @@
 import { Buffer } from "node:buffer";
 import type { RawData } from "npm:@types/ws";
-import { RealtimeClient } from "../realtime/client.js";
-import { RealtimeUtils } from "../realtime/utils.js";
-import { addConversation, getDeviceInfo } from "../supabase.ts";
-import { createOpusPacketizer, isDev, openaiApiKey, defaultOpenAIVoice } from "../utils.ts";
+import { RealtimeClient } from "../../realtime/client.js";
+import { RealtimeUtils } from "../../realtime/utils.js";
+import { addConversation, getDeviceInfo } from "../../supabase.ts";
+import { createOpusPacketizer, isDev, openaiApiKey, defaultOpenAIVoice } from "../../utils.ts";
 
 const sendFirstMessage = (client: RealtimeClient, firstMessage: string) => {
     const event = {

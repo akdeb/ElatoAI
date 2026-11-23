@@ -4,7 +4,7 @@ For more details, visit the [Elato Deno Server Docs](https://www.elatoai.com/doc
 
 ## OpenAI GPT-Live
 
-`models/openai-live.ts` bridges OpenAI's GPT-Live model. GPT-Live is **not** a
+`models/realtime/openai-live.ts` bridges OpenAI's GPT-Live model. GPT-Live is **not** a
 Realtime model: it runs on the separate Live API
 (`wss://api.openai.com/v1/live/sessions`), so it is exposed as its own provider
 rather than a model swap within `openai`. Set a personality's `provider` to
@@ -33,23 +33,10 @@ Two behaviours differ from the Realtime bridge and are worth knowing:
   (`session.input_audio.mute`) for the duration of each spoken turn, which also
   means the device cannot barge in mid-response.
 
-## Mistral (Voxtral STT + Mistral LLM + Voxtral TTS)
-
-`models/mistral.ts` runs a cascaded, streaming pipeline. Set a voice row's
-`provider` to `mistral` and its `name` to a Voxtral TTS `voice_id`, and set
-`MISTRAL_API_KEY`. Turn detection is an energy VAD on the server; STT sockets are
-pre-warmed, the LLM streams, and text is sent to TTS clause-by-clause.
-
-Optional overrides: `MISTRAL_LLM_MODEL` (default `mistral-large-4`),
-`MISTRAL_REASONING_EFFORT` (default `none`; `high` enables thinking, much slower),
-`MISTRAL_STT_MODEL`, `MISTRAL_TTS_MODEL`, `MISTRAL_TTS_VOICE`,
-`MISTRAL_TTS_SAMPLE_RATE` (default `24000`), `MISTRAL_VAD_THRESHOLD` (min level, default `120`), `MISTRAL_VAD_SNR` (default `3`), `MISTRAL_PLAYBACK_LEAD_MS` (default `800`)
-and `MISTRAL_VAD_SILENCE_MS` (default `550`).
-
 ## Boson Higgs Realtime
 
 The Deno server supports Boson's raw Realtime WebSocket API through
-`models/boson.ts`. Set a voice row's `provider` to `boson` and its `name` to
+`models/realtime/boson.ts`. Set a voice row's `provider` to `boson` and its `name` to
 one of the preset voices: `chloe`, `eleanor`, `nora`, `jake`, `marcus`,
 `oliver`, `yujin`, or `jiho`.
 
@@ -67,41 +54,46 @@ stream, packetizes Boson's 24 kHz PCM output as Opus, forwards transcripts,
 and supports interruption and end-session events. Tune far-field detection
 with `BOSON_ESP32_VAD_THRESHOLD` and `BOSON_ESP32_VAD_SILENCE_MS`.
 
-## AssemblyAI (STT + LLM Gateway + TTS)
+## Pipeline (STT → LLM → TTS, any mix)
 
-`models/assemblyai-pipeline.ts` runs a streaming cascade on one `ASSEMBLYAI_API_KEY`
-and is selected by the `assemblyai-pipeline` personality provider:
+`models/pipeline/` runs a streaming cascade where each stage is a plug-in, so any
+speech-to-text works with any LLM and any text-to-speech. A character uses provider
+`pipeline` and stores `stt_provider`, `llm_provider` + `llm_model`, and `tts_provider` +
+`oai_voice` (the voice id on that TTS provider).
 
 ```
-ESP32 --16 kHz PCM--> STT (wss://streaming.assemblyai.com/v3/ws)
-                          | end_of_turn
-                          v
-                  LLM Gateway (SSE, /v1/chat/completions)
-                          | sentences
-                          v
-        TTS (wss://tts.us.assemblyai.com/v1/ws) --24 kHz PCM--> Opus --> ESP32
+ESP32 --16 kHz PCM--> stt/  (owns turn detection)
+                        | end of turn
+                        v
+                      llm/  (streams; tool calls run between rounds)
+                        | sentences, first one at its first clause
+                        v
+                      tts/  --24 kHz PCM--> Opus --> ESP32
 ```
 
-It uses only Deno's built-in `WebSocket` and `fetch` for the upstream hops. The STT and TTS
-sessions open when the call starts and stay open, mic audio is forwarded without
-resampling, TTS audio goes straight to Opus, and sentences are sent to TTS with
-`Generate` + `Flush` while the LLM is still writing. `INTERRUPT` aborts the LLM request, sends TTS
-`Cancel` and drops queued audio. Each turn logs `end_of_turn->llm_first_token` and
-`end_of_turn->first_audio` latencies.
+| Stage | `assemblyai` | `mistral` |
+|---|---|---|
+| `stt/` | Streaming STT, server-side turn detection | Voxtral Realtime + local energy VAD |
+| `llm/openai-compatible.ts` | LLM Gateway: any model id (Claude, GPT, Gemini, Gemma, …) | Mistral Large 4 |
+| `tts/` | TTS-1 over one WebSocket (library or cloned voice ids) | Voxtral TTS, one streaming request per sentence |
 
-The character's voice is a TTS `voice_id` such as `aai-kyla` (a bare `kyla` works too).
-Optional settings: `ASSEMBLYAI_STT_MODEL`, `ASSEMBLYAI_LLM_MODEL`, `ASSEMBLYAI_REGION`
-(`us` or `eu`), `ASSEMBLYAI_MIN_TURN_SILENCE` / `ASSEMBLYAI_MAX_TURN_SILENCE`,
-`ASSEMBLYAI_LLM_MAX_TOKENS`, `ASSEMBLYAI_LLM_TEMPERATURE`, `ASSEMBLYAI_LLM_REASONING_EFFORT`,
-`ASSEMBLYAI_PLAYBACK_LEAD_MS`, and `ASSEMBLYAI_BARGE_IN=True` (only for hardware with echo
-cancellation).
+`runner.ts` is the shared turn loop: history, tool rounds, barge-in, playback pacing, and
+`end_of_turn->first_audio` latency logs. Tool packs live in `tools/` (`plant.ts` is the
+soil-sensor demo, on with `PIPELINE_PLANT_MODE=True`). To add a provider, implement the
+`SttProvider`, `LlmProvider` or `TtsProvider` interface in `types.ts` and register it in
+`index.ts`. Characters saved as `assemblyai` or `mistral` before the split run every stage
+on that provider.
 
-### AssemblyAI Voice Agent API (deprecated)
-
-`models/assemblyai.ts` bridges AssemblyAI's managed Voice Agent API
-(`wss://agents.assemblyai.com/v1/ws`) under the `assemblyai` provider. AssemblyAI is
-sunsetting that API in favor of the STT / LLM Gateway / TTS products, so use
-`assemblyai-pipeline` for new characters. The file is kept until the API shuts down.
+Keys: `ASSEMBLYAI_API_KEY`, `MISTRAL_API_KEY` (only for the stages you use).
+AssemblyAI options: `ASSEMBLYAI_STT_MODEL`, `ASSEMBLYAI_LLM_MODEL` (default when a character
+has no `llm_model`), `ASSEMBLYAI_TTS_VOICE` (overrides every character's voice, e.g. a clone
+id), `ASSEMBLYAI_REGION` (`us`/`eu`), `ASSEMBLYAI_MIN_TURN_SILENCE` / `ASSEMBLYAI_MAX_TURN_SILENCE`,
+`ASSEMBLYAI_LLM_MAX_TOKENS`, `ASSEMBLYAI_LLM_TEMPERATURE`, `ASSEMBLYAI_LLM_REASONING_EFFORT`.
+Mistral options: `MISTRAL_LLM_MODEL` (default `mistral-large-4`), `MISTRAL_REASONING_EFFORT`
+(default `low`), `MISTRAL_STT_MODEL`, `MISTRAL_TTS_MODEL`, `MISTRAL_TTS_VOICE`,
+`MISTRAL_VAD_THRESHOLD`, `MISTRAL_VAD_SNR`, `MISTRAL_VAD_SILENCE_MS`.
+Runner options: `PIPELINE_PLAYBACK_LEAD_MS` (default `800`), `PIPELINE_OPUS_BITRATE` (default
+`48000`), `PIPELINE_BARGE_IN=True` (only for hardware with echo cancellation).
 
 ## xAI Grok Voice
 

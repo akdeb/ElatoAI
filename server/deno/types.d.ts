@@ -26,7 +26,7 @@ declare global {
         user_code: string;
     }
 
-    type ModelProvider = "openai" | "gemini" | "elevenlabs" | "hume" | "grok" | "boson" | "mistral" | "assemblyai" | "assemblyai-pipeline";
+    type ModelProvider = "openai" | "gemini" | "elevenlabs" | "hume" | "grok" | "boson" | "mistral" | "assemblyai" | "pipeline";
 
     type GrokVoice = 
         | "Ara"
@@ -108,6 +108,11 @@ declare global {
         creator_id: string | null;
         pitch_factor: number;
         first_message_prompt: string;
+        // Pipeline characters (provider 'pipeline'): one provider per stage.
+        stt_provider?: string | null;
+        llm_provider?: string | null;
+        llm_model?: string | null; // null = that LLM provider's default
+        tts_provider?: string | null;
     }
 
     interface ILanguage {

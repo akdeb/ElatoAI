@@ -1,8 +1,8 @@
 import { Buffer } from "node:buffer";
 import type { RawData } from "npm:@types/ws";
 import { WebSocket } from "npm:ws";
-import { addConversation, getDeviceInfo } from "../supabase.ts";
-import { createOpusPacketizer, isDev, humeApiKey, downsamplePcm, extractPcmFromWav, boostLimitPCM16LEInPlace } from "../utils.ts";
+import { addConversation, getDeviceInfo } from "../../supabase.ts";
+import { createOpusPacketizer, isDev, humeApiKey, downsamplePcm, extractPcmFromWav, boostLimitPCM16LEInPlace } from "../../utils.ts";
 
 export const connectToHume = ({
     ws,

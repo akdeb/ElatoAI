@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { providerInfo } from "@/lib/providers";
 import {
     Sheet,
     SheetClose,
@@ -7,7 +8,8 @@ import {
 } from "@/components/ui/sheet";
 import Image from "next/image";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
-import { Airplay, Check, MonitorSmartphone, Phone } from "lucide-react";
+import { Airplay, Check, MonitorSmartphone, Pencil, Phone } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
 import { getPersonalityImageSrc } from "@/lib/utils";
@@ -61,6 +63,14 @@ const ModifyCharacterSheet: React.FC<ModifyCharacterSheetProps> = ({
                         ? "Live character"
                         : "Click to chat"}
                 </Button>
+                {/* Your own characters (built-ins have no creator) can be edited. */}
+                {isPersonalCharacter && (
+                    <Button asChild size="lg" variant="ghost" className="flex-shrink-0 px-2 text-gray-600 hover:text-gray-900 hover:bg-transparent">
+                        <Link href={`/home/edit/${openPersonality.personality_id}`} aria-label={`Edit ${openPersonality.title}`}>
+                            <Pencil className="h-5 w-5" />
+                        </Link>
+                    </Button>
+                )}
             </div>
         );
     };
@@ -115,7 +125,15 @@ const ModifyCharacterSheet: React.FC<ModifyCharacterSheetProps> = ({
                     <div className="space-y-2 text-left w-full relative">
                     <div className="absolute top-0 right-0">
                     <Badge variant="outline">
-                        {openPersonality.provider}
+                        {(() => {
+                            const info = providerInfo(openPersonality.provider);
+                            if (openPersonality.provider === "pipeline") {
+                                // e.g. "assemblyai → gemma-4-31b → mistral"
+                                const p = openPersonality;
+                                return `${p.stt_provider} → ${p.llm_model ?? p.llm_provider} → ${p.tts_provider}`;
+                            }
+                            return info ? `${info.label} · Realtime` : openPersonality.provider;
+                        })()}
                     </Badge>
                 </div>
                     <div className="flex flex-row items-center gap-2">
